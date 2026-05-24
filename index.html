@@ -560,11 +560,11 @@
     <h1 class="hero-title" data-i18n-html="hero.title">Welcome to the future. Curated real estate deals — revealed in <em>seconds</em>.</h1>
     <p class="hero-sub" data-i18n="hero.sub"></p>
     <div class="cta-row">
-      <a href="/venda/" class="btn btn-primary">
+      <a href="/venda/" class="btn btn-primary" id="hero-cta1">
         <span data-i18n="hero.cta1">Present My Deal to Investors</span>
         <span class="arrow">→</span>
       </a>
-      <a href="/investir/" class="btn btn-ghost">
+      <a href="/investir/" class="btn btn-ghost" id="hero-cta2">
         <span data-i18n="hero.cta2">I Want to Invest</span>
         <span class="arrow">→</span>
       </a>
@@ -596,11 +596,11 @@
   <h2 data-i18n-html="private.title">The best opportunities<br><em>are offline.</em></h2>
 
   <div class="cta-center">
-    <a href="/venda/" class="btn btn-primary">
+    <a href="/venda/" class="btn btn-primary" id="private-cta1">
       <span data-i18n="private.cta">Present My Deal to Investors</span>
       <span class="arrow">→</span>
     </a>
-    <a href="/investir/" class="btn btn-ghost">
+    <a href="/investir/" class="btn btn-ghost" id="private-cta2">
       <span data-i18n="private.cta2">I Want to Invest</span>
       <span class="arrow">→</span>
     </a>
@@ -788,6 +788,33 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   init();
   step();
 })();
+</script>
+
+<script>
+  // ── PASSAR IDIOMA PARA OS FORMULÁRIOS ──
+  function atualizarLinksLang(lang) {
+    const links = {
+      'hero-cta1':    '/venda/?lang=' + lang,
+      'hero-cta2':    '/investir/?lang=' + lang,
+      'private-cta1': '/venda/?lang=' + lang,
+      'private-cta2': '/investir/?lang=' + lang,
+    };
+    Object.entries(links).forEach(([id, href]) => {
+      const el = document.getElementById(id);
+      if (el) el.href = href;
+    });
+  }
+
+  // Observar mudanças de idioma — interceta os botões PT/EN
+  document.addEventListener('DOMContentLoaded', function() {
+    // Detectar idioma inicial
+    const langAtivo = document.getElementById('lang-en').classList.contains('active') ? 'en' : 'pt';
+    atualizarLinksLang(langAtivo);
+
+    // Quando muda o idioma, atualizar os links
+    document.getElementById('lang-pt').addEventListener('click', () => atualizarLinksLang('pt'));
+    document.getElementById('lang-en').addEventListener('click', () => atualizarLinksLang('en'));
+  });
 </script>
 </body>
 </html>

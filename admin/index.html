@@ -18,10 +18,8 @@
     --line:       rgba(242,237,228,0.08);
     --line-strong:rgba(242,237,228,0.14);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-
   body {
     background: var(--bg);
     color: var(--ink);
@@ -72,11 +70,7 @@
     justify-content: center;
     padding: 120px 24px 80px;
   }
-
-  .login-wrap {
-    width: 100%;
-    max-width: 420px;
-  }
+  .login-wrap { width: 100%; max-width: 560px; }
 
   .login-kicker {
     font-size: 11px;
@@ -89,8 +83,7 @@
     align-items: center;
     gap: 14px;
   }
-  .login-kicker::before,
-  .login-kicker::after {
+  .login-kicker::before, .login-kicker::after {
     content: '';
     display: block;
     height: 1px;
@@ -98,7 +91,6 @@
     background: var(--gold);
     opacity: 0.5;
   }
-
   h1 {
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(2rem, 5vw, 2.8rem);
@@ -107,11 +99,7 @@
     color: var(--ink);
     margin-bottom: 10px;
   }
-  h1 em {
-    font-style: italic;
-    color: var(--gold);
-  }
-
+  h1 em { font-style: italic; color: var(--gold); }
   .login-sub {
     font-size: 14px;
     color: var(--muted);
@@ -119,13 +107,8 @@
     letter-spacing: 0.01em;
   }
 
-  /* ── FORM ── */
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 24px;
-  }
+  /* ── FIELD ── */
+  .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
   .field label {
     font-size: 11px;
     font-weight: 400;
@@ -147,10 +130,7 @@
     -webkit-appearance: none;
   }
   .field input::placeholder { color: var(--muted); opacity: 0.6; }
-  .field input:focus {
-    outline: none;
-    border-color: var(--gold);
-  }
+  .field input:focus { outline: none; border-color: var(--gold); }
 
   .btn-login {
     width: 100%;
@@ -182,22 +162,15 @@
     color: #c97b7b;
     margin-top: 16px;
     text-align: center;
-    letter-spacing: 0.02em;
   }
   .error-msg.show { display: block; }
 
   /* ── DIVIDER ── */
-  .login-divider {
-    border: none;
-    border-top: 1px solid var(--line);
-    margin: 40px 0 32px;
-  }
+  .login-divider { border: none; border-top: 1px solid var(--line); margin: 36px 0 28px; }
 
-  /* ── MENU INTERNO ── */
+  /* ── MENU ── */
   .menu-wrap { display: none; }
   .menu-wrap.show { display: block; }
-  .login-wrap.logged .login-form { display: none; }
-  .login-wrap.logged .menu-wrap { display: block; }
 
   .menu-title {
     font-size: 11px;
@@ -205,47 +178,85 @@
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
+  /* ── GRID FERRAMENTAS ── */
   .menu-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 10px;
+    margin-bottom: 10px;
   }
-
   .menu-item {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 20px;
+    gap: 4px;
+    padding: 18px;
     background: var(--bg-soft);
     border: 1px solid var(--line-strong);
     border-radius: 4px;
     text-decoration: none;
     color: var(--ink);
     transition: border-color 0.2s, background 0.2s;
-    cursor: pointer;
   }
-  .menu-item:hover {
-    border-color: var(--gold);
-    background: rgba(184,147,90,0.06);
+  .menu-item:hover { border-color: var(--gold); background: rgba(184,147,90,0.06); }
+  .menu-item-icon { font-size: 1.3rem; margin-bottom: 4px; }
+  .menu-item-label { font-size: 13px; font-weight: 500; line-height: 1.3; }
+  .menu-item-sub { font-size: 11px; color: var(--muted); }
+
+  /* ── GRID CLIENTES ── */
+  .client-grid { display: flex; flex-direction: column; gap: 8px; }
+  .client-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    gap: 12px;
   }
-  .menu-item-icon {
-    font-size: 1.4rem;
-    margin-bottom: 4px;
-  }
-  .menu-item-label {
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    line-height: 1.3;
-  }
-  .menu-item-sub {
+  .client-item-info { display: flex; flex-direction: column; gap: 2px; }
+  .client-item-label { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .client-item-url { font-size: 11px; color: var(--muted); font-family: monospace; }
+  .client-item-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .btn-copy {
+    font-family: 'DM Sans', sans-serif;
     font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
     color: var(--muted);
-    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
   }
+  .btn-copy:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-copy.copied { border-color: #4caf7d; color: #4caf7d; }
+
+  .btn-open {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .btn-open:hover { border-color: var(--ink); color: var(--ink); }
 
   .logout-btn {
     background: none;
@@ -265,21 +276,14 @@
   .logout-btn:hover { color: var(--ink); }
 
   /* ── FOOTER ── */
-  footer {
-    text-align: center;
-    padding: 32px 24px;
-    border-top: 1px solid var(--line);
-  }
-  footer p {
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
+  footer { text-align: center; padding: 32px 24px; border-top: 1px solid var(--line); }
+  footer p { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
 
-  @media (max-width: 480px) {
+  @media (max-width: 520px) {
     nav { padding: 18px 20px; }
     .menu-grid { grid-template-columns: 1fr; }
+    .client-item { flex-direction: column; align-items: flex-start; }
+    .client-item-actions { width: 100%; justify-content: flex-start; }
   }
 </style>
 </head>
@@ -293,28 +297,23 @@
 <main>
   <div class="login-wrap" id="login-wrap">
 
-    <!-- ── ESTADO: LOGIN ── -->
-    <div class="login-form">
+    <!-- ── LOGIN ── -->
+    <div class="login-form" id="login-form">
       <div class="login-kicker">Área Reservada</div>
       <h1>Acesso<br><em>interno.</em></h1>
       <p class="login-sub">Introduza a palavra-passe para continuar.</p>
-
       <div class="field">
         <label>Palavra-passe</label>
         <input type="password" id="pass-input" placeholder="••••••••"
                onkeydown="if(event.key==='Enter') tentarLogin()">
       </div>
-
       <button class="btn-login" onclick="tentarLogin()">
         Entrar <span class="arrow">→</span>
       </button>
-
-      <p class="error-msg" id="error-msg">
-        Palavra-passe incorreta. Tente novamente.
-      </p>
+      <p class="error-msg" id="error-msg">Palavra-passe incorreta. Tente novamente.</p>
     </div>
 
-    <!-- ── ESTADO: MENU ── -->
+    <!-- ── MENU ── -->
     <div class="menu-wrap" id="menu-wrap">
       <div class="login-kicker">Magna Properties</div>
       <h1>Ferramentas<br><em>internas.</em></h1>
@@ -322,8 +321,8 @@
 
       <hr class="login-divider">
 
-      <p class="menu-title">Formulários & Ferramentas</p>
-
+      <!-- Ferramentas internas -->
+      <p class="menu-title">Ferramentas & Formulários Internos</p>
       <div class="menu-grid">
         <a href="/admin/ficha-visita/" class="menu-item">
           <div class="menu-item-icon">📋</div>
@@ -352,6 +351,14 @@
         </a>
       </div>
 
+      <hr class="login-divider">
+
+      <!-- Links para clientes -->
+      <p class="menu-title">Links para Enviar a Clientes</p>
+      <div class="client-grid" id="client-grid">
+        <!-- gerado pelo JS -->
+      </div>
+
       <button class="logout-btn" onclick="logout()">Terminar sessão</button>
     </div>
 
@@ -363,16 +370,57 @@
 </footer>
 
 <script>
-  // ── CONFIGURAÇÃO ──────────────────────────────────────────
-  // Muda esta password para o que quiseres
   const ADMIN_PASSWORD = 'magna2025';
   const SESSION_KEY    = 'magna_admin_auth';
-  // ─────────────────────────────────────────────────────────
+
+  // Links de cliente — base sem domínio para funcionar em qualquer ambiente
+  const CLIENTE_FORMS = [
+    { label: 'KYC — Pessoa Singular',      url: '/forms/kyc-singular/' },
+    { label: 'KYC — Pessoa Coletiva',       url: '/forms/kyc-coletiva/' },
+    { label: 'Proposta de Compra',          url: '/forms/proposta/' },
+    { label: 'Pedido de Testemunho',        url: '/forms/testemunho/' },
+    { label: 'Docs CPCV — Vendedor',        url: '/forms/cpcv-vendedor/' },
+    { label: 'Docs CPCV — Comprador',       url: '/forms/cpcv-comprador/' },
+    { label: 'Docs Escritura — Vendedor',   url: '/forms/escritura-vendedor/' },
+    { label: 'Docs Escritura — Comprador',  url: '/forms/escritura-comprador/' },
+  ];
+
+  function construirLinksCliente() {
+    const base  = window.location.origin;
+    const grid  = document.getElementById('client-grid');
+    grid.innerHTML = '';
+
+    CLIENTE_FORMS.forEach(form => {
+      const fullUrl = base + form.url;
+      const item = document.createElement('div');
+      item.className = 'client-item';
+      item.innerHTML = `
+        <div class="client-item-info">
+          <div class="client-item-label">${form.label}</div>
+          <div class="client-item-url">${fullUrl}</div>
+        </div>
+        <div class="client-item-actions">
+          <a href="${fullUrl}" target="_blank" class="btn-open">Abrir</a>
+          <button class="btn-copy" onclick="copiarLink(this, '${fullUrl}')">Copiar link</button>
+        </div>`;
+      grid.appendChild(item);
+    });
+  }
+
+  function copiarLink(btn, url) {
+    navigator.clipboard.writeText(url).then(() => {
+      btn.textContent = 'Copiado ✓';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copiar link';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
 
   function tentarLogin() {
     const input = document.getElementById('pass-input').value;
     const erro  = document.getElementById('error-msg');
-
     if (input === ADMIN_PASSWORD) {
       sessionStorage.setItem(SESSION_KEY, 'ok');
       mostrarMenu();
@@ -384,19 +432,19 @@
   }
 
   function mostrarMenu() {
-    document.querySelector('.login-form').style.display = 'none';
+    document.getElementById('login-form').style.display = 'none';
     document.getElementById('menu-wrap').classList.add('show');
+    construirLinksCliente();
   }
 
   function logout() {
     sessionStorage.removeItem(SESSION_KEY);
-    document.querySelector('.login-form').style.display = 'block';
+    document.getElementById('login-form').style.display = 'block';
     document.getElementById('menu-wrap').classList.remove('show');
     document.getElementById('pass-input').value = '';
     document.getElementById('pass-input').focus();
   }
 
-  // Verificar se já tem sessão ativa
   if (sessionStorage.getItem(SESSION_KEY) === 'ok') {
     mostrarMenu();
   }

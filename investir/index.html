@@ -492,5 +492,18 @@ document.addEventListener('DOMContentLoaded', function(){
   setLang('pt');
 });
 </script>
+
+<script>
+  // ── LER IDIOMA DO URL ──
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    const lang = params.get('lang');
+    if (lang === 'en' || lang === 'pt') {
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof setLang === 'function') setLang(lang);
+      });
+    }
+  })();
+</script>
 </body>
 </html>
