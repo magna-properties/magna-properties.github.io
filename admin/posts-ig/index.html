@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<script>
+  (function() {
+    if (sessionStorage.getItem('magna_admin_auth') !== 'ok') {
+      window.location.replace('/admin/');
+    }
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Magna Properties — Gerador de Posts Instagram</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+ --navy:#1a2d4a; --gold:#b8935a; --gold2:#d4a96a; --gold-bg:#fdf6e8;
+ --ink:#1a1612; --ink2:#5c5449; --ink-light:#5c5449;
+ --paper:#faf8f4; --cream:#f2ede4; --border:#d8cfc0;
+ --green:#2d6a4f; --green-bg:#f0f7f4;
+ --red:#8b2c2c; --red-bg:#fff0f0;
+ --amber:#8a5c1a; --amber-bg:#fdf6e8;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:16px;display:flex;flex-direction:column}
+
+/* ── TOPBAR (formulário interno) ── */
+.topbar{background:#0c0b09;padding:24px 28px;text-align:center;border-bottom:1px solid #2a2720;position:relative}
+.topbar-brand{font-family:'Cormorant Garamond',serif;font-size:.95rem;font-weight:600;letter-spacing:.28em;color:#c4a35a;margin-bottom:14px;display:block}
+.topbar-div{width:32px;height:1px;background:#c4a35a;margin:0 auto 12px}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;color:white;margin-bottom:6px;line-height:1.2}
+.topbar-sub{font-size:.85rem;color:#9a948c;line-height:1.5;letter-spacing:.02em}
+.gold-bar{height:3px;background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent)}
+
+/* ── PROGRESS ── */
+.prog-wrap{position:sticky;top:0;z-index:50;background:white;border-bottom:1px solid var(--border);padding:12px 24px;display:none}
+.prog-wrap.show{display:block}
+.prog-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.prog-lbl{font-size:.82rem;color:var(--ink2);white-space:nowrap}
+.prog-bar{flex:1;height:4px;background:var(--cream);border-radius:2px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;transition:width .4s}
+.prog-pct{font-size:.82rem;color:var(--gold);font-weight:600;white-space:nowrap;min-width:36px;text-align:right}
+
+/* ── INTENT SELECTOR ── */
+.intent-wrap{max-width:860px;margin:0 auto;padding:48px 24px 80px}
+.intent-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.intent-card{background:var(--paper);border:2px solid var(--border);border-radius:2px;padding:48px 36px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:18px;min-height:300px;user-select:none}
+.intent-card:hover{border-color:var(--gold);background:var(--gold-bg);transform:translateY(-2px);box-shadow:0 6px 20px rgba(184,147,90,.12)}
+.intent-icon{font-size:3rem;line-height:1}
+.intent-card-title{font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:600;color:var(--ink);line-height:1.3}
+.intent-card-desc{font-size:.95rem;color:var(--ink2);line-height:1.7;flex:1;max-width:340px}
+.intent-card-cta{font-size:.88rem;color:var(--gold);font-weight:500;letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px}
+.intent-card-cta::after{content:'→';transition:transform .2s}
+.intent-card:hover .intent-card-cta::after{transform:translateX(4px)}
+
+/* ── FLOW WRAPPER ── */
+.flow{display:none;max-width:860px;margin:0 auto;padding:28px 24px 120px}
+.flow.show{display:block}
+.flow-back{display:inline-flex;align-items:center;gap:8px;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--ink2);background:transparent;border:1px solid var(--border);padding:8px 16px;border-radius:20px;cursor:pointer;margin-bottom:18px;transition:all .15s}
+.flow-back:hover{border-color:var(--gold);color:var(--ink);background:var(--paper)}
+.flow-tag{display:inline-block;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--navy);background:var(--gold-bg);padding:5px 12px;border-radius:3px;font-weight:700;margin-bottom:14px;margin-left:10px;vertical-align:middle;border:1px solid var(--gold)}
+
+/* ── INTRO ── */
+.intro-card{background:var(--paper);border:1px solid var(--border);border-left:4px solid var(--gold);border-radius:0 2px 2px 0;padding:22px 28px;text-align:center;margin-bottom:18px}
+.intro-txt{font-size:1rem;color:var(--ink2);line-height:1.8}
+.intro-txt p{margin:0}
+.intro-txt p + p{margin-top:10px}
+.intro-txt strong{color:var(--ink);font-weight:500}
+.intro-list{list-style:none;display:inline-block;text-align:left;margin-top:8px;padding:0}
+.intro-list li{font-size:1rem;color:var(--ink2);line-height:1.9;padding-left:20px;position:relative}
+.intro-list li::before{content:'•';color:var(--gold);position:absolute;left:6px;font-weight:700;font-size:1.1rem;line-height:1.7}
+
+/* ── STEPS ── */
+.step{background:var(--paper);border:1px solid var(--border);border-radius:2px;margin-bottom:16px;overflow:hidden}
+.step-head{padding:14px 18px;background:#f2ede4;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.step-num{width:28px;height:28px;background:var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:var(--gold2);flex-shrink:0}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ink);flex:1}
+.step-body{padding:20px}
+
+.fg{display:grid;gap:12px 16px;margin-bottom:14px}
+.fg:last-child{margin-bottom:0}
+.fg.c1{grid-template-columns:1fr}
+.fg.c2{grid-template-columns:1fr 1fr}
+.fg.c3{grid-template-columns:1fr 1fr 1fr}
+.ff{display:flex;flex-direction:column;gap:4px}
+.ff label{font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--ink2);font-weight:500;margin-bottom:2px;line-height:1.3}
+.req{color:var(--gold);margin-left:2px}
+.opt{font-size:.78rem;font-weight:400;color:#bbb;margin-left:6px}
+.ff input,.ff select,.ff textarea{border:1px solid var(--border);background:white;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--ink);border-radius:4px;width:100%;transition:border-color .15s;-webkit-appearance:none;appearance:none;line-height:1.4}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,90,.08)}
+.ff textarea{resize:vertical;min-height:100px;line-height:1.6}
+.ff select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c5449' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+.ff input::placeholder,.ff textarea::placeholder{color:#b0a898}
+
+/* ── SUBLABELS ── */
+.sublabel{font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--amber);font-weight:700;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.sublabel:first-child{margin-top:0}
+
+/* ── PILLS ── */
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.pill{font-family:'DM Sans',sans-serif;font-size:.9rem;padding:10px 18px;border:1.5px solid var(--border);background:white;border-radius:24px;cursor:pointer;transition:all .15s;color:var(--ink2);user-select:none;line-height:1.3}
+.pill.on{border-color:var(--gold);background:var(--gold-bg);color:var(--ink);font-weight:500}
+
+/* ── NOTE BOX ── */
+.note-box{background:var(--gold-bg);border:1px dashed var(--gold);border-radius:2px;padding:14px 18px;margin-bottom:16px}
+.note-box-title{font-size:.8rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.note-box p{font-size:.92rem;color:var(--ink2);line-height:1.65}
+
+/* ── PRICE/BUDGET INPUT TOGGLE ── */
+.price-fields{display:none}
+.price-fields.show{display:block}
+
+/* ── FUNNEL LINK TOGGLE ── */
+.toggle-row{display:flex;align-items:center;gap:10px;padding:10px 0}
+.toggle-row label{font-size:.92rem;color:var(--ink2);cursor:pointer;line-height:1.4}
+.toggle-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--gold);cursor:pointer;flex-shrink:0}
+
+/* ── SUBMIT ── */
+.submit-area{text-align:center;padding:16px 0 8px}
+.btn-submit{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:500;padding:16px 52px;background:var(--ink);color:white;border:none;cursor:pointer;border-radius:32px;transition:all .2s;letter-spacing:.03em}
+.btn-submit:hover:not(:disabled){background:#3a3530}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed}
+.submit-note{font-size:.85rem;color:var(--ink2);margin-top:12px}
+
+/* ── LOADING ── */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,.85);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.loading-overlay.show{display:flex}
+.spinner{width:38px;height:38px;border:3px solid #3a3530;border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{color:white;font-size:.95rem;text-align:center;max-width:360px;line-height:1.5;padding:0 20px}
+.loading-sub{color:#9a948c;font-size:.82rem;margin-top:4px}
+
+/* ── PREVIEW SCREEN ── */
+.preview-screen{display:none;max-width:860px;margin:0 auto;padding:32px 24px 80px}
+.preview-screen.show{display:block}
+.preview-header{text-align:center;margin-bottom:28px}
+.preview-icon{font-size:2.4rem;margin-bottom:12px}
+.preview-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--ink);margin-bottom:6px}
+.preview-div{width:36px;height:2px;background:var(--gold);margin:14px auto}
+.preview-sub{font-size:.92rem;color:var(--ink2);line-height:1.6}
+
+.drive-link-btn{display:inline-flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--border);padding:10px 20px;border-radius:24px;color:var(--ink);text-decoration:none;font-size:.88rem;font-weight:500;margin-top:14px;transition:all .15s}
+.drive-link-btn:hover{border-color:var(--gold);background:var(--gold-bg)}
+
+.lang-tabs{display:flex;gap:6px;justify-content:center;margin:24px 0 18px;flex-wrap:wrap}
+.lang-tab{font-family:'DM Sans',sans-serif;font-size:.85rem;padding:9px 22px;border:1.5px solid var(--border);background:white;border-radius:24px;cursor:pointer;color:var(--ink2);font-weight:500;transition:all .15s;letter-spacing:.04em}
+.lang-tab.on{border-color:var(--ink);background:var(--ink);color:var(--gold2)}
+
+.platform-tabs{display:flex;gap:8px;justify-content:center;margin:24px 0 6px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.platform-tab{font-family:'DM Sans',sans-serif;font-size:.92rem;padding:11px 22px;border:1.5px solid var(--border);background:white;border-radius:24px;cursor:pointer;color:var(--ink2);font-weight:500;transition:all .15s;display:inline-flex;align-items:center;gap:6px;letter-spacing:.02em}
+.platform-tab:hover{border-color:var(--gold)}
+.platform-tab.on{border-color:var(--gold);background:var(--gold-bg);color:var(--ink);font-weight:600}
+
+.platform-pane{display:none}
+.platform-pane.show{display:block}
+
+.variants-wrap{display:none}
+.variants-wrap.show{display:block}
+
+.variant-card{background:var(--paper);border:1px solid var(--border);border-radius:2px;margin-bottom:14px;overflow:hidden;position:relative}
+.variant-card.regenerating::after{content:'';position:absolute;inset:0;background:rgba(250,248,244,.85);z-index:5}
+.variant-card.regenerating::before{content:'';position:absolute;top:50%;left:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border:3px solid var(--cream);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;z-index:6}
+.variant-head{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:#f2ede4;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.variant-tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700;padding:4px 10px;border-radius:3px;background:var(--ink);color:var(--gold2)}
+.variant-meta{font-size:.78rem;color:var(--ink2);font-weight:500}
+.variant-text{padding:18px 22px;font-size:.95rem;color:var(--ink);line-height:1.7;white-space:pre-wrap;font-family:'DM Sans',sans-serif;background:white;min-height:60px;border-bottom:1px solid var(--border)}
+.variant-actions{display:flex;gap:8px;padding:12px 18px;justify-content:flex-end;flex-wrap:wrap}
+.btn-action{font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;padding:8px 18px;border:1px solid var(--border);background:white;color:var(--ink);border-radius:20px;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:6px}
+.btn-action:hover{border-color:var(--gold);background:var(--gold-bg)}
+.btn-action.copied{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+
+.preview-footer{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap}
+.btn-back-preview{font-family:'DM Sans',sans-serif;font-size:.9rem;padding:12px 28px;background:transparent;border:1px solid var(--border);color:var(--ink2);border-radius:24px;cursor:pointer;transition:all .15s}
+.btn-back-preview:hover{border-color:var(--gold);color:var(--ink)}
+
+/* ── FOOTER ── */
+.footer{background:#0c0b09;text-align:center;padding:36px 24px;margin-top:auto;border-top:1px solid #2a2720}
+.footer-brand{display:inline-block;font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#c4a35a;letter-spacing:.08em;margin-bottom:6px}
+.footer-sub{font-size:.82rem;color:#6b6358;letter-spacing:.05em}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+ .fg.c3{grid-template-columns:1fr 1fr}
+ .topbar-title{font-size:1.45rem}
+ .intent-grid{grid-template-columns:1fr;gap:14px}
+ .intent-card{min-height:auto;padding:36px 28px;gap:14px}
+ .flow,.intent-wrap,.preview-screen{padding-left:20px;padding-right:20px}
+ .variant-text{font-size:.92rem;padding:16px 18px}
+ .variant-head,.variant-actions{padding-left:14px;padding-right:14px}
+}
+@media(max-width:480px){
+ .topbar-title{font-size:1.3rem}
+ .flow,.intent-wrap,.preview-screen{padding-left:16px;padding-right:16px}
+ .preview-title{font-size:1.6rem}
+ .variant-actions{justify-content:center}
+}
+@media(max-width:380px){
+ .fg.c2,.fg.c3{grid-template-columns:1fr}
+}
+
+ .upload-zone{border:1px dashed var(--border);border-radius:4px;padding:16px 20px;cursor:pointer;transition:all .2s;background:white;position:relative;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--ink2)}
+ .upload-zone:hover,.upload-zone.drag{border-color:#c4a35a;background:#fdf6e8}
+ .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+ .upload-icon{font-size:2rem;margin-bottom:8px}
+ .upload-label{font-size:.88rem;color:var(--ink2);pointer-events:none}
+ .upload-label strong{color:var(--ink)}
+ .upload-preview{display:none;margin-top:12px;position:relative;text-align:center}
+ .upload-preview img{max-height:180px;border-radius:4px;border:1px solid var(--border)}
+ .upload-clear{position:absolute;top:-8px;right:-8px;background:#c4635a;color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:.8rem;line-height:22px;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+ <div class="spinner"></div>
+ <div class="loading-txt" id="loading-txt">A gerar copy...</div>
+ <div class="loading-sub">Pode demorar 20-40 segundos</div>
+</div>
+
+<div class="topbar">
+ <span class="topbar-brand">MAGNA PROPERTIES</span>
+ <div class="topbar-div"></div>
+ <h1 class="topbar-title">Gerador de Posts Instagram</h1>
+ <p class="topbar-sub">Briefing para copy automático do Numeiro</p>
+</div>
+<div class="gold-bar"></div>
+
+<div class="prog-wrap" id="prog-wrap">
+ <div class="prog-inner">
+ <span class="prog-lbl">Briefing</span>
+ <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+ <span class="prog-pct" id="prog-pct">0%</span>
+ </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+ STEP 0 — TIPO DE POST
+ ═══════════════════════════════════════════════════════════════ -->
+<div id="intent-area">
+ <div class="intent-wrap">
+ <div class="intent-grid">
+ <div class="intent-card" onclick="selecionarTipo('apresentar_imovel')">
+ <div class="intent-icon"></div>
+ <div class="intent-card-title">Publicar Imóvel</div>
+ <div class="intent-card-desc">Tens uma angariação ou um negócio para vender e queres atrair compradores via Instagram.</div>
+ <div class="intent-card-cta">Iniciar</div>
+ </div>
+ <div class="intent-card" onclick="selecionarTipo('procura_cliente')">
+ <div class="intent-icon"></div>
+ <div class="intent-card-title">Procurar Imóvel</div>
+ <div class="intent-card-desc">Tens um cliente comprador com pedido específico e queres atrair vendedores que tenham esse perfil de imóvel.</div>
+ <div class="intent-card-cta">Iniciar</div>
+ </div>
+ </div>
+ </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+ FLUXO A — APRESENTAR IMÓVEL
+ ═══════════════════════════════════════════════════════════════ -->
+<div id="flow-a" class="flow">
+ <button class="flow-back" onclick="voltarTipo()">← Mudar de opção</button>
+ <span class="flow-tag">Publicar Imóvel</span>
+
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">1</div><div class="step-title">Imóvel</div></div>
+ <div class="step-body">
+ <div class="fg c2">
+ <div class="ff"><label>Referência interna <span class="req">*</span></label><input id="a-ref" placeholder="Ex: MP-2026-0142" oninput="upd()"></div>
+ <div class="ff">
+ <label>Tipo <span class="req">*</span></label>
+ <select id="a-tipo" onchange="upd()">
+ <option value="">— Selecionar —</option>
+ <option>Apartamento</option><option>Moradia / Villa</option>
+ <option>Moradia em Banda</option><option>Moradia Geminada</option>
+ <option>Terreno Urbanizável</option>
+ <option>Loja / Escritório</option><option>Prédio</option>
+ </select>
+ </div>
+ </div>
+ <div class="fg c3">
+ <div class="ff">
+ <label>Tipologia <span class="req">*</span></label>
+ <select id="a-tipologia" onchange="upd()">
+ <option value="">— Selecionar —</option>
+ <option>T0</option><option>T1</option><option>T2</option>
+ <option>T3</option><option>T4</option><option>T4+</option><option>N/A</option>
+ </select>
+ </div>
+ <div class="ff">
+ <label>Concelho <span class="req">*</span></label>
+ <select id="a-concelho" onchange="popFreg('a');upd()">
+ <option value="">— Selecionar —</option>
+ <option>Albufeira</option><option>Alcoutim</option><option>Aljezur</option>
+ <option>Castro Marim</option><option>Faro</option><option>Lagoa</option>
+ <option>Lagos</option><option>Loulé</option><option>Monchique</option>
+ <option>Olhão</option><option>Portimão</option><option>São Brás de Alportel</option>
+ <option>Silves</option><option>Tavira</option><option>Vila do Bispo</option>
+ <option>Vila Real de Santo António</option>
+ </select>
+ </div>
+ <div class="ff">
+ <label>Freguesia <span class="req">*</span></label>
+ <select id="a-freg" onchange="upd()">
+ <option value="">— Selecione Concelho —</option>
+ </select>
+ </div>
+ </div>
+ <div class="fg c1">
+ <div class="ff"><label>Zona / urbanização específica <span class="opt">(opcional)</span></label><input id="a-zona" placeholder="Ex: Vale do Lobo, Marina de Vilamoura, Meia Praia, Carvoeiro..."></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">2</div><div class="step-title">Destaques</div></div>
+ <div class="step-body">
+ <div class="fg c3">
+ <div class="ff"><label>Área Bruta Privativa (m²)</label><input id="a-abp" type="number" placeholder="Ex: 180"></div>
+ <div class="ff"><label>Área Terreno (m²) <span class="opt">(se aplicável)</span></label><input id="a-terreno" type="number" placeholder="Ex: 800"></div>
+ <div class="ff"><label>Ano construção / remodelação</label><input id="a-ano" type="number" placeholder="Ex: 2022" min="1800" max="2030"></div>
+ </div>
+
+ <div class="sublabel">Características <span class="opt">(seleciona as principais)</span></div>
+ <div class="pills" id="a-pills-carac">
+ <div class="pill" onclick="togglePill(this)">Piscina</div>
+ <div class="pill" onclick="togglePill(this)">Garagem</div>
+ <div class="pill" onclick="togglePill(this)">Vista mar</div>
+ <div class="pill" onclick="togglePill(this)">Vista serra</div>
+ <div class="pill" onclick="togglePill(this)">Terraço</div>
+ <div class="pill" onclick="togglePill(this)">Varanda</div>
+ <div class="pill" onclick="togglePill(this)">Jardim</div>
+ <div class="pill" onclick="togglePill(this)">Ar condicionado</div>
+ <div class="pill" onclick="togglePill(this)">Painéis solares</div>
+ <div class="pill" onclick="togglePill(this)">Lareira</div>
+ <div class="pill" onclick="togglePill(this)">Elevador</div>
+ <div class="pill" onclick="togglePill(this)">Cozinha equipada</div>
+ <div class="pill" onclick="togglePill(this)">Licença AL / Turística</div>
+ <div class="pill" onclick="togglePill(this)">Mobilado</div>
+ <div class="pill" onclick="togglePill(this)">Condomínio fechado</div>
+ <div class="pill" onclick="togglePill(this)">Primeira linha de mar</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Estado <span class="opt">(escolhe um)</span></div>
+ <div class="pills" id="a-pills-estado">
+ <div class="pill" onclick="togglePillEx(this)">Nova construção / Recente</div>
+ <div class="pill" onclick="togglePillEx(this)">Como novo / Remodelado</div>
+ <div class="pill" onclick="togglePillEx(this)">Estado razoável</div>
+ <div class="pill" onclick="togglePillEx(this)">Precisa de obras</div>
+ <div class="pill" onclick="togglePillEx(this)">Para remodelação total</div>
+ </div>
+ </div>
+ </div>
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">3</div><div class="step-title">O que torna este imóvel especial</div></div>
+ <div class="step-body">
+ <div class="note-box">
+ <div class="note-box-title">Esta é a parte chave</div>
+ <p>Quanto mais detalhes diferenciadores deres, melhor o Claude API consegue construir uma narrativa engaging. Pensa: o que faz este imóvel sobressair? Que história tem? O que vai despertar interesse?</p>
+ </div>
+ <div class="fg c1">
+ <div class="ff">
+ <label>Pontos diferenciadores principais <span class="req">*</span></label>
+ <textarea id="a-pontos" placeholder="Ex: vista desobstruída sobre a Ria Formosa garantida, segunda linha de mar a 3 minutos a pé, projecto de remodelação total assinado por arquitecto reconhecido, ginásio e SPA privativos no condomínio..." oninput="upd()"></textarea>
+ </div>
+ </div>
+ <div class="fg c1">
+ <div class="ff">
+ <label>Vista / localização privilegiada <span class="opt">(detalhe)</span></label>
+ <textarea id="a-vista-loc" placeholder="Ex: vista panorâmica para a Marina de Vilamoura e o mar; pôr do sol sobre a Serra de Monchique a oeste; orientação solar sul..."></textarea>
+ </div>
+ </div>
+ <div class="fg c1">
+ <div class="ff">
+ <label>História ou contexto único <span class="opt">(opcional)</span></label>
+ <textarea id="a-historia" placeholder="Ex: pertenceu à mesma família durante 3 gerações; primeira moradia construída na zona; foi capa da revista X em 2019..."></textarea>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">4</div><div class="step-title">Posicionamento e CTA</div></div>
+ <div class="step-body">
+ <div class="sublabel">Como mostrar o preço no post <span class="req">*</span></div>
+ <div class="pills" id="a-pills-preco-fmt">
+ <div class="pill" onclick="togglePillEx(this);togglePrecoFmt('a');upd()">Mostrar valor exato</div>
+ <div class="pill" onclick="togglePillEx(this);togglePrecoFmt('a');upd()">Mostrar a partir de</div>
+ <div class="pill" onclick="togglePillEx(this);togglePrecoFmt('a');upd()">Preço sob consulta</div>
+ </div>
+ <div class="price-fields" id="a-preco-fields">
+ <div class="fg c1" style="margin-top:12px">
+ <div class="ff"><label>Valor</label><input id="a-preco" placeholder="Ex: 850 000 €" oninput="fmtPreco(this)"></div>
+ </div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Perfil ideal de comprador <span class="opt">(seleciona todos os relevantes)</span></div>
+ <div class="pills" id="a-pills-perfil">
+ <div class="pill" onclick="togglePill(this)">Investidor</div>
+ <div class="pill" onclick="togglePill(this)">Família portuguesa</div>
+ <div class="pill" onclick="togglePill(this)">Família internacional</div>
+ <div class="pill" onclick="togglePill(this)">Reformado / lifestyle</div>
+ <div class="pill" onclick="togglePill(this)">Segunda casa / férias</div>
+ <div class="pill" onclick="togglePill(this)">Investidor AL</div>
+ <div class="pill" onclick="togglePill(this)">Comprador de luxo</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Finalidade típica <span class="opt">(seleciona todas)</span></div>
+ <div class="pills" id="a-pills-finalidade">
+ <div class="pill" onclick="togglePill(this)"> Habitação permanente</div>
+ <div class="pill" onclick="togglePill(this)"> Segunda casa</div>
+ <div class="pill" onclick="togglePill(this)"> Arrendamento longa duração</div>
+ <div class="pill" onclick="togglePill(this)"> Alojamento Local</div>
+ <div class="pill" onclick="togglePill(this)"> Revenda</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Call-to-Action no post</div>
+ <div class="fg c1">
+ <div class="ff">
+ <select id="a-cta">
+ <option value="">— Selecionar —</option>
+ <option>Agende uma visita</option>
+ <option>Contacte-nos para mais informação</option>
+ <option>Saiba mais via link na bio</option>
+ <option>Marque uma chamada</option>
+ <option>Envie mensagem privada</option>
+ </select>
+ </div>
+ </div>
+
+ <div class="toggle-row" style="margin-top:14px">
+ <input type="checkbox" id="a-link-funnel" onchange="toggleLinkFld('a')">
+ <label for="a-link-funnel">Incluir link do formulário funnel</label>
+ </div>
+ <div class="fg c1" id="a-link-fld" style="display:none">
+ <div class="ff"><input id="a-link-url" placeholder="Ex: https://magna-properties.pt/numeiro" value="https://magna-properties.pt/numeiro"></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">5</div><div class="step-title">Estilo e briefing</div></div>
+ <div class="step-body">
+ <div class="sublabel">Plataformas onde publicar <span class="req">*</span> <span class="opt">(seleciona todas)</span></div>
+ <div class="pills" id="a-pills-plat">
+ <div class="pill" onclick="togglePlat(this,'a')"> IG Numeiro</div>
+ <div class="pill" onclick="togglePlat(this,'a')"> IG Magna</div>
+ </div>
+
+ <div id="a-invest-fields" style="display:none">
+ <div class="note-box" style="margin-top:22px">
+ <div class="note-box-title">Dados de investimento</div>
+ <p>Como selecionaste <strong>LinkedIn</strong> e/ou <strong>X</strong>, preenche estes campos para que o copy B2B seja credível e data-driven.</p>
+ </div>
+ <div class="fg c1">
+ <div class="ff"><label>Yield / Cap rate projetado <span class="req">*</span></label><input id="a-yield" placeholder="Ex: 6.8% bruto / 5.2% líquido (rendimento anual)" oninput="upd()"></div>
+ </div>
+ <div class="fg c1">
+ <div class="ff"><label>Tese de investimento <span class="req">*</span></label><textarea id="a-tese" placeholder="Ex: Compra abaixo de mercado em zona pré-AL com upside de 25% em 24 meses; rendas em alta procura todo o ano por proximidade a Marina e campo de golf; entrada possível abaixo de 200k com financiamento..." style="min-height:90px" oninput="upd()"></textarea></div>
+ </div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Idioma do copy <span class="req">*</span></div>
+ <div class="pills" id="a-pills-idioma">
+ <div class="pill" onclick="togglePillEx(this);upd()">PT</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">EN</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">PT e EN</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Tom de comunicação <span class="req">*</span></div>
+ <div class="pills" id="a-pills-tom">
+ <div class="pill" onclick="togglePillEx(this);upd()">Lifestyle aspiracional</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Investimento racional</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Familiar e acolhedor</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Discreto / Exclusivo</div>
+ </div>
+
+ <div class="note-box" style="margin-top:22px">
+ <div class="note-box-title"># Hashtags automáticas</div>
+ <p>O Claude API gera as hashtags optimizadas para SEO com base em <strong>plataforma</strong>, <strong>localização</strong>, <strong>tipo de imóvel</strong>, <strong>perfil de comprador</strong>, <strong>idioma</strong> e <strong>marca Magna Properties</strong>. Não precisas de te preocupar com isto.</p>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Briefing adicional para o Claude API <span class="opt">(opcional mas recomendado)</span></div>
+ <div class="fg c1">
+ <div class="ff"><textarea id="a-briefing" placeholder="Ex: evita a palavra &quot;único&quot; — usa muito; quero um hook que apele a quem está farto de Lisboa; menciona discretamente que aceita propostas de não-residentes; tem 3 ofertas em curso por isso podes criar urgência subtil..." style="min-height:120px"></textarea></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="submit-area">
+ <div class="step">
+ <div class="step-head" style="text-align:left"><div class="step-num">6</div><div class="step-title">Fotografia <span class="opt">(opcional)</span></div></div>
+ <div class="step-body">
+ <div class="upload-zone" id="upload-zone-a" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'a')">
+ <input type="file" accept="image/*" onchange="handleFile(this,'a')">
+ <div class="upload-label">Clica ou arrasta uma fotografia — JPG, PNG, WEBP &nbsp;·&nbsp; máx. 10MB</div>
+ </div>
+ <div class="upload-preview" id="upload-preview-a">
+ <img id="upload-img-a" src="">
+ <button class="upload-clear" onclick="clearUpload('a')"></button>
+ </div>
+ </div>
+ </div>
+
+ <button class="btn-submit" id="btn-submit-a" onclick="submeter('apresentar_imovel')" disabled>Gerar Copy</button>
+ <div class="submit-note">As variantes serão geradas para todas as plataformas selecionadas e arquivadas na Drive</div>
+ </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+ FLUXO B — PROCURA DE CLIENTE
+ ═══════════════════════════════════════════════════════════════ -->
+<div id="flow-b" class="flow">
+ <button class="flow-back" onclick="voltarTipo()">← Mudar de opção</button>
+ <span class="flow-tag">Procurar Imóvel</span>
+
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">1</div><div class="step-title">Cliente</div></div>
+ <div class="step-body">
+ <div class="fg c2">
+ <div class="ff"><label>Referência interna da procura <span class="req">*</span></label><input id="b-ref" placeholder="Ex: PROC-2026-0017" oninput="upd()"></div>
+ <div class="ff">
+ <label>Origem do cliente <span class="req">*</span></label>
+ <select id="b-origem" onchange="upd()">
+ <option value="">— Selecionar —</option>
+ <option>Português residente em Portugal</option>
+ <option>Português emigrante</option>
+ <option>Internacional — UE</option>
+ <option>Internacional — UK</option>
+ <option>Internacional — EUA / Canadá</option>
+ <option>Internacional — Brasil</option>
+ <option>Internacional — outro</option>
+ </select>
+ </div>
+ </div>
+ <div class="fg c1">
+ <div class="ff">
+ <label>Descrição anonimizada do cliente <span class="req">*</span></label>
+ <textarea id="b-descricao" placeholder="Ex: cliente internacional reformado, com poder de compra confirmado em conta, à procura para mudar para o Algarve permanentemente nos próximos 6 meses; já visitou várias vezes; valoriza tranquilidade e proximidade a campos de golf..." oninput="upd()"></textarea>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">2</div><div class="step-title">O que procura</div></div>
+ <div class="step-body">
+ <div class="fg c2">
+ <div class="ff">
+ <label>Tipo de imóvel <span class="req">*</span></label>
+ <select id="b-tipo" onchange="upd()">
+ <option value="">— Selecionar —</option>
+ <option>Apartamento</option><option>Moradia / Villa</option>
+ <option>Moradia em Banda</option><option>Moradia Geminada</option>
+ <option>Terreno Urbanizável</option>
+ <option>Loja / Escritório</option><option>Prédio</option>
+ <option>Indiferente</option>
+ </select>
+ </div>
+ <div class="ff">
+ <label>Tipologia mínima</label>
+ <select id="b-tipologia">
+ <option value="">— Selecionar —</option>
+ <option>T0</option><option>T1</option><option>T2</option>
+ <option>T3</option><option>T4</option><option>T4+</option>
+ <option>Indiferente</option>
+ </select>
+ </div>
+ </div>
+ <div class="fg c2">
+ <div class="ff">
+ <label>Concelho preferido <span class="req">*</span></label>
+ <select id="b-concelho" onchange="popFreg('b');upd()">
+ <option value="">— Selecionar —</option>
+ <option>Albufeira</option><option>Alcoutim</option><option>Aljezur</option>
+ <option>Castro Marim</option><option>Faro</option><option>Lagoa</option>
+ <option>Lagos</option><option>Loulé</option><option>Monchique</option>
+ <option>Olhão</option><option>Portimão</option><option>São Brás de Alportel</option>
+ <option>Silves</option><option>Tavira</option><option>Vila do Bispo</option>
+ <option>Vila Real de Santo António</option>
+ </select>
+ </div>
+ <div class="ff">
+ <label>Freguesia preferida</label>
+ <select id="b-freg">
+ <option value="">— Selecione Concelho —</option>
+ </select>
+ </div>
+ </div>
+ <div class="fg c1">
+ <div class="ff"><label>Zona / urbanização preferida <span class="opt">(opcional)</span></label><input id="b-zona" placeholder="Ex: Vale do Lobo, Quinta do Lago, Marina de Vilamoura..."></div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Características essenciais</div>
+ <div class="pills" id="b-pills-carac">
+ <div class="pill" onclick="togglePill(this)">Piscina</div>
+ <div class="pill" onclick="togglePill(this)">Garagem</div>
+ <div class="pill" onclick="togglePill(this)">Vista mar</div>
+ <div class="pill" onclick="togglePill(this)">Vista serra</div>
+ <div class="pill" onclick="togglePill(this)">Terraço</div>
+ <div class="pill" onclick="togglePill(this)">Jardim</div>
+ <div class="pill" onclick="togglePill(this)">Lareira</div>
+ <div class="pill" onclick="togglePill(this)">Elevador</div>
+ <div class="pill" onclick="togglePill(this)">Cozinha equipada</div>
+ <div class="pill" onclick="togglePill(this)">Licença AL</div>
+ <div class="pill" onclick="togglePill(this)">Condomínio fechado</div>
+ <div class="pill" onclick="togglePill(this)">Primeira linha de mar</div>
+ </div>
+ </div>
+ </div>
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">3</div><div class="step-title">Detalhes</div></div>
+ <div class="step-body">
+ <div class="sublabel">Como mostrar o orçamento no post <span class="req">*</span></div>
+ <div class="pills" id="b-pills-orc-fmt">
+ <div class="pill" onclick="togglePillEx(this);toggleOrcFmt();upd()">Mostrar range exato</div>
+ <div class="pill" onclick="togglePillEx(this);toggleOrcFmt();upd()">Mostrar apenas máximo</div>
+ <div class="pill" onclick="togglePillEx(this);toggleOrcFmt();upd()">Valor competitivo / sob consulta</div>
+ </div>
+ <div class="price-fields" id="b-orc-fields">
+ <div class="fg c2" style="margin-top:12px">
+ <div class="ff"><label>Valor mínimo</label><input id="b-orc-min" placeholder="Ex: 500 000 €" oninput="fmtPreco(this)"></div>
+ <div class="ff"><label>Valor máximo</label><input id="b-orc-max" placeholder="Ex: 800 000 €" oninput="fmtPreco(this)"></div>
+ </div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Quando o cliente pretende comprar <span class="req">*</span></div>
+ <div class="pills" id="b-pills-timing">
+ <div class="pill" onclick="togglePillEx(this);upd()">Imediato</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">1 a 3 meses</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">3 a 6 meses</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">6 a 12 meses</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Forma de pagamento <span class="req">*</span></div>
+ <div class="pills" id="b-pills-pag">
+ <div class="pill" onclick="togglePillEx(this);upd()">Pronto Pagamento / Capitais Próprios</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Financiamento Bancário</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Misto</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Finalidade da compra <span class="req">*</span></div>
+ <div class="pills" id="b-pills-finalidade">
+ <div class="pill" onclick="togglePillEx(this);upd()"> Habitação permanente</div>
+ <div class="pill" onclick="togglePillEx(this);upd()"> Segunda casa / férias</div>
+ <div class="pill" onclick="togglePillEx(this);upd()"> Arrendamento longa duração</div>
+ <div class="pill" onclick="togglePillEx(this);upd()"> Alojamento Local</div>
+ <div class="pill" onclick="togglePillEx(this);upd()"> Comprar para revender</div>
+ </div>
+ </div>
+ </div>
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">4</div><div class="step-title">Posicionamento e CTA</div></div>
+ <div class="step-body">
+ <div class="sublabel">Tipo de procura <span class="req">*</span></div>
+ <div class="pills" id="b-pills-procura">
+ <div class="pill" onclick="togglePillEx(this);upd()">Off-market discreto</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Mercado aberto</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Ambos</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Argumento para o vendedor <span class="opt">(porque deveria considerar apresentar-nos um imóvel?)</span></div>
+ <div class="fg c1">
+ <div class="ff">
+ <textarea id="b-argumento" placeholder="Ex: cliente com decisão rápida e financiamento já aprovado; queremos fechar antes do final do ano; abertos a propostas em qualquer estado de conservação desde que a localização encaixe..."></textarea>
+ </div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Nível de discrição na publicação <span class="req">*</span></div>
+ <div class="pills" id="b-pills-discricao">
+ <div class="pill" onclick="togglePillEx(this);upd()">Apenas características</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Detalhes parciais</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Detalhes completos</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Call-to-Action no post</div>
+ <div class="fg c1">
+ <div class="ff">
+ <select id="b-cta">
+ <option value="">— Selecionar —</option>
+ <option>Tem este imóvel? Apresente-nos</option>
+ <option>Conhece alguém com este perfil de imóvel?</option>
+ <option>Apresente a sua oportunidade via link na bio</option>
+ <option>Envie mensagem privada com a sua oportunidade</option>
+ <option>Marque uma chamada confidencial</option>
+ </select>
+ </div>
+ </div>
+
+ <div class="toggle-row" style="margin-top:14px">
+ <input type="checkbox" id="b-link-funnel" onchange="toggleLinkFld('b')">
+ <label for="b-link-funnel">Incluir link do formulário funnel</label>
+ </div>
+ <div class="fg c1" id="b-link-fld" style="display:none">
+ <div class="ff"><input id="b-link-url" placeholder="Ex: https://magna-properties.pt/numeiro" value="https://magna-properties.pt/numeiro"></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="step">
+ <div class="step-head"><div class="step-num">5</div><div class="step-title">Estilo e briefing</div></div>
+ <div class="step-body">
+ <div class="sublabel">Plataformas onde publicar <span class="req">*</span> <span class="opt">(seleciona todas)</span></div>
+ <div class="pills" id="b-pills-plat">
+ <div class="pill" onclick="togglePlat(this,'b')"> IG Numeiro</div>
+ <div class="pill" onclick="togglePlat(this,'b')"> IG Magna</div>
+ </div>
+
+ <div id="b-invest-fields" style="display:none">
+ <div class="note-box" style="margin-top:22px">
+ <div class="note-box-title">Dados de investimento</div>
+ <p>Como selecionaste <strong>LinkedIn</strong> e/ou <strong>X</strong>, preenche estes campos para que o copy B2B seja credível e data-driven.</p>
+ </div>
+ <div class="fg c1">
+ <div class="ff"><label>Yield / Cap rate alvo do cliente <span class="req">*</span></label><input id="b-yield" placeholder="Ex: cliente procura yield mínimo 5% líquido; cap rate alvo 6.5%+" oninput="upd()"></div>
+ </div>
+ <div class="fg c1">
+ <div class="ff"><label>Tese de investimento do cliente <span class="req">*</span></label><textarea id="b-tese" placeholder="Ex: cliente procura ativos em zona pré-AL com upside de yield projetado; aberto a oportunidades em estado bruto desde que tenham potencial de valorização confirmado; horizonte 5-7 anos..." style="min-height:90px" oninput="upd()"></textarea></div>
+ </div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Idioma do copy <span class="req">*</span></div>
+ <div class="pills" id="b-pills-idioma">
+ <div class="pill" onclick="togglePillEx(this);upd()">PT</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">EN</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">PT e EN</div>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Tom de comunicação <span class="req">*</span></div>
+ <div class="pills" id="b-pills-tom">
+ <div class="pill" onclick="togglePillEx(this);upd()">Profissional / Discreto</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Convite directo</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Storytelling</div>
+ <div class="pill" onclick="togglePillEx(this);upd()">Urgência subtil</div>
+ </div>
+
+ <div class="note-box" style="margin-top:22px">
+ <div class="note-box-title"># Hashtags automáticas</div>
+ <p>O Claude API gera as hashtags optimizadas para SEO com base em <strong>plataforma</strong>, <strong>localização</strong>, <strong>perfil do cliente</strong>, <strong>tipo de procura</strong>, <strong>idioma</strong> e <strong>marca Magna Properties</strong>. Não precisas de te preocupar com isto.</p>
+ </div>
+
+ <div class="sublabel" style="margin-top:22px">Briefing adicional para o Claude API <span class="opt">(opcional mas recomendado)</span></div>
+ <div class="fg c1">
+ <div class="ff"><textarea id="b-briefing" placeholder="Ex: cliente está a olhar há 6 meses, já não tem paciência para portais; quero apelar a consultores que tenham este tipo em carteira off-market; menciona que pagamos comissão de cortesia..." style="min-height:120px"></textarea></div>
+ </div>
+ </div>
+ </div>
+
+ <div class="submit-area">
+ <div class="step">
+ <div class="step-head" style="text-align:left"><div class="step-num">6</div><div class="step-title">Fotografia <span class="opt">(opcional)</span></div></div>
+ <div class="step-body">
+ <div class="upload-zone" id="upload-zone-b" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'b')">
+ <input type="file" accept="image/*" onchange="handleFile(this,'b')">
+ <div class="upload-label">Clica ou arrasta uma fotografia — JPG, PNG, WEBP &nbsp;·&nbsp; máx. 10MB</div>
+ </div>
+ <div class="upload-preview" id="upload-preview-b">
+ <img id="upload-img-b" src="">
+ <button class="upload-clear" onclick="clearUpload('b')"></button>
+ </div>
+ </div>
+ </div>
+
+ <button class="btn-submit" id="btn-submit-b" onclick="submeter('procura_cliente')" disabled>Gerar Copy</button>
+ <div class="submit-note">As variantes serão geradas para todas as plataformas selecionadas e arquivadas na Drive</div>
+ </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+ PREVIEW SCREEN
+ ═══════════════════════════════════════════════════════════════ -->
+<div id="preview-screen" class="preview-screen">
+ <div class="preview-header">
+ <div class="preview-icon"></div>
+ <h2 class="preview-title">Copy Gerado</h2>
+ <div class="preview-div"></div>
+ <p class="preview-sub">Variantes prontas para revisão por plataforma. O ficheiro foi arquivado na Drive.</p>
+ <a id="drive-link" class="drive-link-btn" target="_blank" style="display:none"> Abrir na Drive</a>
+ </div>
+
+ <div class="platform-tabs" id="platform-tabs"></div>
+ <div id="platform-panes"></div>
+
+ <div class="preview-footer">
+ <button class="btn-back-preview" onclick="novoPostBriefing()">← Novo briefing</button>
+ </div>
+</div>
+
+<div class="footer">
+ <div class="footer-brand">Magna Properties</div>
+ <div class="footer-sub">Mediação Imobiliária &nbsp;·&nbsp; Algarve &nbsp;·&nbsp; Portugal</div>
+</div>
+
+<script>
+
+const uploadData = {a: null, b: null};
+
+function handleFile(input, prefix){
+ const file = input.files[0];
+ if(!file) return;
+ if(file.size > 10*1024*1024){ alert('Ficheiro demasiado grande. Máximo 10MB.'); return; }
+ const reader = new FileReader();
+ reader.onload = e => {
+ uploadData[prefix] = { data: e.target.result, name: file.name, type: file.type };
+ document.getElementById('upload-img-'+prefix).src = e.target.result;
+ document.getElementById('upload-preview-'+prefix).style.display = 'block';
+ document.getElementById('upload-zone-'+prefix).style.borderColor = '#c4a35a';
+ };
+ reader.readAsDataURL(file);
+}
+
+function handleDrop(e, prefix){
+ e.preventDefault();
+ document.getElementById('upload-zone-'+prefix).classList.remove('drag');
+ const file = e.dataTransfer.files[0];
+ if(!file || !file.type.startsWith('image/')) return;
+ const dt = new DataTransfer(); dt.items.add(file);
+ const input = document.querySelector('#upload-zone-'+prefix+' input');
+ input.files = dt.files;
+ handleFile(input, prefix);
+}
+
+function clearUpload(prefix){
+ uploadData[prefix] = null;
+ document.getElementById('upload-img-'+prefix).src = '';
+ document.getElementById('upload-preview-'+prefix).style.display = 'none';
+ document.getElementById('upload-zone-'+prefix).style.borderColor = '';
+ const input = document.querySelector('#upload-zone-'+prefix+' input');
+ input.value = '';
+}
+
+const WEBHOOK_URL='SUBSTITUIR_PELO_URL_DO_MAKE_WEBHOOK';
+
+// ── PLATAFORMAS ──
+const PLATFORM_LABELS={
+ ig_numeiro:' IG Numeiro',
+ ig_magna:' IG Magna',
+ linkedin:' LinkedIn',
+ x:'𝕏'
+};
+const PLATFORM_VARIANTS={
+ ig_numeiro:[
+ {key:'curta',label:'Curta · Reel/Story'},
+ {key:'media',label:'Média · Feed'},
+ {key:'longa',label:'Longa · Carousel'}
+ ],
+ ig_magna:[
+ {key:'curta',label:'Curta · Reel/Story'},
+ {key:'media',label:'Média · Feed'},
+ {key:'longa',label:'Longa · Carousel'}
+ ],
+ linkedin:[
+ {key:'status',label:'Status post'},
+ {key:'artigo',label:'Artigo longo'}
+ ],
+ x:[
+ {key:'single',label:'Single tweet'},
+ {key:'thread',label:'Thread'}
+ ]
+};
+function platLabelToKey(label){
+ if(label.includes('Numeiro'))return'ig_numeiro';
+ if(label.includes('Magna'))return'ig_magna';
+ if(label.includes('LinkedIn'))return'linkedin';
+ if(label.includes('𝕏'))return'x';
+ return null;
+}
+
+// ── ESTADO ──
+let tipoActual=null; // 'apresentar_imovel' | 'procura_cliente'
+let lastBriefing=null; // último briefing submetido (para regenerate)
+
+// ── FREGUESIAS ──
+const FREGUESIAS={
+ 'Albufeira':['Albufeira e Olhos de Água','Ferreiras','Guia','Paderne'],
+ 'Faro':['Faro (Sé e São Pedro)','Montenegro','Santa Bárbara de Nexe','Conceição e Estoi'],
+ 'Lagos':['Lagos (Santo Sebastião)','Lagos (Santa Maria)','Luz','Odiáxere','Bensafrim e Barão de São João'],
+ 'Loulé':['Almancil','Alte','Ameixial','Boliqueime','Loulé (São Clemente)','Loulé (São Sebastião)','Quarteira','Querença, Tôr e Benafim','Salir','Vilamoura'],
+ 'Olhão':['Olhão','Moncarapacho e Fuseta','Pechão','Quelfes'],
+ 'Portimão':['Portimão','Alvor'],
+ 'Lagoa':['Lagoa e Carvoeiro','Estômbar e Parchal','Ferragudo','Porches','Armação de Pêra'],
+ 'Silves':['Silves','Alcantarilha e Pêra','Algoz e Tunes','São Bartolomeu de Messines','São Marcos da Serra'],
+ 'Tavira':['Tavira (Santa Maria e Santiago)','Cabanas de Tavira','Luz de Tavira e Santo Estêvão'],
+ 'Vila Real de Santo António':['Vila Real de Santo António','Monte Gordo','Castro Marim','Altura'],
+ 'Aljezur':['Aljezur','Bordeira','Odeceixe','Rogil'],
+ 'Vila do Bispo':['Budens','Raposeira','Sagres','Vila do Bispo'],
+ 'Monchique':['Monchique','Alferce','Marmelete']
+};
+
+function popFreg(prefix){
+ const c=document.getElementById(prefix+'-concelho').value;
+ const s=document.getElementById(prefix+'-freg');
+ s.innerHTML='<option value="">— Selecionar Freguesia —</option>';
+ if(FREGUESIAS[c]){
+ FREGUESIAS[c].forEach(f=>{
+ const o=document.createElement('option');
+ o.value=f; o.textContent=f;
+ s.appendChild(o);
+ });
+ }
+ upd();
+}
+
+// ── INTENT ──
+function selecionarTipo(tipo){
+ tipoActual=tipo;
+ document.getElementById('intent-area').style.display='none';
+ document.getElementById('prog-wrap').classList.add('show');
+ document.getElementById('flow-'+(tipo==='apresentar_imovel'?'a':'b')).classList.add('show');
+ window.scrollTo({top:0,behavior:'smooth'});
+ upd();
+}
+
+function voltarTipo(){
+ tipoActual=null;
+ document.getElementById('flow-a').classList.remove('show');
+ document.getElementById('flow-b').classList.remove('show');
+ document.getElementById('prog-wrap').classList.remove('show');
+ document.getElementById('preview-screen').classList.remove('show');
+ document.getElementById('intent-area').style.display='block';
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── HELPERS ──
+const gv=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
+const pills=id=>{const el=document.getElementById(id);return el?[...el.querySelectorAll('.pill.on')].map(p=>p.textContent.trim()).join(', '):''};
+const pillsArr=id=>{const el=document.getElementById(id);return el?[...el.querySelectorAll('.pill.on')].map(p=>p.textContent.trim()):[]};
+function togglePill(el){el.classList.toggle('on');upd()}
+function togglePillEx(el){el.closest('.pills').querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');upd()}
+function togglePlat(el,prefix){
+ el.classList.toggle('on');
+ const selected=pillsArr(prefix+'-pills-plat');
+ const needsInvest=selected.some(p=>p.includes('LinkedIn')||p.includes('𝕏'));
+ document.getElementById(prefix+'-invest-fields').style.display=needsInvest?'block':'none';
+ upd();
+}
+function fmtPreco(inp){const r=inp.value.replace(/[^\d]/g,'');if(!r){inp.value='';return;}inp.value=parseInt(r,10).toLocaleString('pt-PT').replace(/\u00a0/g,' ')+' \u20ac'}
+
+function togglePrecoFmt(prefix){
+ const sel=document.querySelector('#'+prefix+'-pills-preco-fmt .pill.on');
+ const fld=document.getElementById(prefix+'-preco-fields');
+ if(!sel||sel.textContent.trim()==='Preço sob consulta'){fld.classList.remove('show');}
+ else{fld.classList.add('show');}
+}
+function toggleOrcFmt(){
+ const sel=document.querySelector('#b-pills-orc-fmt .pill.on');
+ const fld=document.getElementById('b-orc-fields');
+ if(!sel||sel.textContent.trim().includes('competitivo')){fld.classList.remove('show');}
+ else{fld.classList.add('show');}
+}
+function toggleLinkFld(prefix){
+ document.getElementById(prefix+'-link-fld').style.display=document.getElementById(prefix+'-link-funnel').checked?'grid':'none';
+}
+
+// ── VALIDAÇÃO ──
+function upd(){
+ if(!tipoActual)return;
+ let req=[],btn;
+ if(tipoActual==='apresentar_imovel'){
+ const platsA=pillsArr('a-pills-plat');
+ const needsInvestA=platsA.some(p=>p.includes('LinkedIn')||p.includes('𝕏'));
+ req=[
+ gv('a-ref'),gv('a-tipo'),gv('a-tipologia'),gv('a-concelho'),gv('a-freg'),
+ gv('a-pontos'),
+ document.querySelector('#a-pills-preco-fmt .pill.on')?'1':'',
+ platsA.length?'1':'',
+ needsInvestA?gv('a-yield'):'1',
+ needsInvestA?gv('a-tese'):'1',
+ document.querySelector('#a-pills-idioma .pill.on')?'1':'',
+ document.querySelector('#a-pills-tom .pill.on')?'1':''
+ ];
+ btn=document.getElementById('btn-submit-a');
+ }else{
+ const platsB=pillsArr('b-pills-plat');
+ const needsInvestB=platsB.some(p=>p.includes('LinkedIn')||p.includes('𝕏'));
+ req=[
+ gv('b-ref'),gv('b-origem'),gv('b-descricao'),
+ gv('b-tipo'),gv('b-concelho'),
+ document.querySelector('#b-pills-orc-fmt .pill.on')?'1':'',
+ document.querySelector('#b-pills-timing .pill.on')?'1':'',
+ document.querySelector('#b-pills-pag .pill.on')?'1':'',
+ document.querySelector('#b-pills-finalidade .pill.on')?'1':'',
+ document.querySelector('#b-pills-procura .pill.on')?'1':'',
+ document.querySelector('#b-pills-discricao .pill.on')?'1':'',
+ platsB.length?'1':'',
+ needsInvestB?gv('b-yield'):'1',
+ needsInvestB?gv('b-tese'):'1',
+ document.querySelector('#b-pills-idioma .pill.on')?'1':'',
+ document.querySelector('#b-pills-tom .pill.on')?'1':''
+ ];
+ btn=document.getElementById('btn-submit-b');
+ }
+ const filled=req.filter(f=>f&&f!=='').length;
+ const pct=Math.round(filled/req.length*100);
+ document.getElementById('prog-fill').style.width=pct+'%';
+ document.getElementById('prog-pct').textContent=pct+'%';
+ if(btn)btn.disabled=!req.every(f=>f&&f!=='');
+}
+
+// ── BUILD BRIEFING ──
+function buildBriefing(tipo){
+ const prefix=tipo==='apresentar_imovel'?'a':'b';
+ const idiomaRaw=pills(prefix+'-pills-idioma');
+ let langs=[];
+ if(idiomaRaw.includes('PT e EN')){langs=['pt','en'];}
+ else if(idiomaRaw.includes('EN')){langs=['en'];}
+ else{langs=['pt'];}
+
+ const platLabels=pillsArr(prefix+'-pills-plat');
+ const plataformas=platLabels.map(platLabelToKey).filter(k=>k);
+ const needsInvest=plataformas.includes('linkedin')||plataformas.includes('x');
+ const investimento=needsInvest?{
+ yield_cap_rate:gv(prefix+'-yield'),
+ tese:gv(prefix+'-tese')
+ }:null;
+
+ if(tipo==='apresentar_imovel'){
+ return{
+ timestamp:new Date().toISOString(),
+ tipo_post:'apresentar_imovel',
+ origem:'gerador_posts_numeiro',
+ plataformas:plataformas,
+ idiomas:langs,
+ imovel:{
+ referencia:gv('a-ref'),
+ tipo:gv('a-tipo'),
+ tipologia:gv('a-tipologia'),
+ concelho:gv('a-concelho'),
+ freguesia:gv('a-freg'),
+ zona:gv('a-zona'),
+ area_bruta_privativa:gv('a-abp'),
+ area_terreno:gv('a-terreno'),
+ ano:gv('a-ano'),
+ caracteristicas:pillsArr('a-pills-carac'),
+ estado:pills('a-pills-estado')
+ },
+ diferenciacao:{
+ pontos_principais:gv('a-pontos'),
+ vista_localizacao:gv('a-vista-loc'),
+ historia:gv('a-historia')
+ },
+ posicionamento:{
+ formato_preco:pills('a-pills-preco-fmt'),
+ valor:gv('a-preco'),
+ perfil_comprador:pillsArr('a-pills-perfil'),
+ finalidade_tipica:pillsArr('a-pills-finalidade'),
+ cta:gv('a-cta'),
+ incluir_link_funnel:document.getElementById('a-link-funnel').checked,
+ link_url:document.getElementById('a-link-funnel').checked?gv('a-link-url'):''
+ },
+ investimento:investimento,
+ estilo:{
+ tom:pills('a-pills-tom'),
+ hashtag_strategy:'auto_seo',
+ briefing_extra:gv('a-briefing')
+ }
+ };
+ }else{
+ return{
+ timestamp:new Date().toISOString(),
+ tipo_post:'procura_cliente',
+ origem:'gerador_posts_numeiro',
+ plataformas:plataformas,
+ idiomas:langs,
+ cliente:{
+ referencia:gv('b-ref'),
+ origem:gv('b-origem'),
+ descricao:gv('b-descricao')
+ },
+ criterios:{
+ tipo:gv('b-tipo'),
+ tipologia_minima:gv('b-tipologia'),
+ concelho:gv('b-concelho'),
+ freguesia:gv('b-freg'),
+ zona:gv('b-zona'),
+ caracteristicas:pillsArr('b-pills-carac')
+ },
+ detalhes:{
+ formato_orcamento:pills('b-pills-orc-fmt'),
+ valor_min:gv('b-orc-min'),
+ valor_max:gv('b-orc-max'),
+ timing:pills('b-pills-timing'),
+ forma_pagamento:pills('b-pills-pag'),
+ finalidade:pills('b-pills-finalidade')
+ },
+ posicionamento:{
+ tipo_procura:pills('b-pills-procura'),
+ argumento_vendedor:gv('b-argumento'),
+ nivel_discricao:pills('b-pills-discricao'),
+ cta:gv('b-cta'),
+ incluir_link_funnel:document.getElementById('b-link-funnel').checked,
+ link_url:document.getElementById('b-link-funnel').checked?gv('b-link-url'):''
+ },
+ investimento:investimento,
+ estilo:{
+ tom:pills('b-pills-tom'),
+ hashtag_strategy:'auto_seo',
+ briefing_extra:gv('b-briefing')
+ }
+ };
+ }
+}
+
+// ── SUBMIT ──
+async function submeter(tipo){
+ const btnId=tipo==='apresentar_imovel'?'btn-submit-a':'btn-submit-b';
+ document.getElementById(btnId).disabled=true;
+ document.getElementById('loading-txt').textContent='A gerar copy...';
+ document.getElementById('loading').classList.add('show');
+
+ const briefing=buildBriefing(tipo);
+ lastBriefing=briefing;
+
+ try{
+ const resp=await fetch(WEBHOOK_URL,{
+ method:'POST',
+ headers:{'Content-Type':'application/json'},
+ body:JSON.stringify({action:'generate',...briefing})
+ });
+ if(!resp.ok)throw new Error('HTTP '+resp.status);
+ const data=await resp.json();
+ document.getElementById('loading').classList.remove('show');
+ mostrarPreview(data,briefing.idiomas,briefing.plataformas);
+ }catch(err){
+ document.getElementById('loading').classList.remove('show');
+ document.getElementById(btnId).disabled=false;
+ alert('Erro ao gerar copy: '+err.message+'\n\nVerifica que o webhook do Make está configurado para devolver JSON com CORS habilitado.');
+ }
+}
+
+// ── PREVIEW ──
+function mostrarPreview(data,idiomas,plataformas){
+ document.getElementById('flow-a').classList.remove('show');
+ document.getElementById('flow-b').classList.remove('show');
+ document.getElementById('prog-wrap').classList.remove('show');
+
+ // Drive link
+ const driveBtn=document.getElementById('drive-link');
+ if(data.drive_url){driveBtn.href=data.drive_url;driveBtn.style.display='inline-flex';}
+ else{driveBtn.style.display='none';}
+
+ // Build platform tabs + panes
+ const platTabs=document.getElementById('platform-tabs');
+ const platPanes=document.getElementById('platform-panes');
+ platTabs.innerHTML='';
+ platPanes.innerHTML='';
+
+ plataformas.forEach((plat,idx)=>{
+ // Platform tab
+ const tab=document.createElement('div');
+ tab.className='platform-tab'+(idx===0?' on':'');
+ tab.textContent=PLATFORM_LABELS[plat]||plat;
+ tab.dataset.platform=plat;
+ tab.onclick=()=>switchPlatform(plat);
+ platTabs.appendChild(tab);
+
+ // Platform pane
+ const pane=document.createElement('div');
+ pane.className='platform-pane'+(idx===0?' show':'');
+ pane.dataset.platform=plat;
+
+ // Language tabs (apenas se mais de um idioma)
+ if(idiomas.length>1){
+ const langTabs=document.createElement('div');
+ langTabs.className='lang-tabs';
+ idiomas.forEach((lang,lIdx)=>{
+ const lt=document.createElement('div');
+ lt.className='lang-tab'+(lIdx===0?' on':'');
+ lt.textContent=lang==='pt'?'Português':'English';
+ lt.dataset.lang=lang;
+ lt.onclick=()=>switchLang(plat,lang);
+ langTabs.appendChild(lt);
+ });
+ pane.appendChild(langTabs);
+ }
+
+ // Variants per language
+ idiomas.forEach((lang,lIdx)=>{
+ const wrap=document.createElement('div');
+ wrap.className='variants-wrap'+(lIdx===0?' show':'');
+ wrap.dataset.lang=lang;
+ const variants=PLATFORM_VARIANTS[plat]||[];
+ variants.forEach(v=>{
+ const text=(data.outputs&&data.outputs[plat]&&data.outputs[plat][lang]&&data.outputs[plat][lang][v.key])||'';
+ wrap.appendChild(buildVariantCard(plat,v.key,v.label,lang,text));
+ });
+ pane.appendChild(wrap);
+ });
+
+ platPanes.appendChild(pane);
+ });
+
+ document.getElementById('preview-screen').classList.add('show');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildVariantCard(plat,variant,label,lang,text){
+ const card=document.createElement('div');
+ card.className='variant-card';
+ card.dataset.platform=plat;
+ card.dataset.variant=variant;
+ card.dataset.lang=lang;
+ const charCount=text?text.length:0;
+ card.innerHTML=`
+ <div class="variant-head">
+ <span class="variant-tag">${label}</span>
+ <span class="variant-meta"><span class="char-count">${charCount}</span> caracteres</span>
+ </div>
+ <div class="variant-text">${text||'(vazio)'}</div>
+ <div class="variant-actions">
+ <button class="btn-action btn-copy" onclick="copiar('${plat}','${variant}','${lang}')"> Copiar</button>
+ <button class="btn-action" onclick="regenerar('${plat}','${variant}','${lang}')"> Regenerar</button>
+ </div>`;
+ return card;
+}
+
+function switchPlatform(plat){
+ document.querySelectorAll('.platform-tab').forEach(t=>t.classList.toggle('on',t.dataset.platform===plat));
+ document.querySelectorAll('.platform-pane').forEach(p=>p.classList.toggle('show',p.dataset.platform===plat));
+}
+
+function switchLang(plat,lang){
+ const pane=document.querySelector(`.platform-pane[data-platform="${plat}"]`);
+ if(!pane)return;
+ pane.querySelectorAll('.lang-tab').forEach(t=>t.classList.toggle('on',t.dataset.lang===lang));
+ pane.querySelectorAll('.variants-wrap').forEach(w=>w.classList.toggle('show',w.dataset.lang===lang));
+}
+
+function copiar(plat,variant,lang){
+ const card=document.querySelector(`.variant-card[data-platform="${plat}"][data-variant="${variant}"][data-lang="${lang}"]`);
+ if(!card)return;
+ const text=card.querySelector('.variant-text').textContent;
+ navigator.clipboard.writeText(text).then(()=>{
+ const btn=card.querySelector('.btn-copy');
+ const orig=btn.textContent;
+ btn.textContent=' Copiado';
+ btn.classList.add('copied');
+ setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},1500);
+ });
+}
+
+async function regenerar(plat,variant,lang){
+ if(!lastBriefing)return;
+ const card=document.querySelector(`.variant-card[data-platform="${plat}"][data-variant="${variant}"][data-lang="${lang}"]`);
+ if(!card)return;
+ card.classList.add('regenerating');
+ try{
+ const resp=await fetch(WEBHOOK_URL,{
+ method:'POST',
+ headers:{'Content-Type':'application/json'},
+ body:JSON.stringify({action:'regenerate',platform:plat,variant:variant,language:lang,...lastBriefing})
+ });
+ if(!resp.ok)throw new Error('HTTP '+resp.status);
+ const data=await resp.json();
+ if(data.text){
+ card.querySelector('.variant-text').textContent=data.text;
+ card.querySelector('.char-count').textContent=data.text.length;
+ }
+ }catch(err){
+ alert('Erro ao regenerar: '+err.message);
+ }finally{
+ card.classList.remove('regenerating');
+ }
+}
+
+function novoPostBriefing(){
+ document.getElementById('preview-screen').classList.remove('show');
+ voltarTipo();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Magna Properties — Vamos falar do seu negócio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a2d4a; --gold:#b8935a; --gold2:#d4a96a; --gold-bg:#fdf6e8;
+  --ink:#1a1612; --ink2:#5c5449;
+  --paper:#faf8f4; --cream:#f2ede4; --border:#d8cfc0;
+  --green:#2d6a4f; --green-bg:#f0f7f4;
+  --red:#8b2c2c; --red-bg:#fff0f0;
+  --amber:#8a5c1a; --amber-bg:#fdf6e8;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:16px;display:flex;flex-direction:column}
+.hero{background:#0c0b09;padding:48px 28px 44px;text-align:center}
+.hero-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;letter-spacing:.28em;color:#c4a35a;margin-bottom:24px;display:block}
+.hero-div{width:40px;height:1px;background:#c4a35a;margin:0 auto 22px}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;color:#e8e0d0;margin-bottom:12px;line-height:1.2}
+.hero-sub{font-size:.95rem;color:#7a7168;line-height:1.7;max-width:520px;margin:0 auto}
+.gold-bar{height:3px;background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent)}
+
+/* ── FLOW WRAPPER ── */
+.flow{display:none;max-width:860px;margin:0 auto;padding:28px 24px 120px}
+.flow.show{display:block}
+
+.step{background:var(--paper);border:1px solid var(--border);border-radius:2px;margin-bottom:16px;overflow:hidden}
+.step-head{padding:14px 18px;background:#f2ede4;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.step-num{width:28px;height:28px;background:#0c0b09;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#c4a35a;flex-shrink:0}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ink);flex:1}
+.step-body{padding:20px}
+
+.fg{display:grid;gap:12px 16px;margin-bottom:14px}
+.fg:last-child{margin-bottom:0}
+.fg.c1{grid-template-columns:1fr}
+.fg.c2{grid-template-columns:1fr 1fr}
+.fg.c3{grid-template-columns:1fr 1fr 1fr}
+.ff{display:flex;flex-direction:column;gap:4px}
+.ff.s2{grid-column:span 2}
+.ff label{font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--ink2);font-weight:500;margin-bottom:2px;line-height:1.3}
+.req{color:var(--gold);margin-left:2px}
+.opt{font-size:.78rem;font-weight:400;color:#bbb;margin-left:6px}
+.ff input,.ff select,.ff textarea{border:1px solid var(--border);background:white;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--ink);border-radius:4px;width:100%;transition:border-color .15s;-webkit-appearance:none;appearance:none;line-height:1.4}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,90,.08)}
+.ff textarea{resize:vertical;min-height:100px;line-height:1.6}
+.ff select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c5449' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+.ff input::placeholder,.ff textarea::placeholder{color:#b0a898}
+.hint{font-size:.8rem;color:var(--ink2);opacity:.75;line-height:1.4}
+
+.sublabel{font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--amber);font-weight:700;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.sublabel:first-child{margin-top:0}
+
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.pill{font-family:'DM Sans',sans-serif;font-size:.9rem;padding:10px 18px;border:1.5px solid var(--border);background:white;border-radius:24px;cursor:pointer;transition:all .15s;color:var(--ink2);user-select:none;line-height:1.3}
+.pill.on{border-color:var(--gold);background:var(--gold-bg);color:var(--ink);font-weight:500}
+
+.note-box{background:var(--gold-bg);border:1px dashed var(--gold);border-radius:2px;padding:14px 18px;margin-bottom:16px}
+.note-box-title{font-size:.8rem;font-weight:700;color:#8a5c1a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.note-box p{font-size:.92rem;color:var(--ink2);line-height:1.65}
+.note-box p + p{margin-top:8px}
+.note-box p strong{color:var(--ink);font-weight:500}
+
+.privacy{background:var(--paper);border:1px solid var(--border);border-radius:2px;padding:14px 18px;font-size:.88rem;color:var(--ink2);line-height:1.7;margin-top:16px}
+.privacy strong{color:var(--ink);font-weight:500}
+
+.submit-area{text-align:center;padding:16px 0 8px}
+.btn-submit{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:500;padding:16px 52px;background:#0c0b09;color:#c4a35a;border:none;cursor:pointer;border-radius:32px;transition:all .2s;letter-spacing:.03em}
+.btn-submit:hover:not(:disabled){background:#1a1812}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed}
+.submit-note{font-size:.85rem;color:var(--ink2);margin-top:12px}
+
+.success-screen{display:none;max-width:860px;margin:0 auto;padding:60px 28px;text-align:center}
+.success-screen.show{display:block}
+.success-icon{font-size:3.5rem;margin-bottom:18px}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:var(--ink);margin-bottom:12px}
+.success-div{width:40px;height:2px;background:var(--gold);margin:20px auto}
+.success-txt{font-size:.95rem;color:var(--ink2);line-height:1.8;max-width:460px;margin:0 auto}
+
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,.85);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.loading-overlay.show{display:flex}
+.spinner{width:38px;height:38px;border:3px solid #3a3530;border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{color:white;font-size:.95rem}
+
+.footer{background:#0c0b09;text-align:center;padding:36px 24px;margin-top:auto;border-top:1px solid #2a2720}
+.footer-brand{display:inline-block;font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#c4a35a;letter-spacing:.08em;margin-bottom:6px}
+.footer-sub{font-size:.82rem;color:#6b6358;letter-spacing:.05em}
+
+.photo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.photo-slot{aspect-ratio:1;border:1.5px dashed var(--border);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;background:white}
+.photo-slot:hover{border-color:var(--gold);background:var(--gold-bg)}
+.photo-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-slot .remove-photo{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.55);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:.7rem;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:2}
+.photo-slot.has-img .remove-photo{display:flex}
+.photo-slot .add-icon-ph{font-size:2.2rem;color:var(--border);line-height:1}
+.photo-slot .add-lbl-ph{font-size:.88rem;color:var(--ink2);margin-top:6px;text-align:center;font-weight:500}
+.photo-slot.has-img .add-icon-ph,.photo-slot.has-img .add-lbl-ph{display:none}
+.photo-input{display:none}
+.lang-pt .en-only{display:none!important}
+.lang-en .pt-only{display:none!important}
+.hero-lang{position:absolute;top:16px;right:20px;display:flex;gap:6px}
+.hero-lang-btn{font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.1em;padding:5px 11px;border-radius:20px;border:1px solid #3a3528;color:#6b6358;background:transparent;cursor:pointer;transition:all .2s}
+.hero-lang-btn.active{background:#c4a35a;color:#0c0b09;border-color:#c4a35a}
+
+.ff.field-error input,.ff.field-error select,.ff.field-error textarea{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(139,44,44,.08)!important}
+.field-error-msg{font-size:.75rem;color:var(--red);margin-top:5px}
+.pills-error{font-size:.75rem;color:var(--red);margin-top:6px}
+
+.photo-note{font-size:.8rem;color:var(--ink2);opacity:.8;margin-top:8px;line-height:1.5}
+.photo-counter{font-size:.8rem;color:var(--ink2);opacity:.8;margin-top:6px;line-height:1.5}
+
+@media(max-width:680px){
+  .fg.c3{grid-template-columns:1fr 1fr}
+  .hero-title{font-size:2rem}
+  .intent-grid{grid-template-columns:1fr;gap:14px}
+  .intent-card{min-height:auto;padding:36px 28px;gap:14px}
+  .intent-icon{font-size:2.6rem}
+  .intent-card-title{font-size:1.4rem}
+  .flow,.intro,.intent-wrap{padding-left:20px;padding-right:20px}
+}
+@media(max-width:480px){
+  .photo-grid{grid-template-columns:repeat(3,1fr)}
+  .hero-title{font-size:1.75rem}
+  .flow,.intro,.intent-wrap{padding-left:16px;padding-right:16px}
+}
+@media(max-width:380px){
+  .fg.c2,.fg.c3{grid-template-columns:1fr}
+  .ff.s2{grid-column:span 1}
+}
+</style>
+</head>
+<body class="lang-pt">
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-txt"><span class="pt-only">A enviar informação...</span><span class="en-only">Sending information...</span></div>
+</div>
+
+<div class="hero" style="position:relative">
+  <span class="hero-logo">MAGNA PROPERTIES</span>
+  <div class="hero-div"></div>
+  <h1 class="hero-title">
+    <span class="pt-only">Apresentar o meu negócio a investidores</span>
+    <span class="en-only">Present my offer to investors</span>
+  </h1>
+  <div style="display:flex;justify-content:center;gap:8px;margin-top:20px;">
+    <button class="hero-lang-btn active" id="btn-pt" onclick="setLang('pt')" style="font-size:.88rem;padding:8px 20px;">PT</button>
+    <button class="hero-lang-btn" id="btn-en" onclick="setLang('en')" style="font-size:.88rem;padding:8px 20px;">EN</button>
+  </div>
+</div>
+<div class="gold-bar"></div>
+
+
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FLUXO A — APRESENTAR NEGÓCIO
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="flow-a" class="flow show">
+
+  <div class="step">
+    <div class="step-head"><div class="step-num">1</div><div class="step-title"><span class="pt-only">Como o podemos contactar</span><span class="en-only">How to contact you</span></div></div>
+    <div class="step-body">
+      <div class="fg c1">
+        <div class="ff"><label><span class="pt-only">Nome</span><span class="en-only">Full Name</span> <span class="req">*</span></label><input id="a-nome" data-ph-pt="Primeiro e Último nome" data-ph-en="First and Last name" placeholder="Primeiro e Último nome" oninput="upd()"></div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label><span class="pt-only">Contacto Telefónico</span><span class="en-only">Phone</span> <span class="req">*</span></label><input id="a-tel" type="tel" placeholder="Ex: +351 912 345 678" oninput="upd()"></div>
+        <div class="ff"><label>Email <span class="req">*</span></label><input id="a-email" type="email" data-ph-pt="Ex: nome@email.com" data-ph-en="Ex: name@email.com" placeholder="Ex: nome@email.com" oninput="upd()"></div>
+      </div>
+      <div class="fg c1">
+        <div class="ff">
+          <label><span class="pt-only">De que forma conhece este imóvel?</span><span class="en-only">How do you know this property?</span> <span class="req">*</span></label>
+          <select id="a-relacao" onchange="upd()">
+            <option value="" data-pt="— Selecionar —" data-en="— Select —">— Selecionar —</option>
+            <option value="Sou o proprietário" data-pt="Sou Proprietário" data-en="I am the Owner">Sou Proprietário</option>
+            <option value="Sou consultor imobiliário com este negócio em carteira" data-pt="Sou Consultor Imobiliário com este negócio em carteira" data-en="I am a Real Estate Agent with this listing">Sou Consultor Imobiliário com este negócio em carteira</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><div class="step-num">2</div><div class="step-title"><span class="pt-only">Localização do Imóvel</span><span class="en-only">Property Location</span></div></div>
+    <div class="step-body">
+      <div class="fg c2">
+        <div class="ff">
+          <label><span class="pt-only">Concelho</span><span class="en-only">Municipality</span> <span class="req">*</span></label>
+          <select id="a-concelho" onchange="popFreg('a');upd()">
+            <option value="" data-pt="— Selecionar —" data-en="— Select —">— Selecionar —</option>
+            <option>Albufeira</option><option>Alcoutim</option><option>Aljezur</option>
+            <option>Castro Marim</option><option>Faro</option>
+            <option>Lagoa</option><option>Lagos</option><option>Loulé</option>
+            <option>Monchique</option><option>Olhão</option><option>Portimão</option>
+            <option>São Brás de Alportel</option><option>Silves</option>
+            <option>Tavira</option><option>Vila do Bispo</option><option>Vila Real de Santo António</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label><span class="pt-only">Freguesia</span><span class="en-only">Parish</span> <span class="req">*</span></label>
+          <select id="a-freg" onchange="upd()">
+            <option value="">— Selecione primeiro o Concelho —</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label><span class="pt-only">Morada</span><span class="en-only">Address</span> <span class="req">*</span></label><input id="a-zona" data-ph-pt="Ex: Rua de Santo António, Meia Praia..." data-ph-en="e.g. Rua de Santo António, Meia Praia..." placeholder="Ex: Rua de Santo António, Meia Praia..." oninput="upd()"></div>
+        <div class="ff"><label><span class="pt-only">Código Postal</span><span class="en-only">Postal Code</span> <span class="req">*</span></label><input id="a-cp" placeholder="Ex: 8000-000" oninput="upd()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><div class="step-num">3</div><div class="step-title"><span class="pt-only">Características</span><span class="en-only">Property Details</span></div></div>
+    <div class="step-body">
+      <div class="fg c2">
+        <div class="ff">
+          <label><span class="pt-only">Tipo</span><span class="en-only">Type</span> <span class="req">*</span></label>
+          <select id="a-tipo" onchange="upd()">
+            <option value="" data-pt="— Selecionar —" data-en="— Select —">— Selecionar —</option>
+            <option value="Apartamento" data-pt="Apartamento" data-en="Apartment">Apartamento</option>
+            <option value="Moradia / Villa" data-pt="Moradia / Villa" data-en="Villa / House">Moradia / Villa</option>
+            <option value="Moradia em Banda" data-pt="Moradia em Banda" data-en="Terraced House">Moradia em Banda</option>
+            <option value="Moradia Geminada" data-pt="Moradia Geminada" data-en="Semi-Detached House">Moradia Geminada</option>
+            <option value="Terreno Urbanizável" data-pt="Terreno Urbanizável" data-en="Building Land">Terreno Urbanizável</option>
+            <option value="Loja / Escritório" data-pt="Loja / Escritório" data-en="Shop / Office">Loja / Escritório</option>
+            <option value="Prédio" data-pt="Prédio" data-en="Building">Prédio</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label><span class="pt-only">Tipologia</span><span class="en-only">Typology</span> <span class="req">*</span></label>
+          <select id="a-tipologia" onchange="upd()">
+            <option value="" data-pt="— Selecionar —" data-en="— Select —">— Selecionar —</option>
+            <option>T0</option><option>T1</option><option>T2</option>
+            <option>T3</option><option>T4</option><option>T4+</option><option>N/A</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label><span class="pt-only">Nº Quartos</span><span class="en-only">No. Bedrooms</span></label><input id="a-quartos" type="number" placeholder="Ex: 3" min="0" max="20"></div>
+        <div class="ff"><label><span class="pt-only">Nº Casas de Banho</span><span class="en-only">No. Bathrooms</span></label><input id="a-wc" type="number" placeholder="Ex: 2" min="0" max="20"></div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label><span class="pt-only">Ano de construção</span><span class="en-only">Year built</span></label><input id="a-ano" type="number" placeholder="Ex: 1998" min="1800" max="2026"></div>
+        <div class="ff">
+          <label><span class="pt-only">Certificado Energético</span><span class="en-only">Energy Certificate</span> <span class="opt">(<span class="pt-only">opcional</span><span class="en-only">optional</span>)</span></label>
+          <select id="a-cert">
+            <option value="" data-pt="— Selecionar —" data-en="— Select —">— Selecionar —</option>
+            <option>A+</option><option>A</option><option>B</option><option>B-</option>
+            <option>C</option><option>D</option><option>E</option><option>F</option>
+            <option value="Não existe" data-pt="Não existe" data-en="Not available">Não existe</option>
+            <option value="Desconhecido" data-pt="Desconhecido" data-en="Unknown">Desconhecido</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label><span class="pt-only">Área Bruta Privativa (m²)</span><span class="en-only">Gross Private Area (m²)</span></label><input id="a-abp" type="number" placeholder="Ex: 140"></div>
+        <div class="ff"><label><span class="pt-only">Área Útil (m²)</span><span class="en-only">Net Area (m²)</span></label><input id="a-au" type="number" placeholder="Ex: 120"></div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label><span class="pt-only">Área do Terreno (m²)</span><span class="en-only">Land Area (m²)</span></label><input id="a-terreno" type="number" placeholder="Ex: 500"></div>
+        <div class="ff"><label><span class="pt-only">Área de Implantação (m²)</span><span class="en-only">Footprint Area (m²)</span></label><input id="a-implant" type="number" placeholder="Ex: 200"></div>
+      </div>
+
+      <div class="note-box">
+        <div class="note-box-title"><span class="pt-only">Sobre as áreas do imóvel</span><span class="en-only">About property areas</span></div>
+        <p><span class="pt-only">Para realizarmos uma avaliação rigorosa e célere, precisamos das áreas oficiais da secção <strong>"Elementos da Fracção"</strong> da <strong>Caderneta Predial Urbana</strong>.</span><span class="en-only">For an accurate and swift assessment, we need the official areas from the <strong>"Elementos da Fracção"</strong> section of the <strong>Caderneta Predial Urbana</strong>.</span></p>
+        <p><span class="pt-only">Este documento encontra-se disponível no Portal das Finanças.</span><span class="en-only">This document is available on the owner's Finance Portal.</span></p>
+      </div>
+
+      <div class="sublabel"><span class="pt-only">Características</span><span class="en-only">Features</span> <span class="opt">(<span class="pt-only">selecione todas as que se aplicam</span><span class="en-only">select all that apply</span>)</span></div>
+      <div class="pills" id="a-pills-carac">
+        <div class="pill" data-val="Garagem" onclick="togglePill(this)"><span class="pt-only">Garagem</span><span class="en-only">Garage</span></div>
+        <div class="pill" data-val="Parqueamento" onclick="togglePill(this)"><span class="pt-only">Parqueamento</span><span class="en-only">Parking</span></div>
+        <div class="pill" data-val="Piscina" onclick="togglePill(this)"><span class="pt-only">Piscina</span><span class="en-only">Pool</span></div>
+        <div class="pill" data-val="Terraço" onclick="togglePill(this)"><span class="pt-only">Terraço</span><span class="en-only">Terrace</span></div>
+        <div class="pill" data-val="Varanda" onclick="togglePill(this)"><span class="pt-only">Varanda</span><span class="en-only">Balcony</span></div>
+        <div class="pill" data-val="Jardim / Quintal" onclick="togglePill(this)"><span class="pt-only">Jardim / Quintal</span><span class="en-only">Garden / Yard</span></div>
+        <div class="pill" data-val="Arrecadação" onclick="togglePill(this)"><span class="pt-only">Arrecadação</span><span class="en-only">Storage</span></div>
+        <div class="pill" data-val="Elevador" onclick="togglePill(this)"><span class="pt-only">Elevador</span><span class="en-only">Lift</span></div>
+        <div class="pill" data-val="Ar Condicionado" onclick="togglePill(this)"><span class="pt-only">Ar Condicionado</span><span class="en-only">Air Conditioning</span></div>
+        <div class="pill" data-val="Lareira" onclick="togglePill(this)"><span class="pt-only">Lareira</span><span class="en-only">Fireplace</span></div>
+        <div class="pill" data-val="Painéis Solares" onclick="togglePill(this)"><span class="pt-only">Painéis Solares</span><span class="en-only">Solar Panels</span></div>
+        <div class="pill" data-val="Cozinha Equipada" onclick="togglePill(this)"><span class="pt-only">Cozinha Equipada</span><span class="en-only">Fitted Kitchen</span></div>
+        <div class="pill" data-val="Vidros Duplos" onclick="togglePill(this)"><span class="pt-only">Vidros Duplos</span><span class="en-only">Double Glazing</span></div>
+        <div class="pill" data-val="Suite" onclick="togglePill(this)">Suite</div>
+        <div class="pill" data-val="Licença AL" onclick="togglePill(this)"><span class="pt-only">Licença AL</span><span class="en-only">AL Licence</span></div>
+        <div class="pill" data-val="Mobilado" onclick="togglePill(this)"><span class="pt-only">Mobilado</span><span class="en-only">Furnished</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><div class="step-num">4</div><div class="step-title"><span class="pt-only">Estado de Conservação</span><span class="en-only">Property Condition</span></div></div>
+    <div class="step-body">
+      <div class="sublabel"><span class="pt-only">Estado geral do imóvel</span><span class="en-only">General condition</span> <span class="req">*</span></div>
+      <div class="pills" id="a-pills-estado">
+        <div class="pill" data-val="Novo Empreendimento" onclick="togglePillEx(this);upd()"><span class="pt-only">Novo Empreendimento</span><span class="en-only">New Development</span></div>
+        <div class="pill" data-val="Como novo / Recente" onclick="togglePillEx(this);upd()"><span class="pt-only">Como novo / Recente</span><span class="en-only">As new / Recent</span></div>
+        <div class="pill" data-val="Bom Estado" onclick="togglePillEx(this);upd()"><span class="pt-only">Bom Estado</span><span class="en-only">Good Condition</span></div>
+        <div class="pill" data-val="Precisa de obras" onclick="togglePillEx(this);upd()"><span class="pt-only">Precisa de obras</span><span class="en-only">Needs works</span></div>
+        <div class="pill" data-val="Para remodelação total" onclick="togglePillEx(this);upd()"><span class="pt-only">Para remodelação total</span><span class="en-only">Full renovation needed</span></div>
+        <div class="pill" data-val="Não se aplica" onclick="togglePillEx(this);upd()"><span class="pt-only">Não se aplica</span><span class="en-only">Not applicable</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><div class="step-num">5</div><div class="step-title"><span class="pt-only">Contexto do Negócio</span><span class="en-only">Deal Context</span></div></div>
+    <div class="step-body">
+      <div class="fg c1">
+        <div class="ff"><label><span class="pt-only">Valor Pedido</span><span class="en-only">Asking Price</span> <span class="req">*</span></label><input id="a-preco" placeholder="Ex: 450 000 €" oninput="fmtPreco(this);upd()"></div>
+      </div>
+      <div class="fg c1" style="margin-top:16px">
+        <div class="ff">
+          <label><span class="pt-only">Informação adicional que considere relevante</span><span class="en-only">Additional information you consider relevant</span> <span class="opt">(<span class="pt-only">opcional</span><span class="en-only">optional</span>)</span></label>
+          <textarea id="a-obs" data-ph-pt="Qualquer detalhe importante: histórico do imóvel, obras recentes, outros interessados, motivo de venda se souber, etc." data-ph-en="Any important detail: property history, recent works, other interested parties, reason for sale if known, etc." placeholder="Qualquer detalhe importante: histórico do imóvel, obras recentes, outros interessados, motivo de venda se souber, etc."></textarea>
+        </div>
+      </div>
+      <div class="privacy">
+        <strong><span class="pt-only">Privacidade:</span><span class="en-only">Privacy:</span></strong>
+        <span class="pt-only">A informação submetida é tratada de forma confidencial pela Magna Properties e não é partilhada com terceiros. Utilizamos estes dados exclusivamente para análise interna do negócio.</span>
+        <span class="en-only">The information submitted is treated confidentially by Magna Properties and is not shared with third parties. We use this data exclusively for internal property analysis.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><div class="step-num">6</div><div class="step-title"><span class="pt-only">Fotografias</span><span class="en-only">Photos</span> <span class="opt" style="font-size:.85rem;font-weight:400">(<span class="pt-only">opcional</span><span class="en-only">optional</span>)</span></div></div>
+    <div class="step-body">
+      <div class="note-box">
+        <p><span class="pt-only">Fotografias permitem-nos fazer uma pré-avaliação mais precisa.</span><span class="en-only">Photos allow us to make a more accurate pre-assessment.</span></p>
+        <p><span class="pt-only">Pode adicionar até 10 fotos — interiores, exteriores, vistas ou detalhes relevantes. Não é obrigatório, mas ajuda muito.</span><span class="en-only">You can add up to 10 photos — interiors, exteriors, views or relevant details. Not required, but very helpful.</span></p>
+      </div>
+      <div class="photo-grid" id="photo-grid"></div>
+      <div class="photo-note"><span class="pt-only">Toque em cada quadrado para adicionar uma fotografia. Aceita JPG e PNG.</span><span class="en-only">Tap each square to add a photo. Accepts JPG and PNG.</span></div>
+      <div class="photo-counter" id="photo-counter">0 / 10 <span class="pt-only">fotografias adicionadas</span><span class="en-only">photos added</span></div>
+    </div>
+  </div>
+
+  <div class="submit-area">
+    <button class="btn-submit" id="btn-submit-a" onclick="validateAndSubmit()"><span class="pt-only">Submeter Negócio</span><span class="en-only">Submit Property</span></button>
+    <div class="submit-note"><span class="pt-only">Respondemos em menos de 24 horas</span><span class="en-only">We respond within 24 hours</span></div>
+    <div class="submit-note" style="margin-top:6px;"><span class="pt-only">⚠ Não feche esta página antes de submeter — as fotografias adicionadas serão perdidas.</span><span class="en-only">⚠ Do not close this page before submitting — any photos added will be lost.</span></div>
+  </div>
+</div>
+
+<div class="success-screen" id="success-screen">
+  <div class="success-icon" style="display:none"></div>
+  <h2 class="success-title"><span class="pt-only">Recebemos o seu negócio.</span><span class="en-only">We have received your offer.</span></h2>
+  <div class="success-div"></div>
+  <p class="success-txt">
+    <span class="pt-only">Obrigado por confiar na Magna Properties.<br><br>Iremos analisar a oportunidade que nos apresentou e entraremos em contacto em menos de 24 horas.</span>
+    <span class="en-only">Thank you for trusting Magna Properties.<br><br>We will analyse the offer you have presented and be in touch within 24 hours.</span>
+  </p>
+</div>
+
+<div class="footer">
+  <div class="footer-brand">Magna · Properties</div>
+  <div class="footer-sub"><span class="pt-only">Mediação Imobiliária</span><span class="en-only">Real Estate</span> &nbsp;·&nbsp; Algarve &nbsp;·&nbsp; Portugal</div>
+</div>
+
+<script>
+const WEBHOOK_URL='https://script.google.com/macros/s/AKfycbzdudM3ga-JMCOFeul97IrboyY-S_EHy2xIoQoBPrbVijDRb9_AJcn4mQ5DrnKsb8m-/exec';
+
+// ── ESTADO ──
+
+// ── FREGUESIAS POR CONCELHO ──
+const FREGUESIAS = {
+  'Albufeira':['Albufeira e Olhos de Água','Ferreiras','Guia','Paderne'],
+  'Alcoutim':['Alcoutim e Pereiro','Giões','Martim Longo','Vaqueiros'],
+  'Aljezur':['Aljezur','Bordeira','Odeceixe','Rogil'],
+  'Castro Marim':['Altura','Castro Marim','Odeleite'],
+  'Faro':['Conceição e Estoi','Faro (Sé e São Pedro)','Montenegro','Santa Bárbara de Nexe'],
+  'Lagoa':['Estômbar e Parchal','Ferragudo','Lagoa e Carvoeiro','Porches'],
+  'Lagos':['Bensafrim e Barão de São João','Luz','Odiáxere','São Sebastião e Santa Maria'],
+  'Loulé':['Almancil','Alte','Ameixial','Boliqueime','Loulé (São Clemente)','Loulé (São Sebastião)','Querença, Tôr e Benafim','Quarteira','Salir'],
+  'Monchique':['Alferce','Marmelete','Monchique'],
+  'Olhão':['Moncarapacho e Fuseta','Olhão','Pechão','Quelfes'],
+  'Portimão':['Alvor','Portimão'],
+  'São Brás de Alportel':['São Brás de Alportel'],
+  'Silves':['Alcantarilha e Pêra','Armação de Pêra','Mexilhoeira Grande','São Bartolomeu de Messines','São Marcos da Serra','Silves'],
+  'Tavira':['Cachopo','Conceição e Cabanas de Tavira','Luz de Tavira e Santo Estêvão','Santa Lúzia','Tavira (Santa Maria e Santiago)'],
+  'Vila do Bispo':['Budens','Sagres','Vila do Bispo e Raposeira'],
+  'Vila Real de Santo António':['Monte Gordo','Vila Nova de Cacela','Vila Real de Santo António']
+};
+
+function setLang(l){
+  document.body.classList.toggle('lang-pt',l==='pt');
+  document.body.classList.toggle('lang-en',l==='en');
+  document.getElementById('btn-pt').classList.toggle('active',l==='pt');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  // Swap select option texts
+  document.querySelectorAll('option[data-pt]').forEach(opt=>{
+    opt.textContent=l==='en'?opt.getAttribute('data-en'):opt.getAttribute('data-pt');
+  });
+  // Swap input/textarea placeholders
+  document.querySelectorAll('[data-ph-en]').forEach(el=>{
+    el.placeholder=l==='en'?el.dataset.phEn:el.dataset.phPt;
+  });
+  // Reconstruir grelha de fotos para actualizar labels Foto/Photo
+  buildPhotoGrid();
+  updFotoCounter();
+  // Update freguesia default option
+  const freg=document.getElementById('a-freg');
+  if(freg&&freg.options[0]&&!freg.options[0].value){
+    freg.options[0].textContent=l==='en'?'— Select Municipality first —':'— Selecione primeiro o Concelho —';
+  }
+}
+
+function popFreg(prefix){
+  const c=document.getElementById(prefix+'-concelho').value;
+  const s=document.getElementById(prefix+'-freg');
+  const isEN=document.body.classList.contains('lang-en');
+  s.innerHTML='<option value="">'+(isEN?'— Select Parish —':'— Selecionar Freguesia —')+'</option>';
+  if(FREGUESIAS[c]){
+    FREGUESIAS[c].forEach(f=>{
+      const o=document.createElement('option');
+      o.value=f; o.textContent=f;
+      s.appendChild(o);
+    });
+  }
+  upd();
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', function(){
+  buildPhotoGrid();
+  upd();
+});
+
+// ── FOTOS (Fluxo A) ──
+const MAX_FOTOS=10;
+let fotosData={};
+
+function buildPhotoGrid(){
+  const grid=document.getElementById('photo-grid');
+  grid.innerHTML='';
+  const isEN=document.body.classList.contains('lang-en');
+  for(let i=0;i<MAX_FOTOS;i++){
+    const slot=document.createElement('div');
+    slot.className='photo-slot';
+    slot.id='ph-slot-'+i;
+    slot.onclick=()=>document.getElementById('ph-input-'+i).click();
+    const lbl=isEN?`Photo ${i+1}`:`Foto ${i+1}`;
+    slot.innerHTML=`
+      <div class="add-icon-ph">+</div>
+      <div class="add-lbl-ph">${lbl}</div>
+      <input type="file" accept="image/*" class="photo-input" id="ph-input-${i}" onchange="loadFoto(${i},this)">
+      <button class="remove-photo" onclick="removeFoto(event,${i})">×</button>`;
+    grid.appendChild(slot);
+  }
+}
+
+function updFotoCounter(){
+  const n=Object.keys(fotosData).length;
+  const isEN=document.body.classList.contains('lang-en');
+  document.getElementById('photo-counter').innerHTML=n+' / '+MAX_FOTOS+' <span class="pt-only">fotografias adicionadas</span><span class="en-only">photos added</span>';
+}
+
+function loadFoto(n,input){
+  if(!input.files[0])return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    fotosData[n]=e.target.result;
+    const slot=document.getElementById('ph-slot-'+n);
+    let img=slot.querySelector('img');
+    if(!img){img=document.createElement('img');slot.appendChild(img);}
+    img.src=e.target.result;
+    slot.classList.add('has-img');
+    updFotoCounter();
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function removeFoto(e,n){
+  e.stopPropagation();
+  delete fotosData[n];
+  const slot=document.getElementById('ph-slot-'+n);
+  const img=slot.querySelector('img');
+  if(img)img.remove();
+  slot.classList.remove('has-img');
+  document.getElementById('ph-input-'+n).value='';
+  updFotoCounter();
+}
+
+
+// ── HELPERS ──
+const gv=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
+const pills=id=>{const el=document.getElementById(id);return el?[...el.querySelectorAll('.pill.on')].map(p=>p.dataset.val||p.querySelector('.pt-only')?.textContent||p.textContent.trim()).join(', '):''};
+const pillsArr=id=>{const el=document.getElementById(id);return el?[...el.querySelectorAll('.pill.on')].map(p=>p.dataset.val||p.querySelector('.pt-only')?.textContent||p.textContent.trim()):[]};
+function togglePill(el){el.classList.toggle('on');upd()}
+function togglePillEx(el){el.closest('.pills').querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');upd()}
+function fmtPreco(inp){const r=inp.value.replace(/[^\d]/g,'');if(!r){inp.value='';return;}inp.value=parseInt(r,10).toLocaleString('pt-PT').replace(/\u00a0/g,' ')+' \u20ac'}
+
+// ── VALIDAÇÃO ──
+function upd(){} // mantido para compatibilidade com oninput/onchange dos campos
+
+function validateAndSubmit(){
+  const isEN = document.body.classList.contains('lang-en');
+  const reqMsg  = isEN ? 'Required field'                   : 'Campo obrigatório';
+  const reqPill = isEN ? 'Please select at least one option': 'Selecione pelo menos uma opção';
+
+  // Limpar erros anteriores
+  document.querySelectorAll('.ff.field-error').forEach(f=>f.classList.remove('field-error'));
+  document.querySelectorAll('.field-error-msg,.pills-error').forEach(m=>m.remove());
+
+  let errors=[], firstErr=null;
+
+  function markField(id){
+    const el=document.getElementById(id); if(!el) return;
+    const val=el.tagName==='SELECT'?el.value:el.value.trim();
+    if(!val){
+      errors.push(id);
+      const ff=el.closest('.ff');
+      if(ff&&!ff.classList.contains('field-error')){
+        ff.classList.add('field-error');
+        const m=document.createElement('div'); m.className='field-error-msg'; m.textContent='⚠ '+reqMsg;
+        ff.appendChild(m);
+        if(!firstErr) firstErr=ff;
+        const clear=()=>{ if(el.tagName==='SELECT'?el.value:el.value.trim()){ ff.classList.remove('field-error'); ff.querySelector('.field-error-msg')?.remove(); } };
+        el.addEventListener('input',clear,{once:true});
+        el.addEventListener('change',clear,{once:true});
+      }
+    }
+  }
+
+  function markPills(id){
+    const el=document.getElementById(id); if(!el) return;
+    if(!el.querySelector('.pill.on')){
+      errors.push(id);
+      if(!el.nextElementSibling?.classList.contains('pills-error')){
+        const m=document.createElement('div'); m.className='pills-error'; m.textContent='⚠ '+reqPill;
+        el.after(m);
+        if(!firstErr) firstErr=el;
+      }
+    }
+  }
+
+  // Campos obrigatórios
+  markField('a-nome'); markField('a-tel'); markField('a-email'); markField('a-relacao');
+  markField('a-concelho'); markField('a-freg'); markField('a-zona'); markField('a-cp');
+  markField('a-tipo'); markField('a-tipologia');
+  markField('a-preco');
+
+  // Pills obrigatórias
+  markPills('a-pills-carac');
+  markPills('a-pills-estado');
+
+  if(errors.length>0){
+    firstErr?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+
+  submeter();
+}
+
+// ── SUBMISSÃO ──
+async function submeter(){
+  const btn=document.getElementById('btn-submit-a');
+  btn.disabled=true;
+  document.getElementById('loading').classList.add('show');
+
+  const fotos=Object.values(fotosData).map(d=>{
+    const parts=d.split(',');
+    return{media_type:parts[0].split(':')[1].split(';')[0],data:parts[1]};
+  });
+
+  const dados={
+    timestamp:new Date().toISOString(),
+    tipo_lead:'apresentar_negocio',
+    origem:'instagram_numero',
+    apresentado_por:{nome:gv('a-nome'),telefone:gv('a-tel'),email:gv('a-email'),relacao:gv('a-relacao')},
+    localizacao:{concelho:gv('a-concelho'),freguesia:gv('a-freg'),codigo_postal:gv('a-cp'),rua_zona:gv('a-zona')},
+    imovel:{tipo:gv('a-tipo'),tipologia:gv('a-tipologia'),quartos:gv('a-quartos'),casas_banho:gv('a-wc'),piso:gv('a-piso'),ano:gv('a-ano'),cert_energetico:gv('a-cert'),area_bruta_privativa:gv('a-abp'),area_util:gv('a-au'),area_terreno:gv('a-terreno'),area_implantacao:gv('a-implant'),caracteristicas:pills('a-pills-carac'),outros:gv('a-im-obs')},
+    estado_conservacao:{estado:pills('a-pills-estado'),obs:gv('a-estado-obs')},
+    contexto:{preco_pedido:gv('a-preco'),obs:gv('a-obs')},
+    fotos:fotos,
+    n_fotos:fotos.length
+  };
+
+  try{await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados),mode:'no-cors'})}catch(e){}
+
+  document.getElementById('loading').classList.remove('show');
+  document.getElementById('flow-a').classList.remove('show');
+  document.getElementById('success-screen').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

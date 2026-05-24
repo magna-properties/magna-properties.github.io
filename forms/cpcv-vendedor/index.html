@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentos para CPCV — Vendedor — Magna Properties</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#1a1612; --ink-light:#5c5449; --paper:#faf8f4; --cream:#f2ede4;
+    --gold:#b8935a; --gold-light:#d4a96a; --gold-bg:#fdf6e8;
+    --border:#d8cfc0; --green:#2d6a4f; --red:#8b2c2c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); }
+
+  /* Topbar */
+  .topbar { background:#0c0b09; padding:16px 24px; display:flex; align-items:center; justify-content:center; position:sticky; top:0; z-index:100; }
+  .topbar-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:#c4a35a; letter-spacing:0.05em; }
+  .topbar-sub { font-size:0.8rem; color:#6b6358; margin-top:3px; }
+  .topbar-ref { position:absolute; right:24px; font-size:0.78rem; color:#6b6358; }
+  .topbar-ref strong { color:#c4a35a; }
+
+  /* Lang toggle */
+  .lang-toggle { position:absolute; right:20px; top:50%; transform:translateY(-50%); display:flex; gap:6px; }
+  .lang-btn { font-family:'DM Sans',sans-serif; font-size:.72rem; font-weight:600; letter-spacing:.1em; padding:5px 11px; border-radius:20px; border:1px solid #3a3528; color:#6b6358; background:transparent; cursor:pointer; transition:all .2s; }
+  .lang-btn.active { background:#c4a35a; color:#0c0b09; border-color:#c4a35a; }
+  .lang-pt .en-only { display:none !important; }
+  .lang-en .pt-only { display:none !important; }
+
+  .gold-bar { height:3px; background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent); }
+  .wrap { max-width:860px; margin:0 auto; padding:28px 24px 60px; }
+
+  /* Intro / note */
+  .intro-box { background:var(--paper); border:1px solid var(--border); border-left:4px solid var(--gold); padding:20px 24px; border-radius:0 2px 2px 0; margin-top:32px; }
+  .intro-box p { font-size:1rem; line-height:1.8; color:var(--ink-light); }
+  .intro-box p strong { color:var(--ink); font-weight:500; }
+  .contact-line { margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:0.92rem; color:var(--ink-light); }
+  .note-box { background:var(--gold-bg); border:1px dashed var(--gold); padding:14px 18px; border-radius:2px; margin-top:16px; }
+  .note-box p { font-size:0.92rem; color:var(--ink-light); line-height:1.65; }
+  .note-box p strong { color:var(--ink); }
+
+  /* Content */
+  #content-anchor { display:block; height:1px; }
+  .content-area { margin-top:24px; padding-bottom:0; }
+
+  /* Sections */
+  .section { margin-bottom:12px; background:var(--paper); border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+  .section-head { padding:14px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
+  .section-icon { font-size:1.4rem; flex-shrink:0; }
+  .section-head-text { flex:1; }
+  .section-head-title { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:600; }
+  .section-head-sub { font-size:0.82rem; color:var(--ink-light); margin-top:2px; }
+
+  /* Doc items */
+  .doc-item { display:flex; align-items:flex-start; gap:16px; padding:20px 22px; border-bottom:1px solid var(--border); transition:background 0.15s; user-select:none; }
+  .doc-item:last-child { border-bottom:none; }
+  .doc-item.ob-item { cursor:pointer; }
+  .doc-item.ob-item:hover { background:#f0ebe2; }
+  .doc-item.checked-row { background:#f4faf7; }
+  .doc-item.cond-item { cursor:default; }
+  .doc-item.na-row { background:#f7f5f0; }
+  .doc-item.na-row .doc-check { background:#ddd8ce; border-color:#c4bdb0; }
+  .doc-item.na-row .doc-check::after { content:'—'; color:#888; font-size:0.9rem; }
+  .doc-item.na-row .doc-name,
+  .doc-item.na-row .doc-desc,
+  .doc-item.na-row .doc-where { opacity:0.45; }
+  .doc-item.help-row { background:#fefce8; }
+  .doc-item.help-row .doc-check { background:#f0d060; border-color:#c8a820; }
+  .doc-item.help-row .doc-check::after { content:"!"; color:#7a6010; font-size:0.85rem; font-weight:700; }
+
+  .doc-check { width:22px; height:22px; border:1.5px solid var(--border); border-radius:3px; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; background:white; pointer-events:none; }
+  .doc-item.ob-item:hover .doc-check { border-color:var(--gold); }
+  .doc-item.checked-row .doc-check { background:var(--green); border-color:var(--green); }
+  .doc-item.checked-row .doc-check::after { content:'✓'; color:white; font-size:0.82rem; font-weight:700; }
+
+  .doc-body { flex:1; }
+  .doc-name { font-size:0.95rem; font-weight:400; color:var(--ink); margin-bottom:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .req-tag { font-size:0.68rem; padding:3px 8px; border-radius:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; flex-shrink:0; }
+  .req-ob   { background:#fdf0f0; color:var(--red); border:1px solid #f0c8c8; }
+  .req-cond { background:var(--gold-bg); color:#8a5c1a; border:1px solid #e8d4a8; }
+  .doc-desc { font-size:0.92rem; color:var(--ink-light); line-height:1.65; margin-bottom:7px; }
+  .doc-where { font-size:0.8rem; color:var(--ink-light); display:flex; align-items:flex-start; gap:5px; }
+  .doc-where span { font-style:italic; }
+
+  /* Conditional buttons */
+  .cond-actions { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; padding-left:2px; }
+  .cond-btn { display:inline-flex; align-items:center; gap:4px; font-size:0.75rem; font-family:'DM Sans',sans-serif; color:#9a8f82; background:transparent; border:1px solid #e0d8cc; border-radius:8px; padding:4px 11px; cursor:pointer; transition:all 0.15s; }
+  .cond-btn:hover { background:#f0ebe2; border-color:#c4bdb0; color:var(--ink); }
+  .cond-btn.active-yes  { background:#e8f5ee; border:1px solid var(--green); color:var(--green); font-weight:500; }
+  .cond-btn.active-na   { background:#e8e0d4; border:1px solid #c4bdb0; color:var(--ink-light); font-weight:500; }
+  .cond-btn.active-help { background:#fef9e7; border:1px solid #d4b84a; color:#7a6010; font-weight:500; }
+
+  /* Vendedores dinâmicos */
+  .comp-block { background:var(--cream); border:1px solid var(--border); border-radius:2px; padding:14px 16px; margin-bottom:10px; position:relative; }
+  .comp-block-title { font-size:0.88rem; color:var(--ink-light); font-weight:600; margin-bottom:10px; }
+  .comp-fields { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .comp-fields + .comp-fields { margin-top:10px; }
+  .comp-field { display:flex; flex-direction:column; gap:4px; }
+  .comp-field label { font-size:0.78rem; color:var(--ink-light); font-weight:500; }
+  .comp-field input,
+  .comp-field select { border:1px solid var(--border); background:white; padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:0.82rem; color:var(--ink); border-radius:1px; width:100%; outline:none; appearance:none; cursor:pointer; }
+  .comp-field input:focus,
+  .comp-field select:focus { border-color:var(--gold); }
+  .comp-field select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235c5449'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:28px; }
+  .comp-remove { position:absolute; top:10px; right:12px; background:none; border:none; font-size:0.75rem; color:var(--ink-light); cursor:pointer; padding:2px 6px; }
+  .comp-remove:hover { color:var(--red); }
+  .btn-add-comp { font-family:'DM Sans',sans-serif; font-size:0.78rem; padding:8px 18px; background:transparent; border:1.5px dashed var(--border); color:var(--ink-light); cursor:pointer; border-radius:1px; margin-top:4px; transition:all 0.15s; }
+  .btn-add-comp:hover { border-color:var(--gold); color:var(--gold); }
+
+  /* Representantes legais */
+  .rep-block { background:var(--cream); border:1px solid var(--border); border-radius:2px; padding:14px 16px; margin-bottom:10px; position:relative; }
+  .rep-block-title { font-size:0.88rem; color:var(--ink-light); font-weight:600; margin-bottom:10px; }
+  .rep-fields { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+  .rep-field { display:flex; flex-direction:column; gap:4px; }
+  .rep-field label { font-size:0.78rem; color:var(--ink-light); font-weight:500; }
+  .rep-field input { border:1px solid var(--border); background:white; padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:0.82rem; color:var(--ink); border-radius:1px; width:100%; outline:none; }
+  .rep-field input:focus { border-color:var(--gold); }
+  .rep-remove { position:absolute; top:10px; right:12px; background:none; border:none; font-size:0.75rem; color:var(--ink-light); cursor:pointer; padding:2px 6px; }
+  .rep-remove:hover { color:var(--red); }
+  .btn-add-rep { font-family:'DM Sans',sans-serif; font-size:0.78rem; padding:8px 18px; background:transparent; border:1.5px dashed var(--border); color:var(--ink-light); cursor:pointer; border-radius:1px; margin-top:4px; transition:all 0.15s; }
+  .btn-add-rep:hover { border-color:var(--gold); color:var(--gold); }
+
+  /* Validação */
+  .field-error { border-color:var(--red) !important; background:#fff8f8 !important; }
+  .error-msg { display:block; font-size:0.72rem; color:var(--red); margin-top:4px; }
+  .tipo-error { font-size:0.78rem; color:var(--red); margin-top:8px; display:none; }
+  .tipo-error.show { display:block; }
+
+  /* Botão submit */
+  .btn-submit { font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:500; padding:13px 48px; background:var(--gold); color:white; border:none; border-radius:24px; cursor:pointer; letter-spacing:0.03em; box-shadow:0 2px 12px rgba(184,147,90,0.35); transition:all 0.2s; }
+  .btn-submit:hover { background:var(--gold-light); box-shadow:0 4px 18px rgba(184,147,90,0.45); transform:translateY(-1px); }
+
+  /* Completion overlay */
+  .overlay { display:none; position:fixed; inset:0; background:rgba(26,22,18,0.82); z-index:200; align-items:center; justify-content:center; padding:24px; }
+  .overlay.open { display:flex; }
+  .send-btns { display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:20px; max-width:280px; margin-left:auto; margin-right:auto; }
+  .send-btn { display:flex; flex-direction:column; align-items:center; gap:10px; padding:28px 16px 24px; border-radius:2px; border:2px solid var(--border); background:var(--paper); cursor:pointer; text-decoration:none; transition:all 0.2s; }
+  .send-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.1); }
+  .send-btn.em { border-color:var(--gold); }
+  .send-btn.em:hover { background:var(--gold-bg); }
+  .send-btn-icon { width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .send-btn.em .send-btn-icon { background:var(--gold); }
+  .send-btn-icon svg { width:28px; height:28px; fill:white; }
+  .send-btn-label { font-size:0.95rem; font-weight:500; color:var(--ink); }
+  .send-btn-sub { font-size:0.69rem; color:var(--ink-light); }
+  .completion-card { background:var(--paper); border:1px solid var(--border); border-top:4px solid var(--gold); border-radius:2px; max-width:520px; width:100%; padding:48px 40px; text-align:center; }
+  .completion-emoji { font-size:3.5rem; margin-bottom:18px; }
+  .completion-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--ink); margin-bottom:10px; }
+  .completion-sub { font-size:0.92rem; color:var(--ink-light); line-height:1.75; margin-bottom:32px; }
+  .completion-sub strong { color:var(--ink); }
+  .completion-back { background:transparent; border:1px solid var(--border); color:var(--ink-light); padding:13px 24px; font-family:'DM Sans',sans-serif; font-size:0.85rem; cursor:pointer; border-radius:1px; width:100%; transition:background 0.15s; }
+  .completion-back:hover { background:#f0ebe2; }
+
+  @media(max-width:580px){
+    .wrap { padding:16px 14px 60px; }
+    .send-btns { grid-template-columns:1fr; }
+    .completion-card { padding:28px 20px; }
+    .comp-fields { grid-template-columns:1fr 1fr; }
+  }
+</style>
+</head>
+<body class="lang-pt">
+
+<div class="topbar" style="position:relative">
+  <div style="text-align:center;">
+    <div class="topbar-title">Magna · Properties</div>
+    <div class="topbar-sub">
+      <span class="pt-only">Documentos para CPCV</span>
+      <span class="en-only">Documents for CPCV</span>
+    </div>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btn-pt" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+  <div class="topbar-ref" id="topbar-ref-wrap" style="display:none;">Ref: <strong id="tb-ref">—</strong></div>
+</div>
+<div class="gold-bar"></div>
+
+<div class="wrap">
+  <input type="hidden" id="negocio-ref" value="">
+  <input type="hidden" id="consultor-nome" value="">
+
+  <div class="intro-box">
+    <span class="pt-only">
+      <p>Parabéns — temos o negócio fechado!</p>
+      <p style="margin-top:12px;">O nosso Departamento Jurídico vai iniciar a elaboração do CPCV de imediato.</p>
+      <div class="contact-line" style="margin-top:12px;">Preencha os últimos detalhes por favor.</div>
+    </span>
+    <span class="en-only">
+      <p>Congratulations — the deal is closed!</p>
+      <p style="margin-top:12px;">Our Legal Department will begin drafting the CPCV immediately.</p>
+      <div class="contact-line" style="margin-top:12px;">Please fill in the final details.</div>
+    </span>
+  </div>
+
+  <span id="content-anchor"></span>
+  <div class="content-area">
+
+    <!-- ══ IDENTIFICAÇÃO — secção única com botões tipo cliente ══ -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon">👤</div>
+        <div class="section-head-text">
+          <div class="section-head-title">
+            <span class="pt-only">Identificação</span>
+            <span class="en-only">Identification</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linha: Tipo de cliente — botões pill -->
+      <div style="padding:14px 22px; border-bottom:1px solid var(--border); background:var(--cream);">
+        <div style="font-size:0.75rem; color:var(--ink-light); font-weight:500; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:10px;">
+          <span class="pt-only">Tipo de cliente</span>
+          <span class="en-only">Client type</span>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="tipo-btn-singular" onclick="selectProp('singular')" style="font-family:'DM Sans',sans-serif; font-size:0.88rem; padding:8px 20px; border-radius:24px; border:1.5px solid var(--border); background:white; color:var(--ink-light); cursor:pointer; transition:all 0.15s;">
+            <span class="pt-only">Pessoa Singular</span><span class="en-only">Individual</span>
+          </button>
+          <button id="tipo-btn-empresa" onclick="selectProp('empresa')" style="font-family:'DM Sans',sans-serif; font-size:0.88rem; padding:8px 20px; border-radius:24px; border:1.5px solid var(--border); background:white; color:var(--ink-light); cursor:pointer; transition:all 0.15s;">
+            <span class="pt-only">Pessoa Coletiva / Empresa</span><span class="en-only">Legal Entity / Company</span>
+          </button>
+        </div>
+        <div id="tipo-error" class="tipo-error">
+          <span class="pt-only">⚠ Por favor selecione o tipo de cliente antes de avançar.</span>
+          <span class="en-only">⚠ Please select a client type before proceeding.</span>
+        </div>
+      </div>
+
+      <!-- Conteúdo Singular -->
+      <div id="singular-content" style="display:none;">
+        <div class="doc-item nat-item" style="cursor:default; flex-direction:column; gap:0;">
+          <div style="width:100%;">
+            <div class="doc-name" style="margin-bottom:12px;"><span class="pt-only">Naturalidade dos Vendedores</span><span class="en-only">Sellers' Place of Birth</span></div>
+            <div class="doc-desc" style="margin-bottom:14px;"><span class="pt-only">Indique a naturalidade (Freguesia e Concelho) de cada vendedor.</span><span class="en-only">Please indicate the place of birth (Parish and Municipality) of each seller. Required for the CPCV.</span></div>
+            <div class="comp-block" id="comp-block-1">
+              <div class="comp-block-title"><span class="pt-only">Vendedor 1</span><span class="en-only">Seller 1</span></div>
+              <div class="comp-fields">
+                <div class="comp-field">
+                  <label><span class="pt-only">Nome completo</span><span class="en-only">Full name</span></label>
+                  <input type="text" data-ph-pt="Nome e Apelido" data-ph-en="Full Name" placeholder="Nome e Apelido" id="comp-nome-1">
+                </div>
+                <div class="comp-field">
+                  <label><span class="pt-only">Estado Civil</span><span class="en-only">Marital Status</span></label>
+                  <select id="comp-ecivil-1" onchange="checkConjuge(1, this.value)">
+                    <option value="" data-pt="— Selecione —" data-en="— Select —">— Selecione —</option>
+                    <option value="Solteiro(a)" data-pt="Solteiro(a)" data-en="Single">Solteiro(a)</option>
+                    <option value="Casado(a) — Comunhão de Adquiridos" data-pt="Casado(a) — Comunhão de Adquiridos" data-en="Married — Community of Acquired Assets">Casado(a) — Comunhão de Adquiridos</option>
+                    <option value="Casado(a) — Comunhão Geral de Bens" data-pt="Casado(a) — Comunhão Geral de Bens" data-en="Married — General Community of Property">Casado(a) — Comunhão Geral de Bens</option>
+                    <option value="Casado(a) — Separação de Bens" data-pt="Casado(a) — Separação de Bens" data-en="Married — Separation of Assets">Casado(a) — Separação de Bens</option>
+                    <option value="Divorciado(a)" data-pt="Divorciado(a)" data-en="Divorced">Divorciado(a)</option>
+                    <option value="Viúvo(a)" data-pt="Viúvo(a)" data-en="Widowed">Viúvo(a)</option>
+                    <option value="União de Facto" data-pt="União de Facto" data-en="Civil Partnership">União de Facto</option>
+                  </select>
+                </div>
+              </div>
+              <div class="comp-fields" style="margin-top:10px;">
+                <div class="comp-field">
+                  <label><span class="pt-only">Naturalidade — Freguesia</span><span class="en-only">Place of Birth — Parish</span></label>
+                  <input type="text" placeholder="Ex: Albufeira" id="comp-freg-1">
+                </div>
+                <div class="comp-field">
+                  <label><span class="pt-only">Naturalidade — Concelho</span><span class="en-only">Place of Birth — Municipality</span></label>
+                  <input type="text" placeholder="Ex: Albufeira" id="comp-conc-1">
+                </div>
+              </div>
+              <div id="conjuge-block-1" style="display:none; margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+                <div style="font-size:0.75rem; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:10px;"><span class="pt-only">Cônjuge</span><span class="en-only">Spouse</span></div>
+                <div class="comp-fields">
+                  <div class="comp-field">
+                    <label><span class="pt-only">Nome completo do Cônjuge</span><span class="en-only">Spouse's Full Name</span></label>
+                    <input type="text" data-ph-pt="Nome e Apelido" data-ph-en="Full Name" placeholder="Nome e Apelido" id="conjuge-nome-1">
+                  </div>
+                </div>
+                <div class="comp-fields" style="margin-top:10px;">
+                  <div class="comp-field">
+                    <label><span class="pt-only">Naturalidade — Freguesia</span><span class="en-only">Place of Birth — Parish</span></label>
+                    <input type="text" placeholder="Ex: Albufeira" id="conjuge-freg-1">
+                  </div>
+                  <div class="comp-field">
+                    <label><span class="pt-only">Naturalidade — Concelho</span><span class="en-only">Place of Birth — Municipality</span></label>
+                    <input type="text" placeholder="Ex: Albufeira" id="conjuge-conc-1">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="compradores-list"></div>
+            <button class="btn-add-comp" id="btn-add-comp" onclick="addVendedor()">
+              <span class="pt-only">＋ Adicionar vendedor</span><span class="en-only">＋ Add seller</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conteúdo Empresa -->
+      <div id="empresa-content" style="display:none;">
+        <div class="doc-item nat-item" style="cursor:default; flex-direction:column; gap:0;">
+          <div style="width:100%;">
+            <div class="doc-name" style="margin-bottom:12px;">
+              <span class="pt-only">Naturalidade dos Representantes Legais</span>
+              <span class="en-only">Place of Birth of Legal Representatives</span>
+            </div>
+            <div class="doc-desc" style="margin-bottom:14px;">
+              <span class="pt-only">Indique o nome completo e naturalidade (Freguesia e Concelho) de cada representante legal que vai assinar o CPCV.</span>
+              <span class="en-only">Please indicate the full name and place of birth (Parish and Municipality) of each legal representative who will sign the CPCV.</span>
+            </div>
+            <div class="rep-block" id="rep-block-1">
+              <div class="rep-block-title">
+                <span class="pt-only">Representante Legal 1</span><span class="en-only">Legal Representative 1</span>
+              </div>
+              <div class="comp-fields">
+                <div class="comp-field"><label><span class="pt-only">Nome completo</span><span class="en-only">Full name</span></label><input type="text" data-ph-pt="Nome e Apelido" data-ph-en="Full Name" placeholder="Nome e Apelido" id="rep-nome-1"></div>
+                <div class="comp-field">
+                  <label><span class="pt-only">Estado Civil</span><span class="en-only">Marital Status</span></label>
+                  <select id="rep-ecivil-1" onchange="checkConjugeRep(1, this.value)">
+                    <option value="" data-pt="— Selecione —" data-en="— Select —">— Selecione —</option>
+                    <option value="Solteiro(a)" data-pt="Solteiro(a)" data-en="Single">Solteiro(a)</option>
+                    <option value="Casado(a) — Comunhão de Adquiridos" data-pt="Casado(a) — Comunhão de Adquiridos" data-en="Married — Community of Acquired Assets">Casado(a) — Comunhão de Adquiridos</option>
+                    <option value="Casado(a) — Comunhão Geral de Bens" data-pt="Casado(a) — Comunhão Geral de Bens" data-en="Married — General Community of Property">Casado(a) — Comunhão Geral de Bens</option>
+                    <option value="Casado(a) — Separação de Bens" data-pt="Casado(a) — Separação de Bens" data-en="Married — Separation of Assets">Casado(a) — Separação de Bens</option>
+                    <option value="Divorciado(a)" data-pt="Divorciado(a)" data-en="Divorced">Divorciado(a)</option>
+                    <option value="Viúvo(a)" data-pt="Viúvo(a)" data-en="Widowed">Viúvo(a)</option>
+                    <option value="União de Facto" data-pt="União de Facto" data-en="Civil Partnership">União de Facto</option>
+                  </select>
+                </div>
+              </div>
+              <div class="comp-fields" style="margin-top:10px;">
+                <div class="comp-field"><label><span class="pt-only">Naturalidade — Freguesia</span><span class="en-only">Place of Birth — Parish</span></label><input type="text" placeholder="Ex: Albufeira" id="rep-freg-1"></div>
+                <div class="comp-field"><label><span class="pt-only">Naturalidade — Concelho</span><span class="en-only">Place of Birth — Municipality</span></label><input type="text" placeholder="Ex: Albufeira" id="rep-conc-1"></div>
+              </div>
+              <div id="conjuge-rep-block-1" style="display:none; margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+                <div style="font-size:0.75rem; font-weight:600; color:var(--gold); text-transform:uppercase; letter-spacing:0.07em; margin-bottom:10px;"><span class="pt-only">Cônjuge</span><span class="en-only">Spouse</span></div>
+                <div class="comp-fields">
+                  <div class="comp-field"><label><span class="pt-only">Nome completo do Cônjuge</span><span class="en-only">Spouse's Full Name</span></label><input type="text" data-ph-pt="Nome e Apelido" data-ph-en="Full Name" placeholder="Nome e Apelido" id="conjuge-rep-nome-1"></div>
+                </div>
+                <div class="comp-fields" style="margin-top:10px;">
+                  <div class="comp-field"><label><span class="pt-only">Naturalidade — Freguesia</span><span class="en-only">Place of Birth — Parish</span></label><input type="text" placeholder="Ex: Albufeira" id="conjuge-rep-freg-1"></div>
+                  <div class="comp-field"><label><span class="pt-only">Naturalidade — Concelho</span><span class="en-only">Place of Birth — Municipality</span></label><input type="text" placeholder="Ex: Albufeira" id="conjuge-rep-conc-1"></div>
+                </div>
+              </div>
+            </div>
+            <div id="representantes-list"></div>
+            <button class="btn-add-rep" id="btn-add-rep" onclick="addRepresentante()">
+              <span class="pt-only">＋ Adicionar representante</span><span class="en-only">＋ Add representative</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.content-area -->
+
+  <!-- Botão Submeter -->
+  <div style="text-align:center; margin-top:4px; padding-bottom:16px;">
+    <button class="btn-submit" onclick="validateAndSubmit()">
+      <span class="pt-only">Submeter Informação</span>
+      <span class="en-only">Submit Information</span>
+    </button>
+  </div>
+
+</div><!-- /.wrap -->
+
+<!-- COMPLETION OVERLAY — instância única -->
+<div class="overlay" id="completion-overlay">
+  <div class="completion-card">
+    <div class="completion-title">
+      <span class="pt-only">Tudo pronto!</span>
+      <span class="en-only">All done!</span>
+    </div>
+    <div class="completion-sub" style="margin-bottom:32px;">
+      <span class="pt-only">Obrigado por confiar na Magna Properties!</span>
+      <span class="en-only">Thank you for trusting Magna Properties!</span>
+    </div>
+    <div class="send-btns">
+      <button id="webhook-btn" class="send-btn em" onclick="submitToMake()" style="border:none;width:100%;cursor:pointer;">
+        <div class="send-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+        </div>
+        <span class="send-btn-label" id="webhook-btn-label">
+          <span class="pt-only">Enviar para a Magna Properties</span>
+          <span class="en-only">Send to Magna Properties</span>
+        </span>
+        <span class="send-btn-sub" id="webhook-btn-sub">
+          <span class="pt-only">A informação é enviada de forma segura</span>
+          <span class="en-only">Your information is sent securely</span>
+        </span>
+      </button>
+    </div>
+    <div id="webhook-success" style="display:none;background:#f0f7f4;border:1px solid #2d6a4f;border-radius:4px;padding:16px 20px;margin-bottom:20px;text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:8px;">✅</div>
+      <div style="font-size:.95rem;font-weight:500;color:#2d6a4f;">
+        <span class="pt-only">Informação enviada com sucesso!</span>
+        <span class="en-only">Information sent successfully!</span>
+      </div>
+      <div style="font-size:.85rem;color:#5c5449;margin-top:4px;" id="success-consultor-msg">
+        <span class="pt-only">O nosso consultor irá contactá-lo brevemente.</span>
+        <span class="en-only">Our consultant will be in touch shortly.</span>
+      </div>
+    </div>
+    <button class="completion-back" onclick="closeCompletion()">
+      <span class="pt-only">Rever a lista</span>
+      <span class="en-only">Review the list</span>
+    </button>
+  </div>
+</div>
+
+<script>
+const CONSULTOR_EMAIL = 'joao@magnaproperties.pt';
+const CONSULTOR_PHONE = '351XXXXXXXXX';
+const WEBHOOK_URL = 'SUBSTITUIR_PELO_URL_DO_MAKE_WEBHOOK';
+
+// Pré-preencher referência e consultor via URL: ?ref=ALP-001&consultor=Tomás
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref) {
+    const inp = document.getElementById('negocio-ref');
+    if (inp) inp.value = ref;
+    const wrap = document.getElementById('topbar-ref-wrap');
+    const tb   = document.getElementById('tb-ref');
+    if (wrap) wrap.style.display = 'block';
+    if (tb)   tb.textContent = ref;
+  }
+  const consultor = params.get('consultor');
+  if (consultor) {
+    const el = document.getElementById('consultor-nome');
+    if (el) el.value = consultor;
+  }
+})();
+
+function setLang(l) {
+  document.body.classList.toggle('lang-pt', l === 'pt');
+  document.body.classList.toggle('lang-en', l === 'en');
+  document.getElementById('btn-pt').classList.toggle('active', l === 'pt');
+  document.getElementById('btn-en').classList.toggle('active', l === 'en');
+  document.documentElement.lang = l;
+  updateLangElements(l);
+}
+
+function updateLangElements(l) {
+  // Traduzir opções de selects com data-pt/data-en
+  document.querySelectorAll('option[data-pt]').forEach(opt => {
+    opt.textContent = l === 'en' ? opt.getAttribute('data-en') : opt.getAttribute('data-pt');
+  });
+  // Traduzir placeholders com data-ph-pt/data-ph-en
+  document.querySelectorAll('input[data-ph-pt]').forEach(inp => {
+    inp.placeholder = l === 'en' ? inp.getAttribute('data-ph-en') : inp.getAttribute('data-ph-pt');
+  });
+}
+
+let currentProp = null;
+let vendedorCount = 1;
+let representanteCount = 1;
+
+function selectProp(prop) {
+  currentProp = prop;
+  const btns = { singular: document.getElementById('tipo-btn-singular'), empresa: document.getElementById('tipo-btn-empresa') };
+  Object.entries(btns).forEach(([key, btn]) => {
+    if (!btn) return;
+    const active = key === prop;
+    btn.style.background  = active ? '#c4a35a' : 'white';
+    btn.style.color       = active ? '#0c0b09' : 'var(--ink-light)';
+    btn.style.borderColor = active ? '#c4a35a' : 'var(--border)';
+    btn.style.fontWeight  = active ? '600' : '400';
+  });
+  document.getElementById('singular-content').style.display = prop === 'singular' ? 'block' : 'none';
+  document.getElementById('empresa-content').style.display  = prop === 'empresa'  ? 'block' : 'none';
+}
+
+function addVendedor() {
+  if (vendedorCount >= 5) return;
+  vendedorCount++;
+  const n = vendedorCount;
+  const list = document.getElementById('compradores-list');
+  const block = document.createElement('div');
+  block.className = 'comp-block';
+  block.id = 'comp-block-' + n;
+  const isEN = document.body.classList.contains('lang-en');
+  const sel  = (pt, en) => isEN ? en : pt;
+  block.innerHTML = `
+    <div class="comp-block-title">${sel('Vendedor','Seller')} ${n}</div>
+    <button class="comp-remove" onclick="removeVendedor(${n})" title="Remover">✕</button>
+    <div class="comp-fields">
+      <div class="comp-field">
+        <label><span class="pt-only">Nome completo</span><span class="en-only">Full name</span></label>
+        <input type="text" data-ph-pt="Nome e Apelido" data-ph-en="Full Name" placeholder="${sel('Nome e Apelido','Full Name')}" id="comp-nome-${n}">
+      </div>
+      <div class="comp-field">
+        <label><span class="pt-only">Estado Civil</span><span class="en-only">Marital Status</span></label>
+        <select id="comp-ecivil-${n}" onchange="checkConjuge(${n}, this.value)">
+          <option value="" data-pt="— Selecione —" data-en="— Select —">${sel('— Selecione —','— Select —')}</option>
+          <option value="Solteiro(a)" data-pt="Solteiro(a)" data-en="Single">${sel('Solteiro(a)','Single')}</option>
+          <option value="Casado(a) — Comunhão de Adquiridos" data-pt="Casado(a) — Comunhão de Adquiridos" data-en="Married — Community of Acquired Assets">${sel('Casado(a) — Comunhão de Adquiridos','Married — Community of Acquired Assets')}</option>
+          <option value="Casado(a) — Comunhão Geral de Bens" data-pt="Casado(a) — Comunhão Geral de Bens" data-en="Married — General Community of Property">${sel('Casado(a) — Comunhão Geral de Bens','Married — General Community of Property')}</option>
+          <option value="Casado(a) — Separação de Bens" data-pt="Casado(a) — Separação de Bens" data-en="Married — Separation of Assets">${sel('Casado(a) — Separação de Bens','Married — Separation of Assets')}</option>
+          <option value="Divorciado(a)" data-pt="Divorciado(a)" data-en="Divorced">${sel('Divorciado(a)','Divorced')}</option>
+          <option value="Viúvo(a)" data-pt="Viúvo(a)" data-en="Widowed">${sel('Viúvo(a)','Widowed')}</option>
+          <option value="União de Facto" data-pt="União de Facto" data-en="Civil Partnership">${sel('União de Facto','Civil Partnership')}</option>
+        </select>
+      </div>
+    </div>
+    <div class="comp-fields" style="margin-top:10px;">
+      <div class="comp-field">
+        <label><span class="pt-only">Naturalidade — Freguesia</span><span class="en-only">Place of Birth — Parish</span></label>
+        <input type="text" placeholder="Ex: Albufeira" id="comp-freg-${n}">
+      </div>
+      <div class="comp-field">
+        <label><span class="pt-only">Naturalidade — Concelho</span><span class="en-only">Place of Birth — Municipality</span></label>
+        <input type="text" placeholder="Ex: Albufeira" id="comp-conc-${n}">
+      </div>
+    </div>
+    <div id="conjuge-block-${n}" style="display:none; margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+      <div style="font-size:0.75rem; font-weight:600; color:#b8935a; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:10px;"><span class="pt-only">Cônjuge</span><span class="en-only">Spouse</span></div>
+      <div class="comp-fields">
+        <div class="comp-field">
+          <label><span class="pt-only">Nome completo do Cônjuge</span><span class="en-only">Spouse's Full Name</span></label>
+          <input type="text" data-ph-pt="Nome e Apelido" data-ph-en="Full Name" placeholder="${sel('Nome e Apelido','Full Name')}" id="conjuge-nome-${n}">
+        </div>
+      </div>
+      <div class="comp-fields" style="margin-top:10px;">
+        <div class="comp-field">
+          <label><span class="pt-only">Naturalidade — Freguesia</span><span class="en-only">Place of Birth — Parish</span></label>
+          <input type="text" placeholder="Ex: Albufeira" id="conjuge-freg-${n}">
+        </div>
+        <div class="comp-field">
+          <label><span class="pt-only">Naturalidade — Concelho</span><span class="en-only">Place of Birth — Municipality</span></label>
+          <input type="text" placeholder="Ex: Albufeira" id="conjuge-conc-${n}">
+        </div>
+      </div>
+    </div>`;
+  list.appendChild(block);
+  if (vendedorCount >= 5) document.getElementById('btn-add-comp').style.display = 'none';
+}
+
+function removeVendedor(n) {
+  const block = document.getElementById('comp-block-' + n);
+  if (block) block.remove();
+  vendedorCount--;
+  document.getElementById('btn-add-comp').style.display = 'inline-block';
+}
+
+function addRepresentante() {
+  if (representanteCount >= 5) return;
+  representanteCount++;
+  const n = representanteCount;
+  const list = document.getElementById('representantes-list');
+  const block = document.createElement('div');
+  block.className = 'rep-block';
+  block.id = 'rep-block-' + n;
+  const isENr = document.body.classList.contains('lang-en');
+  const selr  = (pt, en) => isENr ? en : pt;
+  block.innerHTML = `
+    <div class="rep-block-title">${selr('Representante Legal','Legal Representative')} ${n}</div>
+    <button class="rep-remove" onclick="removeRepresentante(${n})" title="Remover">✕</button>
+    <div class="comp-fields">
+      <div class="comp-field"><label><span class="pt-only">Nome completo</span><span class="en-only">Full name</span></label><input type="text" data-ph-pt="Nome e Apelido" data-ph-en="Full Name" placeholder="${selr('Nome e Apelido','Full Name')}" id="rep-nome-${n}"></div>
+      <div class="comp-field">
+        <label><span class="pt-only">Estado Civil</span><span class="en-only">Marital Status</span></label>
+        <select id="rep-ecivil-${n}" onchange="checkConjugeRep(${n}, this.value)">
+          <option value="" data-pt="— Selecione —" data-en="— Select —">${selr('— Selecione —','— Select —')}</option>
+          <option value="Solteiro(a)" data-pt="Solteiro(a)" data-en="Single">${selr('Solteiro(a)','Single')}</option>
+          <option value="Casado(a) — Comunhão de Adquiridos" data-pt="Casado(a) — Comunhão de Adquiridos" data-en="Married — Community of Acquired Assets">${selr('Casado(a) — Comunhão de Adquiridos','Married — Community of Acquired Assets')}</option>
+          <option value="Casado(a) — Comunhão Geral de Bens" data-pt="Casado(a) — Comunhão Geral de Bens" data-en="Married — General Community of Property">${selr('Casado(a) — Comunhão Geral de Bens','Married — General Community of Property')}</option>
+          <option value="Casado(a) — Separação de Bens" data-pt="Casado(a) — Separação de Bens" data-en="Married — Separation of Assets">${selr('Casado(a) — Separação de Bens','Married — Separation of Assets')}</option>
+          <option value="Divorciado(a)" data-pt="Divorciado(a)" data-en="Divorced">${selr('Divorciado(a)','Divorced')}</option>
+          <option value="Viúvo(a)" data-pt="Viúvo(a)" data-en="Widowed">${selr('Viúvo(a)','Widowed')}</option>
+          <option value="União de Facto" data-pt="União de Facto" data-en="Civil Partnership">${selr('União de Facto','Civil Partnership')}</option>
+        </select>
+      </div>
+    </div>
+    <div class="comp-fields" style="margin-top:10px;">
+      <div class="comp-field"><label><span class="pt-only">Naturalidade — Freguesia</span><span class="en-only">Place of Birth — Parish</span></label><input type="text" placeholder="Ex: Albufeira" id="rep-freg-${n}"></div>
+      <div class="comp-field"><label><span class="pt-only">Naturalidade — Concelho</span><span class="en-only">Place of Birth — Municipality</span></label><input type="text" placeholder="Ex: Albufeira" id="rep-conc-${n}"></div>
+    </div>
+    <div id="conjuge-rep-block-${n}" style="display:none; margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+      <div style="font-size:0.75rem; font-weight:600; color:#b8935a; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:10px;"><span class="pt-only">Cônjuge</span><span class="en-only">Spouse</span></div>
+      <div class="comp-fields">
+        <div class="comp-field"><label><span class="pt-only">Nome completo do Cônjuge</span><span class="en-only">Spouse's Full Name</span></label><input type="text" data-ph-pt="Nome e Apelido" data-ph-en="Full Name" placeholder="${selr('Nome e Apelido','Full Name')}" id="conjuge-rep-nome-${n}"></div>
+      </div>
+      <div class="comp-fields" style="margin-top:10px;">
+        <div class="comp-field"><label><span class="pt-only">Naturalidade — Freguesia</span><span class="en-only">Place of Birth — Parish</span></label><input type="text" placeholder="Ex: Albufeira" id="conjuge-rep-freg-${n}"></div>
+        <div class="comp-field"><label><span class="pt-only">Naturalidade — Concelho</span><span class="en-only">Place of Birth — Municipality</span></label><input type="text" placeholder="Ex: Albufeira" id="conjuge-rep-conc-${n}"></div>
+      </div>
+    </div>`;
+  list.appendChild(block);
+  if (representanteCount >= 5) document.getElementById('btn-add-rep').style.display = 'none';
+}
+
+function removeRepresentante(n) {
+  const block = document.getElementById('rep-block-' + n);
+  if (block) block.remove();
+  representanteCount--;
+  document.getElementById('btn-add-rep').style.display = 'inline-block';
+}
+
+function checkConjuge(n, val) {
+  const block = document.getElementById('conjuge-block-' + n);
+  if (block) block.style.display = val.startsWith('Casado') ? 'block' : 'none';
+}
+
+function checkConjugeRep(n, val) {
+  const block = document.getElementById('conjuge-rep-block-' + n);
+  if (block) block.style.display = val.startsWith('Casado') ? 'block' : 'none';
+}
+
+function toggleOb(row) {
+  row.classList.toggle('checked-row');
+  updateProgress();
+  checkCompletion();
+}
+
+function setCond(row, state) {
+  row.classList.remove('checked-row', 'na-row', 'help-row');
+  row.querySelectorAll('.cond-btn').forEach(b => b.classList.remove('active-yes', 'active-na', 'active-help'));
+  if (state === 'yes') {
+    row.classList.add('checked-row');
+    row.querySelector('.cond-btn[onclick*="yes"]').classList.add('active-yes');
+  } else if (state === 'help') {
+    row.classList.add('help-row');
+    row.querySelector('.cond-btn[onclick*="help"]').classList.add('active-help');
+  } else {
+    row.classList.add('na-row');
+    row.querySelector('.cond-btn[onclick*="na"]').classList.add('active-na');
+  }
+  updateProgress();
+  checkCompletion();
+}
+
+function validateAndSubmit() {
+  // Limpar erros anteriores
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+  document.querySelectorAll('.error-msg').forEach(el => el.remove());
+  const tipoErr = document.getElementById('tipo-error');
+  if (tipoErr) tipoErr.classList.remove('show');
+
+  let firstError = null;
+
+  // Verificar tipo de cliente seleccionado
+  if (!currentProp) {
+    if (tipoErr) tipoErr.classList.add('show');
+    tipoErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  function markError(el) {
+    if (!el) return;
+    if (!el.value.trim()) {
+      el.classList.add('field-error');
+      const msg = document.createElement('span');
+      msg.className = 'error-msg';
+      msg.textContent = 'Campo obrigatório';
+      el.parentNode.appendChild(msg);
+      el.addEventListener('input',  () => clearFieldError(el), { once: true });
+      el.addEventListener('change', () => clearFieldError(el), { once: true });
+      if (!firstError) firstError = el;
+    }
+  }
+
+  if (currentProp === 'singular') {
+    document.querySelectorAll('.comp-block').forEach(b => {
+      const n = b.id.replace('comp-block-', '');
+      markError(document.getElementById('comp-nome-'   + n));
+      markError(document.getElementById('comp-ecivil-' + n));
+      markError(document.getElementById('comp-freg-'   + n));
+      markError(document.getElementById('comp-conc-'   + n));
+      const ecivil = document.getElementById('comp-ecivil-' + n);
+      if (ecivil && ecivil.value.startsWith('Casado')) {
+        markError(document.getElementById('conjuge-nome-' + n));
+        markError(document.getElementById('conjuge-freg-' + n));
+        markError(document.getElementById('conjuge-conc-' + n));
+      }
+    });
+  } else {
+    document.querySelectorAll('.rep-block').forEach(b => {
+      const n = b.id.replace('rep-block-', '');
+      markError(document.getElementById('rep-nome-'   + n));
+      markError(document.getElementById('rep-ecivil-' + n));
+      markError(document.getElementById('rep-freg-'   + n));
+      markError(document.getElementById('rep-conc-'   + n));
+      const ecivil = document.getElementById('rep-ecivil-' + n);
+      if (ecivil && ecivil.value.startsWith('Casado')) {
+        markError(document.getElementById('conjuge-rep-nome-' + n));
+        markError(document.getElementById('conjuge-rep-freg-' + n));
+        markError(document.getElementById('conjuge-rep-conc-' + n));
+      }
+    });
+  }
+
+  if (firstError) {
+    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Tudo válido — abrir overlay
+  document.getElementById('completion-overlay').classList.add('open');
+}
+
+function clearFieldError(el) {
+  el.classList.remove('field-error');
+  const msg = el.parentNode.querySelector('.error-msg');
+  if (msg) msg.remove();
+}
+
+async function submitToMake() {
+  const btn        = document.getElementById('webhook-btn');
+  const btnLabel   = document.getElementById('webhook-btn-label');
+  const btnSub     = document.getElementById('webhook-btn-sub');
+  const successBox = document.getElementById('webhook-success');
+
+  btn.disabled = true;
+  btnLabel.querySelector('.pt-only').textContent = 'A enviar...';
+  btnLabel.querySelector('.en-only').textContent = 'Sending...';
+  btnSub.querySelector('.pt-only').textContent   = 'Por favor aguarde';
+  btnSub.querySelector('.en-only').textContent   = 'Please wait';
+
+  const propLabel = currentProp === 'singular' ? 'Pessoa Singular' : 'Pessoa Coletiva / Empresa';
+  const ref   = document.getElementById('negocio-ref')?.value.trim() || '—';
+  const items = getVisibleItems();
+  const documentos = items.map(r => {
+    const name = r.querySelector('.doc-name')?.childNodes[0]?.textContent.trim();
+    if (!name) return null;
+    if (r.classList.contains('checked-row')) return { doc: name, estado: 'Reunido' };
+    if (r.classList.contains('na-row'))      return { doc: name, estado: 'Não aplicável' };
+    return { doc: name, estado: 'Pendente' };
+  }).filter(Boolean);
+
+  let vendedores = [];
+  if (currentProp === 'singular') {
+    document.querySelectorAll('.comp-block').forEach((b, i) => {
+      vendedores.push({
+        numero:      i + 1,
+        nome:        b.querySelector('input[id^="comp-nome"]')?.value || '—',
+        estado_civil: b.querySelector('select[id^="comp-ecivil"]')?.value || '—',
+        freguesia:   b.querySelector('input[id^="comp-freg"]')?.value || '—',
+        concelho:    b.querySelector('input[id^="comp-conc"]')?.value || '—'
+      });
+    });
+  }
+
+  const payload = {
+    timestamp:    new Date().toISOString(),
+    formulario:   'Documentos CPCV Vendedor',
+    referencia:   ref,
+    tipo_vendedor: propLabel,
+    vendedores:   vendedores,
+    documentos:   documentos
+  };
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+      mode:    'no-cors'
+    });
+  } catch(e) {}
+
+  btn.style.display        = 'none';
+  successBox.style.display = 'block';
+
+  const consultorNome = document.getElementById('consultor-nome')?.value.trim();
+  const msgEl = document.getElementById('success-consultor-msg');
+  if (msgEl && consultorNome) {
+    msgEl.querySelector('.pt-only').textContent = 'O ' + consultorNome + ' irá contactá-lo brevemente.';
+    msgEl.querySelector('.en-only').textContent = consultorNome + ' will be in touch shortly.';
+  }
+}
+
+function exportPDF() {
+  const propLabel = currentProp === 'singular' ? 'Pessoa Singular' : 'Pessoa Coletiva / Empresa';
+  const today = new Date().toLocaleDateString('pt-PT');
+
+  let compsHTML = '';
+  if (currentProp === 'singular') {
+    const allBlocks = [document.getElementById('comp-block-1'), ...document.querySelectorAll('#compradores-list .comp-block')].filter(Boolean);
+    allBlocks.forEach((b, i) => {
+      const nome   = b.querySelector('input[id^="comp-nome"]')?.value || '—';
+      const ecivil = b.querySelector('select[id^="comp-ecivil"]')?.value || '—';
+      const freg   = b.querySelector('input[id^="comp-freg"]')?.value || '—';
+      const conc   = b.querySelector('input[id^="comp-conc"]')?.value || '—';
+      compsHTML += `<tr><td>${i+1}º Vendedor</td><td>${nome}</td><td>${ecivil}</td><td>${freg}</td><td>${conc}</td></tr>`;
+    });
+  }
+
+  const items = getVisibleItems();
+  const itemsHTML = items.map(r => {
+    const name   = r.querySelector('.doc-name')?.childNodes[0]?.textContent.trim() || '';
+    const estado = r.classList.contains('checked-row') ? '✓ Reunido' : r.classList.contains('na-row') ? '— Não aplicável' : '⬜ Pendente';
+    const cor    = r.classList.contains('checked-row') ? '#2d6a4f' : r.classList.contains('na-row') ? '#888' : '#8b2c2c';
+    return `<tr><td>${name}</td><td style="color:${cor};font-weight:500;">${estado}</td></tr>`;
+  }).join('');
+
+  const html = `<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8">
+<title>Checklist CPCV Vendedor — Magna Properties</title>
+<style>
+@page{size:A4;margin:14mm 16mm}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Georgia,serif;font-size:9pt;color:#1a1612;line-height:1.6}
+.header{border-bottom:2pt solid #1a1612;padding-bottom:10pt;margin-bottom:16pt;display:flex;justify-content:space-between;align-items:flex-end}
+.logo{font-size:13pt;font-weight:bold;letter-spacing:0.04em}
+.logo-sub{font-size:7pt;color:#b8935a;text-transform:uppercase;letter-spacing:0.1em;margin-top:2pt}
+.ref{font-size:7.5pt;color:#5c5449;text-align:right}
+h2{font-size:10pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;color:#b8935a;border-bottom:0.5pt solid #d8cfc0;padding-bottom:3pt;margin:14pt 0 8pt}
+table{width:100%;border-collapse:collapse;margin-bottom:12pt;font-size:8.5pt}
+th{background:#f2ede4;padding:5pt 8pt;text-align:left;border:0.5pt solid #d8cfc0;font-size:7pt;text-transform:uppercase;letter-spacing:0.05em;font-weight:bold;color:#5c5449}
+td{padding:5pt 8pt;border:0.5pt solid #d8cfc0;vertical-align:top}
+tr:nth-child(even) td{background:#faf8f4}
+.assinatura{margin-top:28pt;border-top:0.5pt solid #1a1612;padding-top:6pt;font-size:7.5pt;color:#5c5449;display:flex;justify-content:space-between}
+.footer{margin-top:16pt;padding-top:6pt;border-top:0.5pt solid #d8cfc0;display:flex;justify-content:space-between;font-size:6.5pt;color:#7a6e5e}
+</style></head><body>
+<div class="header">
+  <div><div class="logo">Magna · Properties</div><div class="logo-sub">Documentação CPCV — Vendedor</div></div>
+  <div class="ref">Data: ${today}<br>Tipo: ${propLabel}</div>
+</div>
+${currentProp === 'singular' && compsHTML ? `
+<h2>Identificação dos Vendedores</h2>
+<table>
+  <thead><tr><th>#</th><th>Nome Completo</th><th>Estado Civil</th><th>Naturalidade — Freguesia</th><th>Naturalidade — Concelho</th></tr></thead>
+  <tbody>${compsHTML}</tbody>
+</table>` : ''}
+<h2>Estado da Documentação</h2>
+<table>
+  <thead><tr><th>Documento</th><th>Estado</th></tr></thead>
+  <tbody>${itemsHTML}</tbody>
+</table>
+<div class="assinatura">
+  <span>Assinatura do Vendedor: ___________________________</span>
+  <span>Data: _____ / _____ / _________</span>
+</div>
+<div class="footer">
+  <span>Magna Properties, Lda — AMI: 27435</span>
+  <span>Documento gerado em ${today}</span>
+</div>
+</body></html>`;
+
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+  setTimeout(() => { iframe.contentWindow.print(); document.body.removeChild(iframe); }, 400);
+}
+
+function closeCompletion() {
+  document.getElementById('completion-overlay').classList.remove('open');
+}
+</script>
+</body>
+</html>

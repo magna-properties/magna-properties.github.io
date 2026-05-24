@@ -1,0 +1,2459 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<script>
+  (function() {
+    if (sessionStorage.getItem('magna_admin_auth') !== 'ok') {
+      window.location.replace('/admin/');
+    }
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Contrato de Mediação Imobiliária — Magna Properties</title>
+
+<style>
+:root {
+ --ink:#1a1612; --ink-light:#5c5449; --paper:#faf8f4; --cream:#f2ede4;
+ --gold:#b8935a; --gold-light:#d4a96a; --gold-bg:#fdf6e8;
+ --red:#8b2c2c; --border:#d8cfc0; --success:#2d6a4f;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:#0c0b09;color:var(--paper);padding:16px 24px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;z-index:100;}
+.topbar-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:#c4a35a;letter-spacing:0.05em;}
+.topbar-sub{font-size:0.78rem;color:#6b6358;margin-top:3px;}
+.gold-bar{height:3px;background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent);}
+
+/* PROGRESS */
+.progress-bar{background:#1a1812;height:3px;}
+.progress-fill{background:linear-gradient(90deg,#c4a35a,#d4b06a);height:100%;transition:width 0.4s ease;}
+
+/* STEPS NAV */
+.steps-nav{background:#0c0b09;padding:0 24px 16px;display:flex;gap:6px;flex-wrap:wrap;}
+.step-pill{font-size:0.78rem;letter-spacing:0;padding:4px 12px;border-radius:20px;cursor:pointer;transition:all 0.2s;border:1px solid #3a3530;color:#888;background:transparent;}
+.step-pill.active{background:#c4a35a;color:#0c0b09;border-color:#c4a35a;font-weight:500;}
+.step-pill.done{background:#1a1812;color:#c4a35a;border-color:#2a2720;}
+
+/* MAIN */
+.main{max-width:860px;margin:40px auto;padding:0 20px 80px;}
+
+/* SECTION CARD */
+.section-card{background:var(--paper);border:1px solid var(--border);border-radius:2px;padding:40px;margin-bottom:24px;display:none;}
+.section-card.active{display:block;}
+.section-header{margin-bottom:32px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.section-number{font-size:0.78rem;letter-spacing:0;color:var(--gold);font-weight:500;margin-bottom:6px;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--ink);line-height:1.2;}
+.section-desc{margin-top:8px;font-size:0.88rem;color:var(--ink-light);line-height:1.6;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.form-grid.cols-1{grid-template-columns:1fr;}
+.form-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field.span-2{grid-column:span 2;}
+.field label{font-size:0.88rem;letter-spacing:0;text-transform:none;font-weight:500;color:var(--ink-light);}
+.field label .req{color:var(--red);margin-left:2px;}
+input,select,textarea{font-family:'DM Sans',sans-serif;font-size:1rem;padding:11px 14px;border:1px solid var(--border);border-radius:4px;background:white;color:var(--ink);transition:border-color 0.2s;width:100%;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,147,90,0.12);}
+input[readonly]{background:#f9f6f0;color:var(--ink-light);cursor:default;}
+textarea{resize:vertical;min-height:80px;}
+
+/* CHECK OPTIONS */
+.check-group{display:flex;flex-direction:column;gap:10px;}
+.check-group.row{flex-direction:row;flex-wrap:wrap;}
+.check-option{display:flex;align-items:flex-start;gap:10px;padding:14px 18px;border:1.5px solid var(--border);border-radius:24px;cursor:pointer;transition:all 0.15s;background:white;color:var(--ink-light);}
+.check-option:hover{border-color:#c4a35a;background:var(--gold-bg);color:var(--ink);}
+.check-option.selected{border-color:#c4a35a;background:var(--gold-bg);color:var(--ink);box-shadow:0 2px 8px rgba(196,163,90,0.2);}
+.check-option input[type="radio"],.check-option input[type="checkbox"]{width:16px;height:16px;min-width:16px;margin-top:2px;accent-color:var(--gold);flex-shrink:0;pointer-events:none;}
+.check-label{font-size:1rem;line-height:1.4;}
+.check-label strong{display:block;font-weight:500;margin-bottom:2px;}
+.check-label span{color:var(--ink-light);font-size:0.88rem;}
+
+/* PROPRIETÁRIO BLOCK */
+.prop-block{border:1px solid var(--border);border-radius:8px;padding:24px;background:#fdfaf6;margin-bottom:16px;position:relative;}
+.prop-block-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.prop-block-num{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--gold);}
+.btn-remove-prop{font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:5px 14px;border-radius:20px;cursor:pointer;background:transparent;color:var(--red);border:1px solid #e8b4b4;transition:all 0.2s;}
+.btn-remove-prop:hover{background:#fdf0f0;}
+.prop-type-sel{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.prop-type-btn{font-family:'DM Sans',sans-serif;font-size:0.95rem;padding:10px 20px;border-radius:24px;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--ink-light);transition:all 0.15s;}
+.prop-type-btn:hover{border-color:#c4a35a;background:var(--gold-bg);color:var(--ink);}
+.prop-type-btn.active{border-color:#c4a35a;background:var(--gold-bg);color:var(--ink);font-weight:500;}
+
+/* ARTIGO BLOCK */
+.artigo-block{border:1px dashed var(--border);border-radius:6px;padding:16px;background:white;margin-bottom:10px;position:relative;}
+.artigo-block-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.artigo-num{font-size:0.78rem;color:var(--gold);font-weight:600;}
+.btn-remove-artigo{font-size:0.72rem;padding:3px 10px;border-radius:20px;cursor:pointer;background:transparent;color:var(--red);border:1px solid #e8b4b4;font-family:'DM Sans',sans-serif;}
+.btn-remove-artigo:hover{background:#fdf0f0;}
+
+/* ADD BUTTONS */
+.btn-add-prop,.btn-add-artigo{display:flex;align-items:center;gap:8px;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;padding:12px 20px;border-radius:24px;cursor:pointer;background:transparent;color:var(--gold);border:1.5px dashed var(--gold);transition:all 0.2s;width:100%;justify-content:center;}
+.btn-add-prop:hover,.btn-add-artigo:hover{background:var(--gold-bg);}
+
+/* NAV BUTTONS */
+.nav-buttons{display:flex;justify-content:space-between;align-items:center;margin-top:36px;padding-top:24px;border-top:1px solid var(--border);}
+.btn{font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;padding:12px 28px;border-radius:24px;cursor:pointer;border:none;transition:all 0.2s;}
+.btn-ghost{background:transparent;color:var(--ink-light);border:1px solid var(--border);border-radius:24px;}
+.btn-ghost:hover{border-color:var(--ink-light);color:var(--ink);}
+.btn-primary{background:#1a2d4a;color:white;border-radius:24px;}
+.btn-primary:hover{background:#2e2a25;}
+.btn-gold{background:var(--gold);color:white;font-size:0.92rem;padding:14px 36px;border-radius:24px;box-shadow:0 2px 8px rgba(184,147,90,0.3);}
+.btn-gold:hover{background:var(--gold-light);}
+
+/* INFO / WARN BOXES */
+.info-box{background:#f0f7f4;border-left:3px solid var(--success);padding:14px 18px;border-radius:0 2px 2px 0;font-size:1rem;color:#2d5a47;line-height:1.6;margin-bottom:20px;}
+.info-box strong{display:block;margin-bottom:2px;font-weight:400;}
+.warn-box{background:#fff8f0;border-left:3px solid var(--gold);padding:14px 18px;border-radius:0 2px 2px 0;font-size:1rem;color:#7a5c2a;line-height:1.6;margin-bottom:20px;}
+.warn-box strong{display:block;margin-bottom:2px;font-weight:400;}
+
+/* DIVIDER */
+.divider{border:none;border-top:1px solid var(--border);margin:28px 0;}
+
+/* REVIEW TABLE */
+.review-section-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--gold);margin:24px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+.review-table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+.review-table tr{border-bottom:1px solid var(--border);}
+.review-table tr:last-child{border-bottom:none;}
+.review-table td{padding:10px 0;font-size:0.92rem;color:var(--ink);}
+.review-table td:first-child{color:var(--ink-light);font-size:0.82rem;font-weight:500;width:40%;padding-right:16px;}
+
+/* VALIDATION */
+.field-error input,.field-error select,.field-error textarea{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(139,44,44,0.12)!important;}
+.field-error-msg{font-size:0.8rem;color:var(--red);margin-top:4px;}
+.step-error-banner{background:#fdf0f0;border:1px solid #e8b4b4;border-left:3px solid var(--red);border-radius:0 2px 2px 0;padding:12px 16px;font-size:0.88rem;color:#7a2222;margin-bottom:20px;display:none;}
+.step-error-banner.show{display:block;}
+.step-error-banner strong{display:block;margin-bottom:2px;}
+
+/* CONDITIONAL */
+.conditional{display:none;}
+.conditional.show{display:block;}
+
+@media(max-width:600px){
+ .form-grid,.form-grid.cols-3{grid-template-columns:1fr;}
+ .field.span-2{grid-column:span 1;}
+ .section-card{padding:24px 16px;}
+ .topbar,.steps-nav{padding-left:16px;padding-right:16px;}
+ .check-group.row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+ <div style="text-align:center;">
+ <div class="topbar-title">Magna Properties</div>
+ <div class="topbar-sub">Contrato de Mediação Imobiliária — Lei n.º 15/2013</div>
+ </div>
+</div>
+<div class="gold-bar"></div>
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:16.6%"></div></div>
+<div class="steps-nav">
+ <div class="step-pill active" onclick="goToStep(1)">1 · Proprietários</div>
+ <div class="step-pill" onclick="goToStep(2)">2 · Imóvel</div>
+ <div class="step-pill" onclick="goToStep(3)">3 · Negócio</div>
+ <div class="step-pill" onclick="goToStep(4)">4 · Contrato</div>
+ <div class="step-pill" onclick="goToStep(5)">5 · Fecho</div>
+ <div class="step-pill" onclick="goToStep(6)">6 · Revisão</div>
+</div>
+
+<div class="main">
+
+<!-- ══ PASSO 1 — PROPRIETÁRIOS ══ -->
+<div class="section-card active" id="step-1">
+ <div class="section-header">
+ <div class="section-number">Passo 01 / 06</div>
+ <div class="section-title">Dados do(s) Proprietário(s)</div>
+ <div class="section-desc">Adicione todos os proprietários do imóvel. Para cada um, seleccione o tipo: pessoa singular, casado(a) ou empresa.</div>
+ </div>
+ <div class="step-error-banner" id="err-1"><strong> Campos obrigatórios em falta</strong>Por favor preencha todos os campos assinalados antes de avançar.</div>
+ <div id="proprietarios_container"></div>
+ <div style="margin-top:8px;">
+ <button class="btn-add-prop" onclick="addProprietario()">+ Adicionar Proprietário</button>
+ </div>
+ <div class="nav-buttons">
+ <div></div>
+ <button class="btn btn-primary" onclick="nextStep()">Próximo →</button>
+ </div>
+</div>
+
+<!-- ══ PASSO 2 — IMÓVEL ══ -->
+<div class="section-card" id="step-2">
+ <div class="section-header">
+ <div class="section-number">Passo 02 / 06</div>
+ <div class="section-title">Identificação do Imóvel</div>
+ <div class="section-desc">Cláusula 1ª — Descrição física e registo do imóvel</div>
+ </div>
+ <div class="step-error-banner" id="err-2"><strong> Campos obrigatórios em falta</strong>Por favor preencha todos os campos assinalados antes de avançar.</div>
+
+ <!-- TIPO DE IMÓVEL -->
+ <div class="section-number" style="margin-bottom:14px">Tipo de Imóvel <span class="req">*</span></div>
+ <div class="check-group row" id="imovel_tipo_group" style="gap:10px;margin-bottom:24px;">
+ <label class="check-option" style="flex:0 0 auto;" onclick="selectImovelTipo(this,'apartamento')">
+ <input type="radio" name="imovel_tipo" value="apartamento">
+ <div class="check-label"><strong> Apartamento</strong><span>Fracção autónoma</span></div>
+ </label>
+ <label class="check-option" style="flex:0 0 auto;" onclick="selectImovelTipo(this,'moradia')">
+ <input type="radio" name="imovel_tipo" value="moradia">
+ <div class="check-label"><strong> Moradia</strong><span>Prédio urbano independente</span></div>
+ </label>
+ <label class="check-option" style="flex:0 0 auto;" onclick="selectImovelTipo(this,'comercial')">
+ <input type="radio" name="imovel_tipo" value="comercial">
+ <div class="check-label"><strong> Loja / Escritório</strong><span>Fracção ou espaço comercial</span></div>
+ </label>
+ <label class="check-option" style="flex:0 0 auto;" onclick="selectImovelTipo(this,'edificio')">
+ <input type="radio" name="imovel_tipo" value="edificio">
+ <div class="check-label"><strong> Prédio</strong><span>Edifício inteiro</span></div>
+ </label>
+ <label class="check-option" style="flex:0 0 auto;" onclick="selectImovelTipo(this,'terreno')">
+ <input type="radio" name="imovel_tipo" value="terreno">
+ <div class="check-label"><strong> Terreno Urbanizável</strong><span>Com possibilidade de construção</span></div>
+ </label>
+ </div>
+
+ <!-- FRACÇÃO — só para apartamento e comercial -->
+ <div id="fracao_section" class="conditional">
+ <div class="form-grid" style="margin-bottom:20px;">
+ <div class="field">
+ <label>Fração Autónoma <span class="req">*</span></label>
+ <input type="text" id="imovel_fracao" placeholder="Ex: A, B, 1.º Dto." style="text-transform:uppercase">
+ </div>
+ <div class="field">
+ <label>Tipologia / Divisões Assoalhadas <span class="req">*</span></label>
+ <input type="text" id="imovel_tipologia" placeholder="Ex: T3, T4, 4 assoalhadas">
+ </div>
+ </div>
+ </div>
+
+ <!-- ÁREA -->
+ <div id="area_section">
+ <div class="form-grid cols-3" style="margin-bottom:20px;">
+ <div class="field" id="area_bruta_field">
+ <label>Área Bruta Privativa (m²) <span class="req">*</span></label>
+ <input type="number" id="imovel_area_apt" placeholder="Ex: 120">
+ </div>
+ <div class="field" id="area_terreno_field" style="display:none;">
+ <label>Área Total do Terreno (m²) <span class="req">*</span></label>
+ <input type="number" id="imovel_area_terreno" placeholder="Ex: 5000">
+ </div>
+ <div class="field" id="destino_field">
+ <label>Destinado a <span class="req">*</span></label>
+ <select id="imovel_destino">
+ <option value="">— Selecionar —</option>
+ <option>Comércio</option>
+ <option>Serviços</option>
+ <option>Comércio e Serviços</option>
+ <option>Outro</option>
+ </select>
+ </div>
+ </div>
+ </div>
+
+ <!-- ÁREAS MORADIA — só visível para moradia -->
+ <div id="areas_moradia_section" style="display:none;">
+ <div class="form-grid" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Tipologia / Divisões Assoalhadas <span class="req">*</span></label>
+ <input type="text" id="mor_tipologia" placeholder="Ex: T3, T4, 4 assoalhadas">
+ </div>
+ <div class="field">
+ <label>Destinado a <span class="req">*</span></label>
+ <select id="imovel_destino_mor" onchange="toggleRegistoRustico()">
+ <option value="">— Selecionar —</option>
+ <option>Habitação</option>
+ <option>Construção</option>
+ <option value="Misto">Misto</option>
+ <option>Outro</option>
+ </select>
+ </div>
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:20px;">
+ <div class="field">
+ <label>Área Bruta Privativa (m²) <span class="req">*</span></label>
+ <input type="text" id="imovel_area" placeholder="Ex: 220 ou -">
+ </div>
+ <div class="field">
+ <label>Área Útil (m²) <span class="req">*</span></label>
+ <input type="text" id="mor_area_util" placeholder="Ex: 190 ou -">
+ </div>
+ <div class="field">
+ <label>Área Total do Terreno (m²) <span class="req">*</span></label>
+ <input type="text" id="mor_area_terreno" placeholder="Ex: 800 ou -">
+ </div>
+ <div class="field">
+ <label>Área de Implantação (m²) <span class="req">*</span></label>
+ <input type="text" id="mor_area_implantacao" placeholder="Ex: 150 ou -">
+ </div>
+ <div class="field">
+ <label>Área Bruta Construção (m²) <span class="req">*</span></label>
+ <input type="text" id="mor_area_construcao" placeholder="Ex: 260 ou -">
+ </div>
+ <div class="field">
+ <label>Área Bruta Dependente (m²) <span class="req">*</span></label>
+ <input type="text" id="mor_area_dependente" placeholder="Ex: 30 ou -">
+ </div>
+ </div>
+ </div>
+
+ <!-- ÁREAS PRÉDIO — só visível para prédio -->
+ <div id="areas_edificio_section" style="display:none;">
+ <div class="form-grid cols-3" style="margin-bottom:20px;">
+ <div class="field">
+ <label>Tipo de Prédio <span class="req">*</span></label>
+ <select id="edificio_tipo" onchange="toggleEdificioPH()">
+ <option value="">— Selecionar —</option>
+ <option value="Propriedade Horizontal (PH)">Propriedade Horizontal (PH)</option>
+ <option value="Propriedade Total (PT)">Propriedade Total (PT)</option>
+ </select>
+ </div>
+ <div class="field">
+ <label>Destinado a <span class="req">*</span></label>
+ <select id="edificio_destino">
+ <option value="">— Selecionar —</option>
+ <option>Habitação</option>
+ <option>Comércio</option>
+ <option>Serviços</option>
+ <option>Comércio e Serviços</option>
+ <option>Misto</option>
+ <option>Outro</option>
+ </select>
+ </div>
+ <div class="field">
+ <label>Nº de Pisos <span class="req">*</span></label>
+ <input type="text" id="edificio_pisos" placeholder="Ex: 4">
+ </div>
+ <div class="field">
+ <label>Área Total do Terreno (m²) <span class="req">*</span></label>
+ <input type="text" id="edificio_area_terreno" placeholder="Ex: 1200 ou -">
+ </div>
+ <div class="field">
+ <label>Área de Implantação (m²) <span class="req">*</span></label>
+ <input type="text" id="edificio_area_implantacao" placeholder="Ex: 600 ou -">
+ </div>
+ <div class="field">
+ <label>Área Bruta Privativa Total (m²) <span class="req">*</span></label>
+ <input type="text" id="edificio_area_bruta_total" placeholder="Ex: 2400 ou -">
+ </div>
+ </div>
+
+ <!-- FRACÇÕES AUTÓNOMAS — só para PH -->
+ <div id="fracoes_ph_section" style="display:none;">
+ <div class="section-number" style="margin-bottom:14px;margin-top:4px;">Fracções Autónomas</div>
+ <div class="info-box" style="margin-bottom:16px;">Adicione cada fracção autónoma do prédio. Pode adicionar tantas quantas necessário.</div>
+ <div id="fracoes_container"></div>
+ <button class="btn-add-artigo" onclick="addFracao()" style="margin-top:4px;">+ Adicionar Fracção Autónoma</button>
+ </div>
+ </div>
+
+ <!-- ÁREAS TERRENO — só visível para terreno -->
+ <div id="areas_terreno_section" style="display:none;">
+ <div class="form-grid cols-3" style="margin-bottom:20px;">
+ <div class="field">
+ <label>Tipo de Terreno <span class="req">*</span></label>
+ <input type="text" id="terreno_tipo" placeholder="Conforme caderneta predial">
+ </div>
+ <div class="field">
+ <label>Área Total do Terreno (m²) <span class="req">*</span></label>
+ <input type="text" id="terreno_area_total" placeholder="Ex: 5000 ou -">
+ </div>
+ <div class="field">
+ <label>Área de Implantação (m²) <span class="req">*</span></label>
+ <input type="text" id="terreno_area_implantacao" placeholder="Ex: 1200 ou -">
+ </div>
+ <div class="field">
+ <label>Área Bruta Construção (m²) <span class="req">*</span></label>
+ <input type="text" id="terreno_area_construcao" placeholder="Ex: 2400 ou -">
+ </div>
+ <div class="field">
+ <label>Área Bruta Dependente (m²) <span class="req">*</span></label>
+ <input type="text" id="terreno_area_dependente" placeholder="Ex: 200 ou -">
+ </div>
+ </div>
+ </div>
+ <div class="form-grid cols-1" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Morada do Imóvel <span class="req">*</span></label>
+ <input type="text" id="imovel_morada" placeholder="Ex: Rua das Flores, n.º 12, 1.º Esq.">
+ </div>
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:24px;">
+ <div class="field">
+ <label>Freguesia <span class="req">*</span></label>
+ <input type="text" id="imovel_freguesia" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Concelho <span class="req">*</span></label>
+ <input type="text" id="imovel_concelho" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Código Postal <span class="req">*</span></label>
+ <input type="text" id="imovel_cp" placeholder="0000-000">
+ </div>
+ </div>
+
+ <hr class="divider">
+
+ <!-- REGISTO PREDIAL — PARTE URBANA -->
+ <div class="section-number" style="margin-bottom:14px" id="label_registo_urbano">Registo Predial</div>
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Conservatória do Registo Predial <span class="req">*</span></label>
+ <input type="text" id="imovel_crp" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Nº de Descrição CRP <span class="req">*</span></label>
+ <input type="text" id="imovel_crp_num" placeholder="Ex: 1234">
+ </div>
+ <div class="field" id="matriz_tipo_field">
+ <label>Matriz Predial <span class="req">*</span></label>
+ <select id="imovel_matriz_tipo">
+ <option value="">— Tipo —</option>
+ <option value="urbana">Urbana</option>
+ <option value="rústica">Rústica</option>
+ </select>
+ </div>
+ </div>
+
+ <!-- ARTIGOS MATRICIAIS — dinâmicos para terrenos, simples para resto -->
+ <div id="artigo_simples_section">
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Artigo Matricial <span class="req">*</span></label>
+ <input type="text" id="imovel_artigo" placeholder="Ex: 1234">
+ </div>
+ <div class="field">
+ <label>Freguesia da Matriz (CPU) <span class="req">*</span></label>
+ <input type="text" id="imovel_matriz_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Concelho da Matriz (CPU) <span class="req">*</span></label>
+ <input type="text" id="imovel_matriz_conc" placeholder="Ex: Faro">
+ </div>
+ </div>
+ <!-- Artigos urbanos adicionais — só quando Misto -->
+ <div id="artigos_urbanos_extra_container"></div>
+ <div id="btn_add_urbano_wrap" style="display:none;">
+ <button class="btn-add-artigo" onclick="addArtigoUrbano()" style="margin-top:4px;margin-bottom:8px;">+ Adicionar Artigo Urbano</button>
+ </div>
+ </div>
+
+ <div id="artigo_multiplo_section" class="conditional">
+ <div class="info-box">O terreno pode ter múltiplos artigos matriciais. Adicione todos os artigos que compõem o imóvel.</div>
+ <div id="artigos_container"></div>
+ <button class="btn-add-artigo" onclick="addArtigo()" style="margin-top:4px;">+ Adicionar Artigo Matricial</button>
+ </div>
+
+ <!-- REGISTO PREDIAL — PARTE RÚSTICA (só quando Misto) -->
+ <div id="registo_rustico_section" style="display:none;">
+ <div class="section-number" style="margin-bottom:14px;margin-top:20px;">Registo Predial — Parte Rústica</div>
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Conservatória do Registo Predial <span class="req">*</span></label>
+ <input type="text" id="rust_crp" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Nº de Descrição CRP <span class="req">*</span></label>
+ <input type="text" id="rust_crp_num" placeholder="Ex: 5678">
+ </div>
+ <input type="hidden" id="rust_matriz_tipo" value="rústica">
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Artigo Matricial <span class="req">*</span></label>
+ <input type="text" id="rust_artigo" placeholder="Ex: 5678">
+ </div>
+ <div class="field">
+ <label>Freguesia da Matriz (CPU) <span class="req">*</span></label>
+ <input type="text" id="rust_matriz_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Concelho da Matriz (CPU) <span class="req">*</span></label>
+ <input type="text" id="rust_matriz_conc" placeholder="Ex: Faro">
+ </div>
+ </div>
+ <!-- Artigos rústicos adicionais -->
+ <div id="artigos_rusticos_extra_container"></div>
+ <button class="btn-add-artigo" onclick="addArtigoRustico()" style="margin-top:4px;margin-bottom:8px;">+ Adicionar Artigo Rústico</button>
+ </div>
+
+ <hr class="divider" id="licenciamento_divider">
+
+ <!-- LICENCIAMENTO -->
+ <div id="licenciamento_section">
+ <div class="section-number" style="margin-bottom:14px">Licenciamento</div>
+ <div class="check-group" id="licenca_group" style="margin-bottom:16px;">
+ <label class="check-option" onclick="selectLicenca(this,'licenciado')">
+ <input type="radio" name="licenca" value="licenciado">
+ <div class="check-label"><strong>Licenciado</strong><span>Possui alvará de licença de utilização</span></div>
+ </label>
+ <label class="check-option" onclick="selectLicenca(this,'anterior1951')">
+ <input type="radio" name="licenca" value="anterior1951">
+ <div class="check-label"><strong>Inscrito na matriz antes de 1951</strong><span>Não é exigível licença de utilização</span></div>
+ </label>
+ <label class="check-option" onclick="selectLicenca(this,'terreno_urbano')">
+ <input type="radio" name="licenca" value="terreno_urbano">
+ <div class="check-label"><strong>Terreno Urbanizável</strong><span>Não sujeito a licença de utilização</span></div>
+ </label>
+ </div>
+ <div id="licenca_details" class="conditional">
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Licenciado para <span class="req">*</span></label>
+ <select id="lic_para">
+ <option value="">— Selecionar —</option>
+ <option>Habitação</option><option>Serviços</option><option>Comércio</option><option>Outro</option>
+ </select>
+ </div>
+ <div class="field">
+ <label>Nº do Alvará <span class="req">*</span></label>
+ <input type="text" id="lic_alvara" placeholder="Ex: 123/2010">
+ </div>
+ <div class="field">
+ <label>Câmara Municipal de <span class="req">*</span></label>
+ <input type="text" id="lic_camara" placeholder="Ex: Faro">
+ </div>
+ </div>
+ </div>
+
+ </div><!-- /licenciamento_section -->
+
+ <!-- CERTIFICADO ENERGÉTICO -->
+ <div id="cert_global_section">
+ <div class="form-grid" style="margin-bottom:0;">
+ <div class="field">
+ <label>Certificado Energético <span class="req">*</span></label>
+ <select id="imovel_cert_tipo" onchange="toggleCertNum()">
+ <option value="">— Selecionar —</option>
+ <option value="possui">Possui — indicar nº</option>
+ <option value="em_obtencao">Em processo de obtenção</option>
+ <option value="dispensado">Dispensado por lei</option>
+ </select>
+ </div>
+ </div>
+ <div id="cert_num_field" class="conditional" style="margin-top:16px;">
+ <div class="form-grid">
+ <div class="field">
+ <label>Número do Certificado <span class="req">*</span></label>
+ <input type="text" id="imovel_cert_num" placeholder="Ex: SCE-XXXXXXXXX">
+ </div>
+ <div class="field">
+ <label>Válido até <span class="req">*</span></label>
+ <input type="date" id="imovel_cert_val">
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <div class="nav-buttons">
+ <button class="btn btn-ghost" onclick="prevStep()">← Anterior</button>
+ <button class="btn btn-primary" onclick="nextStep()">Próximo →</button>
+ </div>
+</div>
+
+<!-- ══ PASSO 3 — NEGÓCIO ══ -->
+<div class="section-card" id="step-3">
+ <div class="section-header">
+ <div class="section-number">Passo 03 / 06</div>
+ <div class="section-title">Identificação do Negócio</div>
+ <div class="section-desc">Cláusulas 2ª, 3ª e 4ª — Preço, ónus e regime de contratação</div>
+ </div>
+ <div class="step-error-banner" id="err-3"><strong> Campos obrigatórios em falta</strong>Por favor preencha todos os campos assinalados antes de avançar.</div>
+
+ <div class="section-number" style="margin-bottom:14px">Tipo de Negócio</div>
+ <div class="check-group row" style="margin-bottom:24px;">
+ <label class="check-option selected" style="flex:0 0 auto;" onclick="selectCheck(this,'negocio')">
+ <input type="radio" name="negocio" value="Venda" checked>
+ <div class="check-label"><strong>Venda</strong></div>
+ </label>
+ </div>
+
+ <div class="form-grid" style="margin-bottom:8px;">
+ <div class="field">
+ <label>Preço de Venda (€) <span class="req">*</span></label>
+ <input type="text" id="neg_preco" placeholder="Ex: 250 000 €" oninput="onPrecoInput(this)">
+ </div>
+ <div class="field">
+ <label>Preço por Extenso <span class="req">*</span></label>
+ <input type="text" id="neg_preco_extenso" placeholder="Calculado automaticamente">
+ </div>
+ </div>
+
+ <hr class="divider">
+
+ <div class="section-number" style="margin-bottom:14px">Ónus e Encargos — Cláusula 3ª</div>
+ <div class="check-group" id="onus_group" style="margin-bottom:16px;">
+ <label class="check-option" onclick="selectCheck(this,'onus')">
+ <input type="radio" name="onus" value="livre">
+ <div class="check-label"><strong>Livre de ónus e encargos</strong></div>
+ </label>
+ <label class="check-option" onclick="selectCheck(this,'onus');document.getElementById('onus_val_wrap').classList.add('show')">
+ <input type="radio" name="onus" value="tem_onus">
+ <div class="check-label"><strong>Com ónus / encargos</strong><span>Hipotecas, penhoras ou outros</span></div>
+ </label>
+ </div>
+ <div id="onus_val_wrap" class="conditional">
+ <div class="field" style="max-width:280px;margin-bottom:16px;">
+ <label>Valor dos Ónus / Encargos aproximados (€) <span class="req">*</span></label>
+ <input type="text" id="neg_onus_valor" placeholder="Ex: 80 000 €" oninput="fmtEuro(this)">
+ </div>
+ </div>
+
+ <hr class="divider">
+
+ <div class="section-number" style="margin-bottom:14px">Regime de Contratação — Cláusula 4ª</div>
+ <div class="check-group" id="regime_group">
+ <label class="check-option" onclick="selectCheck(this,'regime')">
+ <input type="radio" name="regime" value="Exclusividade">
+ <div class="check-label"><strong>Exclusividade</strong><span>Apenas a Magna Properties promove o negócio durante a vigência</span></div>
+ </label>
+ <label class="check-option" onclick="selectCheck(this,'regime')">
+ <input type="radio" name="regime" value="Não exclusividade">
+ <div class="check-label"><strong>Não Exclusividade</strong><span>O proprietário pode contratar outras agências em simultâneo</span></div>
+ </label>
+ </div>
+
+ <div class="nav-buttons">
+ <button class="btn btn-ghost" onclick="prevStep()">← Anterior</button>
+ <button class="btn btn-primary" onclick="nextStep()">Próximo →</button>
+ </div>
+</div>
+
+<!-- ══ PASSO 4 — CONTRATO ══ -->
+<div class="section-card" id="step-4">
+ <div class="section-header">
+ <div class="section-number">Passo 04 / 06</div>
+ <div class="section-title">Remuneração e Prazo</div>
+ <div class="section-desc">Cláusulas 5ª, 6ª e 8ª — Comissão, documentos e duração</div>
+ </div>
+ <div class="step-error-banner" id="err-4"><strong> Campos obrigatórios em falta</strong>Por favor preencha todos os campos assinalados antes de avançar.</div>
+
+ <div class="section-number" style="margin-bottom:14px">Comissão — Cláusula 5ª</div>
+ <div class="form-grid" style="margin-bottom:8px;">
+ <div class="field">
+ <label>Percentagem de Comissão (%) <span class="req">*</span></label>
+ <input type="number" id="rem_percentagem" placeholder="Ex: 5" step="0.5" min="0" max="100" oninput="calcComissao()">
+ </div>
+ <div class="field">
+ <label>Valor da Comissão calculado</label>
+ <input type="text" id="rem_comissao_calc" placeholder="Calculado automaticamente" readonly>
+ </div>
+ </div>
+ <div class="warn-box">O valor é calculado com base no preço de venda do Passo 3. Certifique-se de preencher o preço antes deste passo.</div>
+
+ <div class="section-number" style="margin-bottom:14px">Momento do Pagamento <span class="req">*</span></div>
+ <div class="check-group" id="pagamento_group" style="margin-bottom:16px;">
+ <label class="check-option" onclick="selectCheck(this,'pagamento');document.getElementById('pag_parcelas').classList.add('show')">
+ <input type="radio" name="pagamento" value="promessa_escritura">
+ <div class="check-label"><strong>Parcial no CPCV + Restante na Escritura</strong><span>Uma parte paga no contrato-promessa e o remanescente na escritura</span></div>
+ </label>
+ <label class="check-option" onclick="selectCheck(this,'pagamento');document.getElementById('pag_parcelas').classList.remove('show')">
+ <input type="radio" name="pagamento" value="total_cpcv">
+ <div class="check-label"><strong>Total no CPCV</strong><span>100% da comissão paga na celebração do contrato-promessa</span></div>
+ </label>
+ <label class="check-option" onclick="selectCheck(this,'pagamento');document.getElementById('pag_parcelas').classList.remove('show')">
+ <input type="radio" name="pagamento" value="escritura">
+ <div class="check-label"><strong>Total na Escritura</strong><span>100% da comissão paga na celebração da escritura</span></div>
+ </label>
+ </div>
+ <div id="pag_parcelas" class="conditional">
+ <div class="form-grid" style="margin-bottom:20px;">
+ <div class="field">
+ <label>% paga no CPCV <span class="req">*</span></label>
+ <input type="number" id="pag_cpcv_perc" placeholder="Ex: 50" min="0" max="100" oninput="autoEscritura()">
+ </div>
+ <div class="field">
+ <label>% paga na Escritura <span class="req">*</span></label>
+ <input type="number" id="pag_escrit_perc" placeholder="Ex: 50" min="0" max="100">
+ </div>
+ </div>
+ </div>
+
+ <hr class="divider">
+
+ <div class="section-number" style="margin-bottom:8px">Obtenção de Documentos — Cláusula 6ª</div>
+ <div class="info-box">Sempre que a Magna Properties adiante despesas para obtenção de documentação em nome do proprietário — certidões, licenças, cadernetas prediais ou outros — o proprietário obriga-se a reembolsar integralmente esses valores mediante apresentação de fatura, independentemente da conclusão do negócio.</div>
+
+ <hr class="divider">
+
+ <div class="section-number" style="margin-bottom:14px">Duração do Contrato — Cláusula 8ª</div>
+ <div class="field" style="max-width:200px;">
+ <label>Duração (meses) <span class="req">*</span></label>
+ <input type="number" id="contrato_prazo" placeholder="Ex: 6" min="1">
+ </div>
+
+ <div class="nav-buttons">
+ <button class="btn btn-ghost" onclick="prevStep()">← Anterior</button>
+ <button class="btn btn-primary" onclick="nextStep()">Próximo →</button>
+ </div>
+</div>
+
+<!-- ══ PASSO 5 — FECHO ══ -->
+<div class="section-card" id="step-5">
+ <div class="section-header">
+ <div class="section-number">Passo 05 / 06</div>
+ <div class="section-title">Fecho do Contrato</div>
+ <div class="section-desc">Numeração, data, angariador e autorização RGPD</div>
+ </div>
+ <div class="step-error-banner" id="err-5"><strong> Campos obrigatórios em falta</strong>Por favor preencha todos os campos assinalados antes de avançar.</div>
+
+ <div class="section-number" style="margin-bottom:14px">Identificação e Data</div>
+ <div class="form-grid cols-3" style="margin-bottom:24px;">
+ <div class="field">
+ <label>Referência do Imóvel <span class="req">*</span></label>
+ <input type="text" id="contrato_ref" placeholder="Ex: ALP-001">
+ </div>
+ <div class="field">
+ <label>Local de Celebração <span class="req">*</span></label>
+ <input type="text" id="contrato_local" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Data de Celebração <span class="req">*</span></label>
+ <input type="date" id="contrato_data">
+ </div>
+ </div>
+
+ <hr class="divider">
+
+ <div class="section-number" style="margin-bottom:6px">Angariador Imobiliário <span style="font-weight:400;color:var(--gold);font-size:0.82rem;">*</span></div>
+ <div class="form-grid cols-1" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Nome do(a) Angariador(a)</label>
+ <input type="text" id="ang_nome" placeholder="Nome completo">
+ </div>
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>CC / Passaporte</label>
+ <input type="text" id="ang_cc" placeholder="00000000 0 XX0">
+ </div>
+ <div class="field">
+ <label>Válido até</label>
+ <input type="date" id="ang_cc_val">
+ </div>
+ <div class="field">
+ <label>NIF</label>
+ <input type="text" id="ang_nif" placeholder="000000000">
+ </div>
+ </div>
+
+ <hr class="divider">
+
+ <div class="section-number" style="margin-bottom:8px">Autorização de Marketing — RGPD <span class="req">*</span></div>
+ <div class="info-box">Pergunta ao proprietário se autoriza que a Magna Properties use os seus dados para enviar novidades e informações comerciais no futuro. Obrigatório por lei ter esta autorização explícita para fins de marketing.</div>
+ <div class="check-group" id="rgpd_group">
+ <label class="check-option" onclick="selectCheck(this,'rgpd')">
+ <input type="radio" name="rgpd" value="autoriza">
+ <div class="check-label"><strong> Autoriza</strong><span>O proprietário aceita receber comunicações comerciais da Magna Properties</span></div>
+ </label>
+ <label class="check-option" onclick="selectCheck(this,'rgpd')">
+ <input type="radio" name="rgpd" value="nao_autoriza">
+ <div class="check-label"><strong> Não Autoriza</strong><span>Os dados só podem ser usados para executar este contrato</span></div>
+ </label>
+ </div>
+
+ <div class="nav-buttons">
+ <button class="btn btn-ghost" onclick="prevStep()">← Anterior</button>
+ <button class="btn btn-primary" onclick="nextStep()">Revisão Final →</button>
+ </div>
+</div>
+
+<!-- ══ PASSO 6 — REVISÃO ══ -->
+<div class="section-card" id="step-6">
+ <div class="section-header">
+ <div class="section-number">Passo 06 / 06</div>
+ <div class="section-title">Revisão e Geração do Contrato</div>
+ <div class="section-desc">Confirme todos os dados antes de gerar o PDF final</div>
+ </div>
+ <div id="review-content"></div>
+ <div class="warn-box" style="margin-top:20px;">
+ <strong> Antes de gerar</strong>Verifique todos os dados. O PDF gerado destina-se a ser impresso e assinado pelas partes. Após assinatura, guarde uma cópia digitalizada na pasta do imóvel.
+ </div>
+ <div class="nav-buttons">
+ <button class="btn btn-ghost" onclick="prevStep()">← Editar</button>
+ <button class="btn btn-gold" onclick="gerarPDF()"> Imprimir / Gerar PDF</button>
+ </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════
+// DADOS DA MAGNA PROPERTIES
+// ═══════════════════════════════════════════
+const E = {
+ nome: "Magna Properties, Lda.",
+ nipc: "519 380 428",
+ sede: "Avenida dos Bombeiros Municipais de Olhão, Nº 26, 3º ESQ, 8700-312 Olhão",
+ capital: "5.000€",
+ conservatoria: "Conservatória do Registo Comercial de Barcelos",
+ ami: "27435",
+ seguro_valor: "150.000,00",
+ seguro_valor_extenso: "Cento e cinquenta mil",
+ seguro_apolice: "010364954",
+ seguro_seguradora: "Zurich Seguros",
+};
+
+// ═══════════════════════════════════════════
+// NAVEGAÇÃO
+// ═══════════════════════════════════════════
+let currentStep = 1;
+const totalSteps = 6;
+
+function goToStep(n) {
+ if (n > currentStep) return;
+ document.getElementById('step-'+currentStep).classList.remove('active');
+ document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');
+ document.querySelectorAll('.step-pill')[currentStep-1].classList.add('done');
+ currentStep = n;
+ document.getElementById('step-'+n).classList.add('active');
+ document.querySelectorAll('.step-pill')[n-1].classList.remove('done');
+ document.querySelectorAll('.step-pill')[n-1].classList.add('active');
+ updateProgress();
+ window.scrollTo({top:0,behavior:'instant'});
+}
+
+function nextStep() {
+ if (currentStep >= totalSteps) return;
+ if (!validateStep(currentStep)) return;
+ document.getElementById('step-'+currentStep).classList.remove('active');
+ document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');
+ document.querySelectorAll('.step-pill')[currentStep-1].classList.add('done');
+ currentStep++;
+ document.getElementById('step-'+currentStep).classList.add('active');
+ document.querySelectorAll('.step-pill')[currentStep-1].classList.add('active');
+ updateProgress();
+ if (currentStep === 6) buildReview();
+ window.scrollTo({top:0,behavior:'instant'});
+}
+
+function prevStep() {
+ if (currentStep <= 1) return;
+ document.getElementById('step-'+currentStep).classList.remove('active');
+ document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');
+ currentStep--;
+ document.getElementById('step-'+currentStep).classList.add('active');
+ document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('done');
+ document.querySelectorAll('.step-pill')[currentStep-1].classList.add('active');
+ updateProgress();
+ window.scrollTo({top:0,behavior:'instant'});
+}
+
+function updateProgress() {
+ document.getElementById('progress').style.width = (currentStep/totalSteps*100)+'%';
+}
+
+// ═══════════════════════════════════════════
+// PROPRIETÁRIOS DINÂMICOS
+// ═══════════════════════════════════════════
+let propCount = 0;
+
+function addProprietario() {
+ propCount++;
+ const idx = propCount;
+ const container = document.getElementById('proprietarios_container');
+
+ const block = document.createElement('div');
+ block.className = 'prop-block';
+ block.id = 'prop_block_'+idx;
+
+ block.innerHTML = `
+ <div class="prop-block-header">
+ <div class="prop-block-num" id="prop_num_label_${idx}">${idx}º Proprietário</div>
+ ${idx > 1 ? `<button class="btn-remove-prop" onclick="removeProprietario(${idx})">Remover</button>` : ''}
+ </div>
+ <div class="prop-type-sel">
+ <button class="prop-type-btn active" onclick="setPropType(${idx},'singular',this)"> Pessoa Singular</button>
+ <button class="prop-type-btn" onclick="setPropType(${idx},'casado',this)"> Casado(a)</button>
+ <button class="prop-type-btn" onclick="setPropType(${idx},'empresa',this)"> Empresa</button>
+ </div>
+ <div id="prop_form_${idx}">
+ ${htmlSingular(idx)}
+ </div>
+ `;
+
+ // Add divider between blocks
+ if (container.children.length > 0) {
+ const div = document.createElement('hr');
+ div.className = 'divider';
+ div.id = 'prop_div_'+idx;
+ container.appendChild(div);
+ }
+ container.appendChild(block);
+ updatePropLabels();
+}
+
+function removeProprietario(idx) {
+ const block = document.getElementById('prop_block_'+idx);
+ const div = document.getElementById('prop_div_'+idx);
+ if (block) block.remove();
+ if (div) div.remove();
+ updatePropLabels();
+}
+
+function updatePropLabels() {
+ const blocks = document.querySelectorAll('.prop-block');
+ blocks.forEach((b, i) => {
+ const labelEl = b.querySelector('[id^="prop_num_label_"]');
+ if (labelEl) {
+ const num = i + 1;
+ const ordinal = num === 1 ? '1º' : num === 2 ? '2º' : num === 3 ? '3º' : num+'º';
+ labelEl.textContent = ordinal + ' Proprietário';
+ }
+ });
+}
+
+function setPropType(idx, type, btn) {
+ // Update button styles
+ btn.closest('.prop-type-sel').querySelectorAll('.prop-type-btn').forEach(b => b.classList.remove('active'));
+ btn.classList.add('active');
+ // Render form
+ const formDiv = document.getElementById('prop_form_'+idx);
+ if (type === 'singular') formDiv.innerHTML = htmlSingular(idx);
+ else if (type === 'casado') formDiv.innerHTML = htmlCasado(idx);
+ else if (type === 'empresa') formDiv.innerHTML = htmlEmpresa(idx);
+ formDiv.dataset.type = type;
+}
+
+function htmlSingular(idx) {
+ const ESTADOS = ['Solteiro(a)','Divorciado(a)','Viúvo(a)','Separado(a) judicialmente'];
+ return `
+ <div class="form-grid cols-1" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Nome Completo <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nome" placeholder="Nome completo conforme CC">
+ </div>
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Estado Civil <span class="req">*</span></label>
+ <select id="p${idx}_ec">
+ <option value="">— Selecionar —</option>
+ ${ESTADOS.map(e=>`<option>${e}</option>`).join('')}
+ </select>
+ </div>
+ <div class="field">
+ <label>CC / Passaporte <span class="req">*</span></label>
+ <input type="text" id="p${idx}_cc" placeholder="00000000 0 XX0">
+ </div>
+ <div class="field">
+ <label>Válido até <span class="req">*</span></label>
+ <input type="date" id="p${idx}_cc_val">
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:16px;">
+ <div class="field">
+ <label>NIF <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nif" placeholder="000000000">
+ </div>
+ <div class="field">
+ <label>Nacionalidade <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nacionalidade" placeholder="Ex: Portuguesa, Brasileira">
+ </div>
+ <div class="field">
+ <label>Naturalidade — Freguesia <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nat_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Naturalidade — Concelho <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nat_conc" placeholder="Ex: Faro">
+ </div>
+ </div>
+ <div class="form-grid cols-1" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Morada Fiscal (Rua / Av. / Nº / Andar) <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rua" placeholder="Ex: Rua das Flores, n.º 12, 2.º Esq.">
+ </div>
+ </div>
+ <div class="form-grid cols-3">
+ <div class="field">
+ <label>Freguesia <span class="req">*</span></label>
+ <input type="text" id="p${idx}_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Concelho <span class="req">*</span></label>
+ <input type="text" id="p${idx}_conc" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Código Postal <span class="req">*</span></label>
+ <input type="text" id="p${idx}_cp" placeholder="0000-000">
+ </div>
+ </div>`;
+}
+
+function htmlCasado(idx) {
+ const REGIMES = ['Comunhão de adquiridos','Comunhão geral de bens','Separação de bens'];
+ return `
+ <div class="info-box">Preencha o regime de bens e os dados de ambos os cônjuges.</div>
+ <div class="form-grid cols-1" style="margin-bottom:20px;">
+ <div class="field">
+ <label>Regime de Bens <span class="req">*</span></label>
+ <select id="p${idx}_regime">
+ <option value="">— Selecionar —</option>
+ ${REGIMES.map(r=>`<option>${r}</option>`).join('')}
+ </select>
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:12px;">
+ <div class="field">
+ <label style="font-size:0.78rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;">1.º Cônjuge</label>
+ </div>
+ <div class="field">
+ <label style="font-size:0.78rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;">2.º Cônjuge</label>
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:14px;">
+ <div class="field">
+ <label>Nome Completo <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nome1" placeholder="Nome completo conforme CC">
+ </div>
+ <div class="field">
+ <label>Nome Completo <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nome2" placeholder="Nome completo conforme CC">
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:14px;">
+ <div class="field">
+ <label>CC / Passaporte <span class="req">*</span></label>
+ <input type="text" id="p${idx}_cc1" placeholder="00000000 0 XX0">
+ </div>
+ <div class="field">
+ <label>CC / Passaporte <span class="req">*</span></label>
+ <input type="text" id="p${idx}_cc2" placeholder="00000000 0 XX0">
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:14px;">
+ <div class="field">
+ <label>Válido até <span class="req">*</span></label>
+ <input type="date" id="p${idx}_cc1_val">
+ </div>
+ <div class="field">
+ <label>Válido até <span class="req">*</span></label>
+ <input type="date" id="p${idx}_cc2_val">
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:14px;">
+ <div class="field">
+ <label>NIF <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nif1" placeholder="000000000">
+ </div>
+ <div class="field">
+ <label>NIF <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nif2" placeholder="000000000">
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:14px;">
+ <div class="field">
+ <label>Nacionalidade <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nacionalidade1" placeholder="Ex: Portuguesa, Brasileira">
+ </div>
+ <div class="field">
+ <label>Nacionalidade <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nacionalidade2" placeholder="Ex: Portuguesa, Brasileira">
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:14px;">
+ <div class="field">
+ <label>Naturalidade — Freguesia <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nat1_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Naturalidade — Freguesia <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nat2_freg" placeholder="Ex: Sé">
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:20px;">
+ <div class="field">
+ <label>Naturalidade — Concelho <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nat1_conc" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Naturalidade — Concelho <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nat2_conc" placeholder="Ex: Faro">
+ </div>
+ </div>
+ <div class="form-grid cols-1" style="margin-bottom:14px;">
+ <div class="field">
+ <label>Morada do Casal <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rua" placeholder="Ex: Rua das Flores, n.º 12, 2.º Esq.">
+ </div>
+ </div>
+ </div>
+ <div class="form-grid cols-3">
+ <div class="field">
+ <label>Freguesia <span class="req">*</span></label>
+ <input type="text" id="p${idx}_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Concelho <span class="req">*</span></label>
+ <input type="text" id="p${idx}_conc" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Código Postal <span class="req">*</span></label>
+ <input type="text" id="p${idx}_cp" placeholder="0000-000">
+ </div>
+ </div>`;
+}
+
+function htmlEmpresa(idx) {
+ return `
+ <div class="info-box">Preencha os dados da empresa e depois os dados do representante legal.</div>
+
+ <div class="form-grid cols-1" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Denominação Social <span class="req">*</span></label>
+ <input type="text" id="p${idx}_emp_nome" placeholder="Ex: Imobiliária Silva & Associados, Lda.">
+ </div>
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>NIPC <span class="req">*</span></label>
+ <input type="text" id="p${idx}_nipc" placeholder="500 123 456">
+ </div>
+ <div class="field">
+ <label>Capital Social <span class="req">*</span></label>
+ <input type="text" id="p${idx}_capital" placeholder="Ex: 5 000 €" oninput="fmtEuro(this)">
+ </div>
+ <div class="field">
+ <label>Matriculada na CRC de <span class="req">*</span></label>
+ <input type="text" id="p${idx}_crc" placeholder="Ex: Faro">
+ </div>
+ </div>
+ <div class="form-grid cols-1" style="margin-bottom:6px;">
+ <div style="font-size:0.78rem;font-weight:600;color:var(--gold);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px;">Sede Social</div>
+ </div>
+ <div class="form-grid cols-1" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Morada Fiscal (Rua / Av. / Nº / Andar) <span class="req">*</span></label>
+ <input type="text" id="p${idx}_sede_rua" placeholder="Ex: Rua das Flores, n.º 12, 2.º Esq.">
+ </div>
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Freguesia <span class="req">*</span></label>
+ <input type="text" id="p${idx}_sede_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Concelho <span class="req">*</span></label>
+ <input type="text" id="p${idx}_sede_conc" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Código Postal <span class="req">*</span></label>
+ <input type="text" id="p${idx}_sede_cp" placeholder="0000-000">
+ </div>
+ </div>
+
+ <div class="divider" style="border-top:1px dashed var(--border);margin:20px 0 20px;"></div>
+ <div style="font-size:0.78rem;font-weight:600;color:var(--gold);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:16px;">Representante Legal</div>
+
+ <div class="form-grid" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Nome Completo <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_nome" placeholder="Nome completo conforme CC">
+ </div>
+ <div class="field">
+ <label>Cargo <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_cargo" placeholder="Ex: Gerente, Administrador">
+ </div>
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:16px;">
+ <div class="field">
+ <label>CC / Passaporte <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_cc" placeholder="00000000 0 XX0">
+ </div>
+ <div class="field">
+ <label>Válido até <span class="req">*</span></label>
+ <input type="date" id="p${idx}_rep_cc_val">
+ </div>
+ <div class="field">
+ <label>NIF <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_nif" placeholder="000000000">
+ </div>
+ </div>
+ <div class="form-grid" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Naturalidade — Freguesia <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_nat_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Naturalidade — Concelho <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_nat_conc" placeholder="Ex: Faro">
+ </div>
+ </div>
+ <div class="form-grid cols-1" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Nacionalidade <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_nacionalidade" placeholder="Ex: Portuguesa, Brasileira">
+ </div>
+ </div>
+ <div class="form-grid cols-1" style="margin-bottom:16px;">
+ <div class="field">
+ <label>Morada Fiscal (Rua / Av. / Nº / Andar) <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_morada" placeholder="Ex: Rua das Flores, n.º 12, 2.º Esq.">
+ </div>
+ </div>
+ <div class="form-grid cols-3">
+ <div class="field">
+ <label>Freguesia <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_freg" placeholder="Ex: Sé">
+ </div>
+ <div class="field">
+ <label>Concelho <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_conc" placeholder="Ex: Faro">
+ </div>
+ <div class="field">
+ <label>Código Postal <span class="req">*</span></label>
+ <input type="text" id="p${idx}_rep_cp" placeholder="0000-000">
+ </div>
+ </div>`;
+}
+
+// ═══════════════════════════════════════════
+// IMÓVEL
+// ═══════════════════════════════════════════
+let imovelTipo = '';
+let artigoCount = 0;
+
+function selectImovelTipo(el, tipo) {
+ document.querySelectorAll('#imovel_tipo_group .check-option').forEach(o => o.classList.remove('selected'));
+ el.classList.add('selected');
+ el.querySelector('input').checked = true;
+ imovelTipo = tipo;
+
+ // Fracção autónoma — apartamento e comercial
+ const fracaoSec = document.getElementById('fracao_section');
+ if (tipo === 'apartamento' || tipo === 'comercial') {
+ fracaoSec.classList.add('show');
+ } else {
+ fracaoSec.classList.remove('show');
+ }
+
+ // Área — terreno mostra campo diferente; moradia esconde area_section
+ const isTerreno = tipo === 'terreno';
+ const isMoradia = tipo === 'moradia';
+ const isEdificio = tipo === 'edificio';
+ document.getElementById('area_section').style.display = (isMoradia || isEdificio || isTerreno) ? 'none' : '';
+ document.getElementById('area_bruta_field').style.display = isTerreno ? 'none' : '';
+ document.getElementById('area_terreno_field').style.display = 'none';
+
+ // Label Morada — muda para Prédio
+ const labelMorada = document.querySelector('label[for="imovel_morada"], #step-2 label:has(+ #imovel_morada)');
+ const moradaLabel = document.getElementById('imovel_morada')?.closest('.field')?.querySelector('label');
+ if (moradaLabel) {
+ if (tipo === 'edificio') moradaLabel.innerHTML = 'Morada do Prédio <span class="req">*</span>';
+ else if (tipo === 'terreno') moradaLabel.innerHTML = 'Morada do Terreno <span class="req">*</span>';
+ else moradaLabel.innerHTML = 'Morada do Imóvel <span class="req">*</span>';
+ }
+
+ // Label Registo Predial — muda por tipo
+ const labelReg = document.getElementById('label_registo_urbano');
+ if (labelReg) {
+ if (tipo === 'edificio') labelReg.textContent = 'Registo Predial — Informações do Prédio';
+ else if (tipo !== 'moradia') labelReg.textContent = 'Registo Predial';
+ }
+
+ // Licenciado para — opções dinâmicas por tipo
+ const licPara = document.getElementById('lic_para');
+ if (licPara) {
+ licPara.innerHTML = '<option value="">— Selecionar —</option>';
+ if (tipo === 'apartamento' || tipo === 'moradia') {
+ licPara.innerHTML += '<option>Habitação</option><option>Outro</option>';
+ } else if (tipo === 'comercial') {
+ licPara.innerHTML += '<option>Comércio</option><option>Serviços</option><option>Comércio e Serviços</option><option>Outro</option>';
+ } else if (tipo === 'edificio') {
+ licPara.innerHTML += '<option>Habitação</option><option>Comércio</option><option>Serviços</option><option>Comércio e Serviços</option><option>Misto</option><option>Outro</option>';
+ } else {
+ licPara.innerHTML += '<option>Habitação</option><option>Serviços</option><option>Comércio</option><option>Outro</option>';
+ }
+ }
+
+ // Destinado a — opções dinâmicas por tipo
+ const destinoSel = document.getElementById('imovel_destino');
+ if (destinoSel) {
+ destinoSel.innerHTML = '<option value="">— Selecionar —</option>';
+ if (tipo === 'apartamento' || tipo === 'moradia') {
+ destinoSel.innerHTML += '<option>Habitação</option><option>Outro</option>';
+ } else if (tipo === 'comercial') {
+ destinoSel.innerHTML += '<option>Comércio</option><option>Serviços</option><option>Comércio e Serviços</option>';
+ } else if (tipo === 'edificio') {
+ destinoSel.innerHTML += '<option>Habitação</option><option>Comércio</option><option>Serviços</option><option>Comércio e Serviços</option><option>Misto</option><option>Outro</option>';
+ } else if (tipo === 'terreno') {
+ destinoSel.innerHTML += '<option>Habitação</option><option>Comércio</option><option>Serviços</option><option>Comércio e Serviços</option><option>Construção</option><option>Misto</option><option>Outro</option>';
+ } else {
+ destinoSel.innerHTML += '<option>Comércio</option><option>Serviços</option><option>Comércio e Serviços</option>';
+ }
+ }
+
+ // Áreas Prédio e Terreno
+ document.getElementById('areas_edificio_section').style.display = tipo === 'edificio' ? '' : 'none';
+ document.getElementById('areas_terreno_section').style.display = tipo === 'terreno' ? '' : 'none';
+
+ // Certificado global — esconder para terreno e Prédio PH (este último gerido por toggleEdificioPH)
+ const certGlobal = document.getElementById('cert_global_section');
+ if (certGlobal) certGlobal.style.display = tipo === 'terreno' ? 'none' : '';
+
+ // Licenciamento — esconder para terreno
+ const licSec = document.getElementById('licenciamento_section');
+ const licDiv = document.getElementById('licenciamento_divider');
+ if (licSec) licSec.style.display = tipo === 'terreno' ? 'none' : '';
+ if (licDiv) licDiv.style.display = tipo === 'terreno' ? 'none' : '';
+
+ // Registo rústico — esconder ao mudar tipo
+ const rustSec = document.getElementById('registo_rustico_section');
+ if (rustSec) rustSec.style.display = 'none';
+
+ // Áreas extra — só para moradia
+ document.getElementById('areas_moradia_section').style.display = isMoradia ? '' : 'none';
+
+ // Matriz Predial — só terreno tem opção rústica; resto é sempre urbano
+ const matrizTipoField = document.getElementById('matriz_tipo_field');
+ const matrizTipoSel = document.getElementById('imovel_matriz_tipo');
+ if (tipo === 'terreno') {
+ if (matrizTipoField) matrizTipoField.style.display = '';
+ if (matrizTipoSel) matrizTipoSel.value = '';
+ } else if (tipo === 'moradia') {
+ // Moradia gere o seu próprio dropdown via toggleRegistoRustico
+ if (matrizTipoField) matrizTipoField.style.display = '';
+ } else {
+ // Apartamento, comercial, edifício — sempre urbana, esconde dropdown
+ if (matrizTipoField) matrizTipoField.style.display = 'none';
+ if (matrizTipoSel) matrizTipoSel.value = 'urbana';
+ }
+
+ // Artigos matriciais — terreno tem múltiplos
+ if (tipo === 'terreno') {
+ document.getElementById('artigo_simples_section').style.display = 'none';
+ document.getElementById('artigo_multiplo_section').classList.add('show');
+ if (artigoCount === 0) addArtigo();
+ } else {
+ document.getElementById('artigo_simples_section').style.display = '';
+ document.getElementById('artigo_multiplo_section').classList.remove('show');
+ }
+
+ // Licença — terreno tem opção própria
+ const licTerr = document.querySelector('[value="terreno_urbano"]')?.closest('.check-option');
+ if (licTerr) licTerr.style.display = tipo === 'terreno' ? '' : 'none';
+}
+
+function addArtigo() {
+ artigoCount++;
+ const idx = artigoCount;
+ const container = document.getElementById('artigos_container');
+ const block = document.createElement('div');
+ block.className = 'artigo-block';
+ block.id = 'artigo_block_'+idx;
+ block.innerHTML = `
+ <div class="artigo-block-header">
+ <div class="artigo-num">${idx}º Artigo Matricial</div>
+ ${idx > 1 ? `<button class="btn-remove-artigo" onclick="removeArtigo(${idx})">Remover</button>` : ''}
+ </div>
+ <div class="form-grid">
+ <div class="field">
+ <label>Artigo Matricial <span class="req">*</span></label>
+ <input type="text" id="art${idx}_num" placeholder="Ex: 1234">
+ </div>
+ <div class="field">
+ <label>Freguesia da Matriz (CPU) <span class="req">*</span></label>
+ <input type="text" id="art${idx}_freg" placeholder="Ex: Sé">
+ </div>
+ </div>`;
+ container.appendChild(block);
+ updateArtigoLabels();
+}
+
+function removeArtigo(idx) {
+ document.getElementById('artigo_block_'+idx)?.remove();
+ updateArtigoLabels();
+}
+
+function updateArtigoLabels() {
+ document.querySelectorAll('.artigo-block').forEach((b, i) => {
+ const label = b.querySelector('.artigo-num');
+ if (label) label.textContent = (i+1)+'º Artigo Matricial';
+ });
+}
+
+function selectLicenca(el, val) {
+ document.querySelectorAll('#licenca_group .check-option').forEach(o => o.classList.remove('selected'));
+ el.classList.add('selected');
+ el.querySelector('input').checked = true;
+ const det = document.getElementById('licenca_details');
+ if (val === 'licenciado') det.classList.add('show');
+ else det.classList.remove('show');
+}
+
+function toggleEdificioPH() {
+ const val = document.getElementById('edificio_tipo')?.value;
+ const isPH = val === 'Propriedade Horizontal (PH)';
+ const sec = document.getElementById('fracoes_ph_section');
+ if (sec) sec.style.display = isPH ? '' : 'none';
+ // Esconder certificado global quando PH (cada fracção tem o seu)
+ const certGlobal = document.getElementById('cert_global_section');
+ if (certGlobal) certGlobal.style.display = isPH ? 'none' : '';
+ if (!isPH) {
+ document.getElementById('fracoes_container').innerHTML = '';
+ fracaoCount = 0;
+ } else if (document.getElementById('fracoes_container').children.length === 0) {
+ addFracao();
+ }
+}
+
+let fracaoCount = 0;
+function addFracao() {
+ fracaoCount++;
+ const n = fracaoCount;
+ const c = document.getElementById('fracoes_container');
+ const b = document.createElement('div');
+ b.className = 'artigo-block'; b.id = 'fracao_block_'+n;
+ b.innerHTML = `
+ <div class="artigo-block-header">
+ <div class="artigo-num" style="font-weight:400;">${n}ª Fracção Autónoma</div>
+ ${n > 1 ? `<button class="btn-remove-artigo" onclick="removeFracao(${n})">Remover</button>` : ''}
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:12px;">
+ <div class="field">
+ <label>Letra <span class="req">*</span></label>
+ <input type="text" id="frac${n}_designacao" placeholder="Ex: A, B, C">
+ </div>
+ <div class="field">
+ <label>Destinado a <span class="req">*</span></label>
+ <select id="frac${n}_destino">
+ <option value="">— Selecionar —</option>
+ <option>Habitação</option>
+ <option>Comércio</option>
+ <option>Serviços</option>
+ <option>Comércio e Serviços</option>
+ </select>
+ </div>
+ <div class="field">
+ <label>Piso <span class="req">*</span></label>
+ <input type="text" id="frac${n}_piso" placeholder="Ex: 1.º, R/C">
+ </div>
+ </div>
+ <div class="form-grid cols-3" style="margin-bottom:12px;">
+ <div class="field">
+ <label>Área Bruta Privativa (m²) <span class="req">*</span></label>
+ <input type="text" id="frac${n}_area" placeholder="Ex: 120 ou -">
+ </div>
+ <div class="field">
+ <label>Artigo Matricial <span class="req">*</span></label>
+ <input type="text" id="frac${n}_artigo" placeholder="Ex: 1234-A">
+ </div>
+ <div class="field">
+ <label>Nº de Descrição CRP <span class="req">*</span></label>
+ <input type="text" id="frac${n}_crp_num" placeholder="Ex: 1234">
+ </div>
+ </div>
+ <div class="form-grid cols-3">
+ <div class="field">
+ <label>Certificado Energético <span class="req">*</span></label>
+ <select id="frac${n}_cert_tipo" onchange="toggleFracCert(${n})">
+ <option value="">— Selecionar —</option>
+ <option value="possui">Possui — indicar nº</option>
+ <option value="em_obtencao">Em processo de obtenção</option>
+ <option value="dispensado">Dispensado por lei</option>
+ </select>
+ </div>
+ <div class="field" id="frac${n}_cert_num_field" style="display:none;">
+ <label>Nº do Certificado <span class="req">*</span></label>
+ <input type="text" id="frac${n}_cert_num" placeholder="Ex: SCE-XXXXXXXXX">
+ </div>
+ <div class="field" id="frac${n}_cert_val_field" style="display:none;">
+ <label>Válido até <span class="req">*</span></label>
+ <input type="date" id="frac${n}_cert_val">
+ </div>
+ </div>`;
+ c.appendChild(b);
+ updateFracaoLabels();
+}
+function removeFracao(n) {
+ document.getElementById('fracao_block_'+n)?.remove();
+ updateFracaoLabels();
+}
+function updateFracaoLabels() {
+ document.querySelectorAll('#fracoes_container .artigo-block').forEach((b,i) => {
+ const lbl = b.querySelector('.artigo-num');
+ if (lbl) { lbl.textContent = (i+1)+'ª Fracção Autónoma'; lbl.style.fontWeight = '400'; }
+ });
+}
+
+function toggleFracCert(n) {
+ const val = document.getElementById('frac'+n+'_cert_tipo')?.value;
+ const numField = document.getElementById('frac'+n+'_cert_num_field');
+ const valField = document.getElementById('frac'+n+'_cert_val_field');
+ if (numField) numField.style.display = val === 'possui' ? '' : 'none';
+ if (valField) valField.style.display = val === 'possui' ? '' : 'none';
+}
+
+function toggleRegistoRustico() {
+ const val = document.getElementById('imovel_destino_mor')?.value;
+ const isMisto = imovelTipo === 'moradia' && val === 'Misto';
+ const isHabitacao = imovelTipo === 'moradia' && val === 'Habitação';
+
+ // Label muda para "Parte Urbana" quando Misto
+ const label = document.getElementById('label_registo_urbano');
+ if (label) label.textContent = isMisto ? 'Registo Predial — Parte Urbana' : 'Registo Predial';
+
+ // Dropdown da matriz:
+ // - Misto ou Habitação → esconde e força "urbana"
+ // - Outros → mostra
+ const matrizField = document.getElementById('matriz_tipo_field');
+ const matrizSel = document.getElementById('imovel_matriz_tipo');
+ if (matrizField) matrizField.style.display = (isMisto || isHabitacao) ? 'none' : '';
+ if (matrizSel && (isMisto || isHabitacao)) matrizSel.value = 'urbana';
+ if (matrizSel && !isMisto && !isHabitacao) matrizSel.value = '';
+
+ // Botão adicionar urbano
+ const btnUrb = document.getElementById('btn_add_urbano_wrap');
+ if (btnUrb) btnUrb.style.display = isMisto ? '' : 'none';
+
+ // Secção rústica
+ const rustSec = document.getElementById('registo_rustico_section');
+ if (rustSec) rustSec.style.display = isMisto ? '' : 'none';
+
+ // Se não é Misto, limpa os artigos extras
+ if (!isMisto) {
+ document.getElementById('artigos_urbanos_extra_container').innerHTML = '';
+ document.getElementById('artigos_rusticos_extra_container').innerHTML = '';
+ artUrbanCount = 0; artRusticCount = 0;
+ }
+}
+
+let artUrbanCount = 0;
+function addArtigoUrbano() {
+ artUrbanCount++;
+ const n = artUrbanCount;
+ const c = document.getElementById('artigos_urbanos_extra_container');
+ const b = document.createElement('div');
+ b.className = 'artigo-block'; b.id = 'art_urb_'+n;
+ b.innerHTML = `
+ <div class="artigo-block-header">
+ <div class="artigo-num">Artigo Urbano Adicional ${n}</div>
+ <button class="btn-remove-artigo" onclick="removeArtigoUrbano(${n})">Remover</button>
+ </div>
+ <div class="form-grid cols-3">
+ <div class="field"><label>Conservatória <span class="req">*</span></label><input type="text" id="urb${n}_crp" placeholder="Ex: Faro"></div>
+ <div class="field"><label>Nº Descrição CRP <span class="req">*</span></label><input type="text" id="urb${n}_crp_num" placeholder="Ex: 1235"></div>
+ <input type="hidden" id="urb${n}_matriz_tipo" value="urbana">
+ </div>
+ <div class="form-grid cols-3" style="margin-top:12px;">
+ <div class="field"><label>Artigo Matricial <span class="req">*</span></label><input type="text" id="urb${n}_artigo" placeholder="Ex: 1235"></div>
+ <div class="field"><label>Freguesia (CPU) <span class="req">*</span></label><input type="text" id="urb${n}_freg" placeholder="Ex: Sé"></div>
+ <div class="field"><label>Concelho (CPU) <span class="req">*</span></label><input type="text" id="urb${n}_conc" placeholder="Ex: Faro"></div>
+ </div>`;
+ c.appendChild(b);
+}
+function removeArtigoUrbano(n) { document.getElementById('art_urb_'+n)?.remove(); }
+
+let artRusticCount = 0;
+function addArtigoRustico() {
+ artRusticCount++;
+ const n = artRusticCount;
+ const c = document.getElementById('artigos_rusticos_extra_container');
+ const b = document.createElement('div');
+ b.className = 'artigo-block'; b.id = 'art_rus_'+n;
+ b.innerHTML = `
+ <div class="artigo-block-header">
+ <div class="artigo-num">Artigo Rústico Adicional ${n}</div>
+ <button class="btn-remove-artigo" onclick="removeArtigoRustico(${n})">Remover</button>
+ </div>
+ <div class="form-grid cols-3">
+ <div class="field"><label>Conservatória <span class="req">*</span></label><input type="text" id="rus${n}_crp" placeholder="Ex: Faro"></div>
+ <div class="field"><label>Nº Descrição CRP <span class="req">*</span></label><input type="text" id="rus${n}_crp_num" placeholder="Ex: 5679"></div>
+ <input type="hidden" id="rus${n}_matriz_tipo" value="rústica">
+ </div>
+ <div class="form-grid cols-3" style="margin-top:12px;">
+ <div class="field"><label>Artigo Matricial <span class="req">*</span></label><input type="text" id="rus${n}_artigo" placeholder="Ex: 5679"></div>
+ <div class="field"><label>Freguesia (CPU) <span class="req">*</span></label><input type="text" id="rus${n}_freg" placeholder="Ex: Sé"></div>
+ <div class="field"><label>Concelho (CPU) <span class="req">*</span></label><input type="text" id="rus${n}_conc" placeholder="Ex: Faro"></div>
+ </div>`;
+ c.appendChild(b);
+}
+function removeArtigoRustico(n) { document.getElementById('art_rus_'+n)?.remove(); }
+
+function toggleCertNum() {
+ const tipo = document.getElementById('imovel_cert_tipo').value;
+ const field = document.getElementById('cert_num_field');
+ if (tipo === 'possui') field.classList.add('show');
+ else field.classList.remove('show');
+}
+
+// ═══════════════════════════════════════════
+// CHECK OPTIONS GENÉRICO
+// ═══════════════════════════════════════════
+function selectCheck(el, name) {
+ document.querySelectorAll(`[name="${name}"]`).forEach(r => {
+ r.closest('.check-option').classList.remove('selected');
+ });
+ el.classList.add('selected');
+ el.querySelector('input').checked = true;
+}
+
+function getRadio(name) {
+ const el = document.querySelector(`[name="${name}"]:checked`);
+ return el ? el.value : '';
+}
+
+// ═══════════════════════════════════════════
+// CÁLCULO DE COMISSÃO
+// ═══════════════════════════════════════════
+// ── Formatação de número para euros ──────────
+function fmtEuro(input) {
+ let raw = input.value.replace(/[^\d]/g,'');
+ if (!raw) { input.value = ''; return; }
+ const num = parseInt(raw, 10);
+ input.value = num.toLocaleString('pt-PT') + ' €';
+}
+
+function onPrecoInput(input) {
+ fmtEuro(input);
+ calcComissao();
+ autoExtensoPT();
+}
+
+function getRawPreco() {
+ const val = document.getElementById('neg_preco')?.value || '';
+ return parseInt(val.replace(/[^\d]/g,'')) || 0;
+}
+
+function autoExtensoPT() {
+ const n = getRawPreco();
+ if (n <= 0) return;
+ const ext = numToExtensoPT(n);
+ const field = document.getElementById('neg_preco_extenso');
+ if (field) field.value = ext + ' euros';
+}
+
+function numToExtensoPT(n) {
+ if (n === 0) return 'zero';
+ const u = ['','um','dois','três','quatro','cinco','seis','sete','oito','nove'];
+ const t = ['','dez','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
+ const e11 = ['dez','onze','doze','treze','catorze','quinze','dezasseis','dezassete','dezoito','dezanove'];
+ const c = ['','cem','duzentos','trezentos','quatrocentos','quinhentos','seiscentos','setecentos','oitocentos','novecentos'];
+
+ function centenas(n) {
+ if (n === 0) return '';
+ if (n === 100) return 'cem';
+ const h = Math.floor(n/100);
+ const r = n % 100;
+ let s = h > 0 ? c[h] : '';
+ if (r > 0) {
+ const conj = s ? ' e ' : '';
+ if (r < 10) s += conj + u[r];
+ else if (r < 20) s += conj + e11[r-10];
+ else { s += conj + t[Math.floor(r/10)]; if(r%10) s += ' e ' + u[r%10]; }
+ }
+ return s;
+ }
+
+ if (n < 1000) return centenas(n);
+ if (n < 1000000) {
+ const mil = Math.floor(n/1000);
+ const r = n % 1000;
+ let s = mil === 1 ? 'mil' : centenas(mil) + ' mil';
+ if (r > 0) s += (r < 100 ? ' e ' : ' ') + centenas(r);
+ return s;
+ }
+ const mil1 = Math.floor(n/1000000);
+ const r1 = n % 1000000;
+ let s = (mil1 === 1 ? 'um milhão' : centenas(mil1) + ' milhões');
+ if (r1 > 0) s += (r1 < 100000 ? ' e ' : ' ') + numToExtensoPT(r1);
+ return s;
+}
+
+function calcComissao() {
+ const preco = getRawPreco();
+ const perc = parseFloat(document.getElementById('rem_percentagem')?.value) || 0;
+ const field = document.getElementById('rem_comissao_calc');
+ if (preco > 0 && perc > 0) {
+ const val = preco * perc / 100;
+ field.value = val.toLocaleString('pt-PT', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' € (+IVA 23%)';
+ } else {
+ field.value = '';
+ }
+}
+
+function autoEscritura() {
+ const cpcv = parseFloat(document.getElementById('pag_cpcv_perc')?.value);
+ const escField = document.getElementById('pag_escrit_perc');
+ if (!isNaN(cpcv) && cpcv >= 0 && cpcv <= 100 && escField) {
+ escField.value = Math.round(100 - cpcv);
+ }
+}
+
+function updatePrecoExtenso() {
+ calcComissao();
+}
+
+// ═══════════════════════════════════════════
+// ONUS TOGGLE
+// ═══════════════════════════════════════════
+document.addEventListener('change', function(e) {
+ if (e.target.name === 'onus') {
+ const wrap = document.getElementById('onus_val_wrap');
+ if (e.target.value === 'tem_onus') wrap.classList.add('show');
+ else wrap.classList.remove('show');
+ }
+ if (e.target.name === 'pagamento') {
+ const wrap = document.getElementById('pag_parcelas');
+ if (e.target.value === 'promessa_escritura') wrap.classList.add('show');
+ else wrap.classList.remove('show');
+ }
+});
+
+// ═══════════════════════════════════════════
+// VALIDAÇÃO
+// ═══════════════════════════════════════════
+function gv(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+function req(id, msg, errors) {
+ const el = document.getElementById(id);
+ if (!el) return;
+ if (!el.value.trim()) {
+ errors.push({id, msg});
+ const field = el.closest('.field');
+ if (field) {
+ field.classList.add('field-error');
+ if (!field.querySelector('.field-error-msg')) {
+ const span = document.createElement('div');
+ span.className = 'field-error-msg';
+ span.textContent = ' ' + msg;
+ field.appendChild(span);
+ }
+ }
+ el.addEventListener('input', function fix() {
+ if (el.value.trim()) {
+ field?.classList.remove('field-error');
+ field?.querySelector('.field-error-msg')?.remove();
+ el.removeEventListener('input', fix);
+ }
+ });
+ el.addEventListener('change', function fix() {
+ if (el.value.trim()) {
+ field?.classList.remove('field-error');
+ field?.querySelector('.field-error-msg')?.remove();
+ }
+ });
+ }
+}
+
+function clearErrors(step) {
+ const card = document.getElementById('step-'+step);
+ if (!card) return;
+ card.querySelectorAll('.field-error').forEach(f => f.classList.remove('field-error'));
+ card.querySelectorAll('.field-error-msg').forEach(m => m.remove());
+ document.getElementById('err-'+step)?.classList.remove('show');
+}
+
+function validateStep(step) {
+ clearErrors(step);
+ const errors = [];
+
+ if (step === 1) {
+ if (propCount === 0) {
+ errors.push({msg:'Adicione pelo menos um proprietário', banner:true});
+ } else {
+ document.querySelectorAll('.prop-block').forEach(block => {
+ const blockId = block.id;
+ const idx = blockId.replace('prop_block_','');
+ const formDiv = document.getElementById('prop_form_'+idx);
+ const type = formDiv?.dataset.type || 'singular';
+ if (type === 'singular') {
+ req('p'+idx+'_nome','Nome obrigatório',errors);
+ req('p'+idx+'_ec','Estado civil obrigatório',errors);
+ req('p'+idx+'_cc','CC obrigatório',errors);
+ req('p'+idx+'_cc_val','Validade do CC obrigatória',errors);
+ req('p'+idx+'_nif','NIF obrigatório',errors);
+ req('p'+idx+'_nacionalidade','Nacionalidade obrigatória',errors);
+ req('p'+idx+'_nat_freg','Naturalidade — Freguesia obrigatória',errors);
+ req('p'+idx+'_nat_conc','Naturalidade — Concelho obrigatório',errors);
+ req('p'+idx+'_rua','Morada obrigatória',errors);
+ req('p'+idx+'_cp','Código postal obrigatório',errors);
+ req('p'+idx+'_freg','Freguesia obrigatória',errors);
+ req('p'+idx+'_conc','Concelho obrigatório',errors);
+ } else if (type === 'casado') {
+ req('p'+idx+'_regime','Regime de bens obrigatório',errors);
+ req('p'+idx+'_nome1','Nome do 1.º cônjuge obrigatório',errors);
+ req('p'+idx+'_nome2','Nome do 2.º cônjuge obrigatório',errors);
+ req('p'+idx+'_cc1','CC do 1.º cônjuge obrigatório',errors);
+ req('p'+idx+'_cc1_val','Validade do CC do 1.º cônjuge obrigatória',errors);
+ req('p'+idx+'_cc2','CC do 2.º cônjuge obrigatório',errors);
+ req('p'+idx+'_cc2_val','Validade do CC do 2.º cônjuge obrigatória',errors);
+ req('p'+idx+'_nif1','NIF do 1.º cônjuge obrigatório',errors);
+ req('p'+idx+'_nif2','NIF do 2.º cônjuge obrigatório',errors);
+ req('p'+idx+'_nacionalidade1','Nacionalidade do 1.º cônjuge obrigatória',errors);
+ req('p'+idx+'_nacionalidade2','Nacionalidade do 2.º cônjuge obrigatória',errors);
+ req('p'+idx+'_nat1_freg','Naturalidade — Freguesia do 1.º cônjuge obrigatória',errors);
+ req('p'+idx+'_nat1_conc','Naturalidade — Concelho do 1.º cônjuge obrigatório',errors);
+ req('p'+idx+'_nat2_freg','Naturalidade — Freguesia do 2.º cônjuge obrigatória',errors);
+ req('p'+idx+'_nat2_conc','Naturalidade — Concelho do 2.º cônjuge obrigatório',errors);
+ req('p'+idx+'_rua','Morada obrigatória',errors);
+ req('p'+idx+'_cp','Código postal obrigatório',errors);
+ req('p'+idx+'_freg','Freguesia obrigatória',errors);
+ req('p'+idx+'_conc','Concelho obrigatório',errors);
+ } else if (type === 'empresa') {
+ req('p'+idx+'_emp_nome','Nome da empresa obrigatório',errors);
+ req('p'+idx+'_nipc','NIPC obrigatório',errors);
+ req('p'+idx+'_capital','Capital social obrigatório',errors);
+ req('p'+idx+'_crc','Matriculada na CRC obrigatório',errors);
+ req('p'+idx+'_sede_rua','Morada da sede obrigatória',errors);
+ req('p'+idx+'_sede_cp','Código postal da sede obrigatório',errors);
+ req('p'+idx+'_sede_freg','Freguesia da sede obrigatória',errors);
+ req('p'+idx+'_sede_conc','Concelho da sede obrigatório',errors);
+ req('p'+idx+'_rep_nome','Nome do representante obrigatório',errors);
+ req('p'+idx+'_rep_cargo','Cargo do representante obrigatório',errors);
+ req('p'+idx+'_rep_cc','CC do representante obrigatório',errors);
+ req('p'+idx+'_rep_cc_val','Validade do CC obrigatória',errors);
+ req('p'+idx+'_rep_nif','NIF do representante obrigatório',errors);
+ req('p'+idx+'_rep_nat_freg','Naturalidade — Freguesia do representante obrigatória',errors);
+ req('p'+idx+'_rep_nat_conc','Naturalidade — Concelho do representante obrigatório',errors);
+ req('p'+idx+'_rep_nacionalidade','Nacionalidade do representante obrigatória',errors);
+ req('p'+idx+'_rep_morada','Morada do representante obrigatória',errors);
+ req('p'+idx+'_rep_cp','Código postal do representante obrigatório',errors);
+ req('p'+idx+'_rep_freg','Freguesia do representante obrigatória',errors);
+ req('p'+idx+'_rep_conc','Concelho do representante obrigatório',errors);
+ }
+ });
+ }
+ }
+
+ else if (step === 2) {
+ if (!imovelTipo) errors.push({msg:'Selecione o tipo de imóvel', banner:true});
+ if (imovelTipo === 'terreno') {
+ req('terreno_tipo','Tipo de terreno obrigatório',errors);
+ req('terreno_area_total','Área total obrigatória',errors);
+ req('terreno_area_implantacao','Área de implantação obrigatória',errors);
+ req('terreno_area_construcao','Área bruta de construção obrigatória',errors);
+ req('terreno_area_dependente','Área bruta dependente obrigatória',errors);
+ } else if (imovelTipo === 'moradia') {
+ req('imovel_area','Área bruta privativa obrigatória',errors);
+ req('mor_tipologia','Tipologia obrigatória',errors);
+ req('imovel_destino_mor','Destinado a obrigatório',errors);
+ req('mor_area_util','Área útil obrigatória',errors);
+ req('mor_area_terreno','Área total do terreno obrigatória',errors);
+ req('mor_area_implantacao','Área de implantação obrigatória',errors);
+ req('mor_area_construcao','Área bruta de construção obrigatória',errors);
+ req('mor_area_dependente','Área bruta dependente obrigatória',errors);
+ } else if (imovelTipo !== 'edificio') {
+ req('imovel_area_apt','Área bruta privativa obrigatória',errors);
+ }
+ if (imovelTipo === 'apartamento' || imovelTipo === 'comercial') {
+ req('imovel_tipologia','Tipologia obrigatória',errors);
+ }
+ if (imovelTipo === 'edificio') {
+ req('edificio_tipo','Tipo de prédio obrigatório',errors);
+ req('edificio_destino','Destinado a obrigatório',errors);
+ req('edificio_pisos','Nº de pisos obrigatório',errors);
+ req('edificio_area_terreno','Área total do terreno obrigatória',errors);
+ req('edificio_area_implantacao','Área de implantação obrigatória',errors);
+ req('edificio_area_bruta_total','Área bruta privativa total obrigatória',errors);
+ if (gv('edificio_tipo') === 'Propriedade Horizontal (PH)') {
+ document.querySelectorAll('#fracoes_container .artigo-block').forEach((b,i) => {
+ const n = i+1;
+ req('frac'+n+'_designacao','Letra da fracção obrigatória',errors);
+ req('frac'+n+'_destino','Destinado a da fracção obrigatório',errors);
+ req('frac'+n+'_piso','Piso da fracção obrigatório',errors);
+ req('frac'+n+'_area','Área da fracção obrigatória',errors);
+ req('frac'+n+'_artigo','Artigo matricial da fracção obrigatório',errors);
+ req('frac'+n+'_crp_num','Nº de descrição CRP da fracção obrigatório',errors);
+ req('frac'+n+'_cert_tipo','Certificado energético da fracção obrigatório',errors);
+ if (document.getElementById('frac'+n+'_cert_tipo')?.value === 'possui') {
+ req('frac'+n+'_cert_num','Nº do certificado da fracção obrigatório',errors);
+ req('frac'+n+'_cert_val','Validade do certificado da fracção obrigatória',errors);
+ }
+ });
+ if (document.querySelectorAll('#fracoes_container .artigo-block').length === 0) {
+ errors.push({msg:'Adicione pelo menos uma fracção autónoma', banner:true});
+ }
+ }
+ }
+ if (imovelTipo !== 'moradia' && imovelTipo !== 'edificio' && imovelTipo !== 'terreno') {
+ req('imovel_destino','Destinado a obrigatório',errors);
+ }
+ if (imovelTipo === 'moradia' && gv('imovel_destino_mor') === 'Misto') {
+ req('rust_crp','Conservatória (parte rústica) obrigatória',errors);
+ req('rust_crp_num','Nº Descrição CRP (parte rústica) obrigatório',errors);
+ req('rust_artigo','Artigo matricial (parte rústica) obrigatório',errors);
+ req('rust_matriz_freg','Freguesia da matriz (parte rústica) obrigatória',errors);
+ req('rust_matriz_conc','Concelho da matriz (parte rústica) obrigatório',errors);
+ }
+ req('imovel_morada','Morada do imóvel obrigatória',errors);
+ req('imovel_cp','Código postal obrigatório',errors);
+ req('imovel_freguesia','Freguesia obrigatória',errors);
+ req('imovel_concelho','Concelho obrigatório',errors);
+ req('imovel_crp','Conservatória do Registo Predial obrigatória',errors);
+ req('imovel_crp_num','Nº de Descrição CRP obrigatório',errors);
+ if (imovelTipo === 'moradia') {
+ req('imovel_matriz_tipo','Tipo de matriz obrigatório',errors);
+ }
+ if (imovelTipo !== 'terreno' && imovelTipo !== 'edificio') {
+ req('imovel_artigo','Artigo matricial obrigatório',errors);
+ req('imovel_matriz_freg','Freguesia da Matriz obrigatória',errors);
+ req('imovel_matriz_conc','Concelho da Matriz obrigatório',errors);
+ }
+ if (imovelTipo !== 'terreno') {
+ if (!getRadio('licenca')) errors.push({msg:'Selecione o tipo de licenciamento', banner:true});
+ if (getRadio('licenca') === 'licenciado') {
+ req('lic_para','Licenciado para obrigatório',errors);
+ req('lic_alvara','Nº do alvará obrigatório',errors);
+ req('lic_camara','Câmara Municipal obrigatória',errors);
+ }
+ }
+ const isEdificioPH = imovelTipo === 'edificio' && gv('edificio_tipo') === 'Propriedade Horizontal (PH)';
+ if (!isEdificioPH && imovelTipo !== 'terreno') {
+ req('imovel_cert_tipo','Certificado Energético obrigatório',errors);
+ if (gv('imovel_cert_tipo') === 'possui') {
+ req('imovel_cert_num','Número do certificado obrigatório',errors);
+ req('imovel_cert_val','Validade do certificado obrigatória',errors);
+ }
+ }
+ }
+
+ else if (step === 3) {
+ req('neg_preco','Preço de venda obrigatório',errors);
+ req('neg_preco_extenso','Preço por extenso obrigatório',errors);
+ if (!getRadio('onus')) errors.push({msg:'Selecione se o imóvel tem ónus ou encargos', banner:true});
+ if (getRadio('onus') === 'tem_onus') {
+ req('neg_onus_valor','Valor dos ónus obrigatório',errors);
+ }
+ if (!getRadio('regime')) errors.push({msg:'Selecione o regime de contratação', banner:true});
+ }
+
+ else if (step === 4) {
+ req('rem_percentagem','Percentagem de comissão obrigatória',errors);
+ if (!getRadio('pagamento')) errors.push({msg:'Selecione o momento do pagamento', banner:true});
+ if (getRadio('pagamento') === 'promessa_escritura') {
+ req('pag_cpcv_perc','% no CPCV obrigatória',errors);
+ req('pag_escrit_perc','% na escritura obrigatória',errors);
+ }
+ req('contrato_prazo','Duração do contrato obrigatória',errors);
+ }
+
+ else if (step === 5) {
+ req('contrato_ref','Referência do imóvel obrigatória',errors);
+ req('contrato_local','Local de celebração obrigatório',errors);
+ req('contrato_data','Data de celebração obrigatória',errors);
+ req('ang_nome','Nome do angariador obrigatório',errors);
+ req('ang_cc','CC / Passaporte do angariador obrigatório',errors);
+ req('ang_nif','NIF do angariador obrigatório',errors);
+ if (!getRadio('rgpd')) errors.push({msg:'Selecione a autorização RGPD', banner:true});
+ }
+
+ if (errors.length > 0) {
+ const banner = document.getElementById('err-'+step);
+ if (banner) banner.classList.add('show');
+ const firstErr = document.querySelector('#step-'+step+' .field-error');
+ const target = firstErr || banner;
+ if (target) target.scrollIntoView({behavior:'instant', block:'center'});
+ return false;
+ }
+ return true;
+}
+
+// ═══════════════════════════════════════════
+// REVISÃO
+// ═══════════════════════════════════════════
+function rv(label, val) {
+ if (!val) return '';
+ return `<tr><td>${label}</td><td>${val}</td></tr>`;
+}
+
+function buildReview() {
+ const preco = getRawPreco();
+ const perc = parseFloat(gv('rem_percentagem')) || 0;
+ const vCom = preco > 0 && perc > 0 ? (preco*perc/100).toLocaleString('pt-PT',{minimumFractionDigits:2})+'€ (+IVA 23%)' : '—';
+ const tipoLabels = {apartamento:'Apartamento',moradia:'Moradia',terreno:'Terreno Urbanizável',comercial:'Loja / Escritório',edificio:'Edifício / Prédio'};
+ let html = '';
+
+ // Proprietários
+ html += '<div class="review-section-title">Proprietário(s)</div>';
+ document.querySelectorAll('.prop-block').forEach((block, i) => {
+ const idx = block.id.replace('prop_block_','');
+ const formDiv = document.getElementById('prop_form_'+idx);
+ const type = formDiv?.dataset.type || 'singular';
+ html += `<table class="review-table">`;
+ if (type === 'singular') {
+ html += rv('Nome', gv('p'+idx+'_nome'));
+ html += rv('Estado Civil', gv('p'+idx+'_ec'));
+ html += rv('CC', gv('p'+idx+'_cc'));
+ html += rv('NIF', gv('p'+idx+'_nif'));
+ html += rv('Morada', gv('p'+idx+'_rua')+' · '+gv('p'+idx+'_cp')+' '+gv('p'+idx+'_conc'));
+ } else if (type === 'casado') {
+ html += rv('Regime', gv('p'+idx+'_regime'));
+ html += rv('1.º Cônjuge', gv('p'+idx+'_nome1')+' — CC '+gv('p'+idx+'_cc1')+' — NIF '+gv('p'+idx+'_nif1'));
+ html += rv('2.º Cônjuge', gv('p'+idx+'_nome2')+' — CC '+gv('p'+idx+'_cc2')+' — NIF '+gv('p'+idx+'_nif2'));
+ html += rv('Morada', gv('p'+idx+'_rua')+' · '+gv('p'+idx+'_cp')+' '+gv('p'+idx+'_conc'));
+ } else if (type === 'empresa') {
+ html += rv('Empresa', gv('p'+idx+'_emp_nome'));
+ html += rv('NIPC', gv('p'+idx+'_nipc'));
+ if (gv('p'+idx+'_capital')) html += rv('Capital Social', gv('p'+idx+'_capital'));
+ if (gv('p'+idx+'_crc')) html += rv('Matriculada na CRC de', gv('p'+idx+'_crc'));
+ html += rv('Sede Social', gv('p'+idx+'_sede_rua')+', '+gv('p'+idx+'_sede_cp')+' '+gv('p'+idx+'_sede_freg')+', '+gv('p'+idx+'_sede_conc'));
+ html += rv('Representante', gv('p'+idx+'_rep_nome')+' ('+gv('p'+idx+'_rep_cargo')+')');
+ html += rv('CC Representante', gv('p'+idx+'_rep_cc')+' · válido até '+fmtData(gv('p'+idx+'_rep_cc_val')));
+ html += rv('NIF Representante', gv('p'+idx+'_rep_nif'));
+ const repNat = [gv('p'+idx+'_rep_nat_freg'),gv('p'+idx+'_rep_nat_conc')].filter(Boolean).join(', ');
+ if (repNat) html += rv('Naturalidade', repNat);
+ html += rv('Morada Representante', gv('p'+idx+'_rep_morada')+' · '+gv('p'+idx+'_rep_cp')+' '+gv('p'+idx+'_rep_conc'));
+ }
+ html += `</table>`;
+ });
+
+ // Imóvel
+ html += '<div class="review-section-title">Imóvel</div><table class="review-table">';
+ html += rv('Tipo', tipoLabels[imovelTipo] || imovelTipo);
+ html += rv('Fração', gv('imovel_fracao'));
+ html += rv('Tipologia', gv('imovel_tipologia'));
+ html += rv('Morada', gv('imovel_morada')+' · '+gv('imovel_cp')+' '+gv('imovel_freguesia')+' · '+gv('imovel_concelho'));
+ html += rv('Área', imovelTipo==='terreno' ? gv('imovel_area_terreno')+' m²' : imovelTipo==='moradia' ? gv('imovel_area')+' m²' : gv('imovel_area_apt')+' m²');
+ if (imovelTipo === 'terreno') {
+ if (gv('terreno_tipo')) html += rv('Tipo de Terreno', gv('terreno_tipo'));
+ if (gv('terreno_area_total')) html += rv('Área Total', gv('terreno_area_total')+' m²');
+ if (gv('terreno_area_implantacao')) html += rv('Área Implantação', gv('terreno_area_implantacao')+' m²');
+ if (gv('terreno_area_construcao')) html += rv('Área Bruta Construção', gv('terreno_area_construcao')+' m²');
+ if (gv('terreno_area_dependente')) html += rv('Área Bruta Dependente', gv('terreno_area_dependente')+' m²');
+ }
+ if (imovelTipo === 'moradia') {
+ if (gv('mor_tipologia')) html += rv('Tipologia', gv('mor_tipologia'));
+ if (gv('mor_area_util')) html += rv('Área Útil', gv('mor_area_util')+' m²');
+ if (gv('mor_area_terreno')) html += rv('Área Total Terreno', gv('mor_area_terreno')+' m²');
+ if (gv('mor_area_implantacao')) html += rv('Área Implantação', gv('mor_area_implantacao')+' m²');
+ if (gv('mor_area_construcao')) html += rv('Área Bruta Construção', gv('mor_area_construcao')+' m²');
+ if (gv('mor_area_dependente')) html += rv('Área Bruta Dependente', gv('mor_area_dependente')+' m²');
+ }
+ if (imovelTipo === 'edificio') {
+ if (gv('edificio_tipo')) html += rv('Tipo de Prédio', gv('edificio_tipo'));
+ if (gv('edificio_destino')) html += rv('Destinado a', gv('edificio_destino'));
+ if (gv('edificio_pisos')) html += rv('Nº de Pisos', gv('edificio_pisos'));
+ if (gv('edificio_area_terreno')) html += rv('Área Total Terreno', gv('edificio_area_terreno')+' m²');
+ if (gv('edificio_area_implantacao')) html += rv('Área Implantação', gv('edificio_area_implantacao')+' m²');
+ if (gv('edificio_area_bruta_total')) html += rv('Área Bruta Privativa Total', gv('edificio_area_bruta_total')+' m²');
+ if (gv('edificio_tipo') === 'Propriedade Horizontal (PH)') {
+ document.querySelectorAll('#fracoes_container .artigo-block').forEach((b,i) => {
+ const n = i+1;
+ const des = document.getElementById('frac'+n+'_designacao')?.value||'';
+ const dst = document.getElementById('frac'+n+'_destino')?.value||'';
+ const art = document.getElementById('frac'+n+'_artigo')?.value||'';
+ const area = document.getElementById('frac'+n+'_area')?.value||'';
+ const piso = document.getElementById('frac'+n+'_piso')?.value||'';
+ html += rv('Fracção '+des, dst+(art?' · art. '+art:'')+(area?' · '+area+' m²':'')+(piso?' · '+piso:''));
+ });
+ }
+ }
+ html += rv('Destino', imovelTipo==='moradia' ? gv('imovel_destino_mor') : imovelTipo==='edificio' ? gv('edificio_destino') : imovelTipo==='terreno' ? '' : gv('imovel_destino'));
+ if (imovelTipo === 'moradia' && gv('imovel_destino_mor') === 'Misto') {
+ html += rv('Registo Rústico — CRP', gv('rust_crp')+(gv('rust_crp_num')?' — Descrição n.º '+gv('rust_crp_num'):''));
+ html += rv('Registo Rústico — Matriz', gv('rust_matriz_tipo')+' — artigo '+gv('rust_artigo')+' — '+gv('rust_matriz_freg')+', '+gv('rust_matriz_conc'));
+ }
+ html += rv('CRP', gv('imovel_crp')+' — Descrição n.º '+gv('imovel_crp_num'));
+ html += rv('Matriz', gv('imovel_matriz_tipo')+' — artigo '+gv('imovel_artigo'));
+ html += rv('Licença', getRadio('licenca'));
+ html += rv('Cert. Energético', gv('imovel_cert_tipo')==='possui' ? 'N.º '+gv('imovel_cert_num') : gv('imovel_cert_tipo'));
+ html += '</table>';
+
+ // Negócio
+ html += '<div class="review-section-title">Negócio</div><table class="review-table">';
+ html += rv('Tipo', getRadio('negocio'));
+ html += rv('Preço', preco>0?preco.toLocaleString('pt-PT')+'€':'—');
+ html += rv('Preço por Extenso', gv('neg_preco_extenso'));
+ html += rv('Ónus', getRadio('onus')==='tem_onus'?'Com ónus — '+gv('neg_onus_valor')+'€':'Livre de ónus');
+ html += rv('Regime', getRadio('regime'));
+ html += '</table>';
+
+ // Contrato
+ html += '<div class="review-section-title">Remuneração e Prazo</div><table class="review-table">';
+ html += rv('Comissão', gv('rem_percentagem')+'% = '+vCom);
+ html += rv('Pagamento', getRadio('pagamento')==='escritura'?'Total na escritura':'CPCV '+gv('pag_cpcv_perc')+'% / Escritura '+gv('pag_escrit_perc')+'%');
+ html += rv('Duração', gv('contrato_prazo')+' meses');
+ html += '</table>';
+
+ // Fecho
+ html += '<div class="review-section-title">Fecho</div><table class="review-table">';
+ html += rv('Referência', gv('contrato_ref'));
+ html += rv('Local / Data', gv('contrato_local')+' — '+fmtData(gv('contrato_data')));
+ html += rv('Angariador', gv('ang_nome'));
+ html += rv('RGPD Marketing', getRadio('rgpd')==='autoriza'?'Autoriza':'Não autoriza');
+ html += '</table>';
+
+ document.getElementById('review-content').innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// UTILITÁRIOS
+// ═══════════════════════════════════════════
+function fmtData(raw) {
+ if (!raw) return '—';
+ const [y,m,d] = raw.split('-');
+ return d+'/'+m+'/'+y;
+}
+
+function fp(val) {
+ const n = parseFloat(val)||0;
+ return n > 0 ? n.toLocaleString('pt-PT',{minimumFractionDigits:2})+'€' : '___';
+}
+
+function e(v) {
+ return (v||'___').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function ne(n) {
+ const ns = {'1':'um','2':'dois','3':'três','4':'quatro','5':'cinco','6':'seis','7':'sete','8':'oito','9':'nove','10':'dez','11':'onze','12':'doze','18':'dezoito','24':'vinte e quatro'};
+ return ns[String(n)] || String(n);
+}
+
+// ═══════════════════════════════════════════
+// GERAR PDF
+// ═══════════════════════════════════════════
+function gerarPDF() {
+ // Recolher dados dos proprietários
+ const pessoas = [];
+ document.querySelectorAll('.prop-block').forEach(block => {
+ const idx = block.id.replace('prop_block_','');
+ const formDiv = document.getElementById('prop_form_'+idx);
+ const type = formDiv?.dataset.type || 'singular';
+ const p = {type};
+ if (type === 'singular') {
+ p.nome=gv('p'+idx+'_nome');p.ec=gv('p'+idx+'_ec');p.cc=gv('p'+idx+'_cc');
+ p.cc_val=fmtData(gv('p'+idx+'_cc_val'));
+ p.nif=gv('p'+idx+'_nif');p.nacionalidade=gv('p'+idx+'_nacionalidade');
+ p.nat_freg=gv('p'+idx+'_nat_freg');p.nat_conc=gv('p'+idx+'_nat_conc');
+ p.morada=gv('p'+idx+'_rua')+', '+gv('p'+idx+'_cp')+' '+gv('p'+idx+'_freg')+' '+gv('p'+idx+'_conc');
+ } else if (type === 'casado') {
+ p.regime=gv('p'+idx+'_regime');p.nome1=gv('p'+idx+'_nome1');p.nome2=gv('p'+idx+'_nome2');
+ p.cc1=gv('p'+idx+'_cc1');p.cc2=gv('p'+idx+'_cc2');
+ p.cc1_val=fmtData(gv('p'+idx+'_cc1_val'));p.cc2_val=fmtData(gv('p'+idx+'_cc2_val'));
+ p.nif1=gv('p'+idx+'_nif1');p.nif2=gv('p'+idx+'_nif2');
+ p.nacionalidade1=gv('p'+idx+'_nacionalidade1');p.nacionalidade2=gv('p'+idx+'_nacionalidade2');
+ p.nat1=gv('p'+idx+'_nat1_freg')&&gv('p'+idx+'_nat1_conc')?gv('p'+idx+'_nat1_freg')+', '+gv('p'+idx+'_nat1_conc'):'';
+ p.nat2=gv('p'+idx+'_nat2_freg')&&gv('p'+idx+'_nat2_conc')?gv('p'+idx+'_nat2_freg')+', '+gv('p'+idx+'_nat2_conc'):'';
+ p.morada=gv('p'+idx+'_rua')+', '+gv('p'+idx+'_cp')+' '+gv('p'+idx+'_freg')+' '+gv('p'+idx+'_conc');
+ } else if (type === 'empresa') {
+ p.emp_nome=gv('p'+idx+'_emp_nome');p.nipc=gv('p'+idx+'_nipc');
+ p.capital=gv('p'+idx+'_capital');p.crc=gv('p'+idx+'_crc');
+ p.sede=gv('p'+idx+'_sede_rua')+', '+gv('p'+idx+'_sede_cp')+' '+gv('p'+idx+'_sede_freg')+', '+gv('p'+idx+'_sede_conc');
+ p.rep_nome=gv('p'+idx+'_rep_nome');p.rep_cargo=gv('p'+idx+'_rep_cargo');
+ p.rep_cc=gv('p'+idx+'_rep_cc');p.rep_cc_val=fmtData(gv('p'+idx+'_rep_cc_val'));
+ p.rep_nif=gv('p'+idx+'_rep_nif');
+ p.rep_nat=gv('p'+idx+'_rep_nat_freg')&&gv('p'+idx+'_rep_nat_conc')?gv('p'+idx+'_rep_nat_freg')+', '+gv('p'+idx+'_rep_nat_conc'):'';
+ p.rep_nacionalidade=gv('p'+idx+'_rep_nacionalidade');
+ p.rep_morada=gv('p'+idx+'_rep_morada')+', '+gv('p'+idx+'_rep_cp')+' '+gv('p'+idx+'_rep_freg')+' '+gv('p'+idx+'_rep_conc');
+ }
+ pessoas.push(p);
+ });
+
+ // Artigos matriciais (terreno)
+ let artigosTexto = '';
+ if (imovelTipo === 'terreno') {
+ const arts = [];
+ document.querySelectorAll('.artigo-block').forEach((b,i) => {
+ const n = i+1;
+ const artNum = document.getElementById('art'+n+'_num')?.value||'';
+ const artFrg = document.getElementById('art'+n+'_freg')?.value||'';
+ if (artNum) arts.push('artigo '+artNum+(artFrg?' da freguesia de '+artFrg:''));
+ });
+ artigosTexto = arts.join('; ');
+ } else {
+ artigosTexto = 'artigo '+gv('imovel_artigo')+(gv('imovel_matriz_freg')?' da freguesia de '+gv('imovel_matriz_freg'):'')+' da matriz predial urbana'+(gv('imovel_matriz_conc')?' do concelho de '+gv('imovel_matriz_conc'):'');
+ }
+
+ // Textos das cláusulas
+ const tipoLabels = {apartamento:'fracção autónoma',moradia:'prédio urbano',terreno:'terreno urbanizável',comercial:'fracção autónoma para comércio/serviços',edificio:'prédio urbano'};
+ const fracaoVal = gv('imovel_fracao');
+ const iDesc_base = fracaoVal ? 'fracção autónoma '+e(fracaoVal) : (tipoLabels[imovelTipo] || imovelTipo);
+ const area = imovelTipo==='terreno' ? gv('imovel_area_terreno') : imovelTipo==='moradia' ? gv('imovel_area') : gv('imovel_area_apt');
+ let areaTxt = area ? area+' m²' : '';
+ if (imovelTipo === 'terreno') {
+ const partes = [];
+ if (gv('terreno_tipo')) partes.push('terreno do tipo '+gv('terreno_tipo'));
+ if (gv('terreno_area_total')) partes.push('área total de '+gv('terreno_area_total')+' m²');
+ if (gv('terreno_area_implantacao')) partes.push('área de implantação de '+gv('terreno_area_implantacao')+' m²');
+ if (gv('terreno_area_construcao')) partes.push('área bruta de construção de '+gv('terreno_area_construcao')+' m²');
+ if (gv('terreno_area_dependente')) partes.push('área bruta dependente de '+gv('terreno_area_dependente')+' m²');
+ areaTxt = partes.join(', ');
+ } else if (imovelTipo === 'moradia') {
+ const partes = [];
+ if (gv('imovel_area')) partes.push('área bruta privativa de '+gv('imovel_area')+' m²');
+ if (gv('mor_area_util')) partes.push('área útil de '+gv('mor_area_util')+' m²');
+ if (gv('mor_area_terreno')) partes.push('área total do terreno de '+gv('mor_area_terreno')+' m²');
+ if (gv('mor_area_implantacao')) partes.push('área de implantação de '+gv('mor_area_implantacao')+' m²');
+ if (gv('mor_area_construcao')) partes.push('área bruta de construção de '+gv('mor_area_construcao')+' m²');
+ if (gv('mor_area_dependente')) partes.push('área bruta dependente de '+gv('mor_area_dependente')+' m²');
+ areaTxt = partes.join(', ');
+ } else if (imovelTipo === 'edificio') {
+ const partes = [];
+ if (gv('edificio_pisos')) partes.push(gv('edificio_pisos')+' piso(s)');
+ if (gv('edificio_area_terreno')) partes.push('área total do terreno de '+gv('edificio_area_terreno')+' m²');
+ if (gv('edificio_area_implantacao')) partes.push('área de implantação de '+gv('edificio_area_implantacao')+' m²');
+ if (gv('edificio_area_bruta_total')) partes.push('área bruta privativa total de '+gv('edificio_area_bruta_total')+' m²');
+ areaTxt = partes.join(', ');
+ }
+ const edificioTipoTxt = imovelTipo === 'edificio' && gv('edificio_tipo') ? ' em regime de '+gv('edificio_tipo') : '';
+ const tipologiaTxt = imovelTipo === 'moradia'
+ ? (gv('mor_tipologia') ? ' ('+gv('mor_tipologia')+')' : '')
+ : (gv('imovel_tipologia') ? ' ('+gv('imovel_tipologia')+')' : '');
+ const iDesc = iDesc_base+tipologiaTxt+edificioTipoTxt+(areaTxt?', com '+areaTxt:'')+', sito em '+e(gv('imovel_morada'))+', '+e(gv('imovel_cp'))+', freguesia de '+e(gv('imovel_freguesia'))+', concelho de '+e(gv('imovel_concelho'));
+ const licVal = getRadio('licenca');
+ const licT = licVal==='licenciado'
+ ? 'O imóvel encontra-se licenciado para '+e(gv('lic_para'))+', alvará n.º '+e(gv('lic_alvara'))+', emitido pela Câmara Municipal de '+e(gv('lic_camara'))+'.'
+ : licVal==='anterior1951' ? 'O imóvel encontra-se inscrito na matriz predial anterior a 1951, não sendo exigível Licença de Utilização nos termos legais.'
+ : 'Terreno urbanizável, não sujeito a licença de utilização.';
+ const certVal = gv('imovel_cert_tipo');
+ const certT = certVal==='possui'
+ ? 'O imóvel possui Certificado Energético n.º '+e(gv('imovel_cert_num'))+', válido até '+fmtData(gv('imovel_cert_val'))+'.'
+ : certVal==='dispensado' ? 'O imóvel está dispensado de Certificado Energético, nos termos legais.'
+ : 'O Certificado Energético encontra-se em processo de obtenção.';
+ const onusVal = getRadio('onus');
+ const onusValorRaw = parseInt((gv('neg_onus_valor')||'').replace(/[^\d]/g,'')) || 0;
+ const onusValorFmt = onusValorRaw > 0 ? onusValorRaw.toLocaleString('pt-PT')+'€' : '___';
+ const onT = onusVal==='livre'
+ ? '1 – O imóvel encontra-se livre de quaisquer ónus ou encargos.'
+ : '1 – O(s) Segundo(s) Contratante(s) declara(m) que sobre o imóvel recaem ónus ou encargos, pelo valor de € '+onusValorFmt+'.';
+ const regimeVal = getRadio('regime');
+ const preco = getRawPreco();
+ const perc = parseFloat(gv('rem_percentagem'))||0;
+ const vCom = preco>0&&perc>0 ? (preco*perc/100).toLocaleString('pt-PT',{minimumFractionDigits:2})+' €' : '___';
+ const remT = 'A quantia de '+gv('rem_percentagem')+'% calculada sobre o preço pelo qual o negócio é efetivamente concluído (correspondente a '+vCom+'), acrescida de IVA à taxa legal de 23%.';
+ const pagVal = getRadio('pagamento');
+ const pagT = pagVal==='escritura'
+ ? 'O total da remuneração aquando da celebração da escritura ou conclusão do negócio.'
+ : 'Parcial no CPCV: '+gv('pag_cpcv_perc')+'% após a celebração do contrato-promessa; e o remanescente de '+gv('pag_escrit_perc')+'% na conclusão do negócio.';
+ const prazo = gv('contrato_prazo');
+ const local = gv('contrato_local');
+ const dataAss = fmtData(gv('contrato_data'));
+ const rgpdVal = getRadio('rgpd');
+ const rgpdT = rgpdVal==='autoriza'
+ ? 'O(s) Segundo(s) Contratante(s) autoriza(m) expressamente o tratamento dos seus dados para fins de marketing e comunicações comerciais da Mediadora.'
+ : 'O(s) Segundo(s) Contratante(s) não autoriza(m) o tratamento dos dados para fins de marketing, autorizando apenas o tratamento necessário à execução do presente contrato.';
+
+ // Texto dos contratantes
+ function clientesTexto() {
+ return pessoas.map(p => {
+ if (p.type==='singular') {
+ const natS = [p.nat_freg,p.nat_conc].filter(Boolean).join(', ');
+ let s = e(p.nome)+', '+e(p.ec)+(p.nacionalidade?', de nacionalidade '+e(p.nacionalidade):'')+( natS?', natural de '+e(natS):'')+', portador(a) do CC n.º '+e(p.cc)+(p.cc_val&&p.cc_val!=='—'?', válido até '+e(p.cc_val):'')+', NIF '+e(p.nif)+', residente em '+e(p.morada);
+ return s;
+ }
+ if (p.type==='casado') {
+ return e(p.nome1)+(p.nacionalidade1?', de nacionalidade '+e(p.nacionalidade1):'')+( p.nat1?', natural de '+e(p.nat1):'')+', CC n.º '+e(p.cc1)+(p.cc1_val&&p.cc1_val!=='—'?', válido até '+e(p.cc1_val):'')+', NIF '+e(p.nif1)
+ +' e '+e(p.nome2)+(p.nacionalidade2?', de nacionalidade '+e(p.nacionalidade2):'')+( p.nat2?', natural de '+e(p.nat2):'')+', CC n.º '+e(p.cc2)+(p.cc2_val&&p.cc2_val!=='—'?', válido até '+e(p.cc2_val):'')+', NIF '+e(p.nif2)
+ +', casados no regime de '+e(p.regime)+', residentes em '+e(p.morada);
+ }
+ if (p.type==='empresa') {
+ let s = e(p.emp_nome)+', NIPC '+e(p.nipc);
+ if (p.capital) s += ', capital social de '+e(p.capital);
+ if (p.crc) s += ', matriculada na Conservatória do Registo Comercial de '+e(p.crc);
+ s += ', com sede em '+e(p.sede);
+ s += ', representada por '+e(p.rep_nome)+(p.rep_cargo?' ('+e(p.rep_cargo)+')':'');
+ if (p.rep_nacionalidade) s += ', de nacionalidade '+e(p.rep_nacionalidade);
+ if (p.rep_nat) s += ', natural de '+e(p.rep_nat);
+ s += ', portador(a) do CC n.º '+e(p.rep_cc)+(p.rep_cc_val&&p.rep_cc_val!=='—'?', válido até '+e(p.rep_cc_val):'');
+ s += ', NIF '+e(p.rep_nif)+', residente em '+e(p.rep_morada);
+ return s;
+ }
+ }).join(';\ne ');
+ }
+
+ function sigBoxes() {
+ const boxes = [];
+ pessoas.forEach((p, i) => {
+ const contraLabel = pessoas.length === 1 ? 'O(A) Segundo(a) Contratante' : 'O(A) '+(i+1)+'º(ª) Segundo(a) Contratante';
+ if (p.type === 'casado') {
+ boxes.push('<div class="sig-box"><div class="sig-label">'+contraLabel+' — 1.º Cônjuge</div><div class="sig-blank"></div><div class="sig-name">'+e(p.nome1||'')+'</div></div>');
+ boxes.push('<div class="sig-box"><div class="sig-label">'+contraLabel+' — 2.º Cônjuge</div><div class="sig-blank"></div><div class="sig-name">'+e(p.nome2||'')+'</div></div>');
+ } else {
+ const nm = p.type === 'empresa' ? e(p.emp_nome||'') : e(p.nome||'');
+ boxes.push('<div class="sig-box"><div class="sig-label">'+contraLabel+'</div><div class="sig-blank"></div><div class="sig-name">'+nm+'</div></div>');
+ }
+ });
+ return boxes.join('');
+ }
+
+ // Construir HTML do PDF
+ const parts = [];
+ const add = html => parts.push(html);
+
+ add('<div class="hl"><h1>Contrato de Mediação Imobiliária</h1><div class="subtitle">Lei n.º 15/2013, de 8 de Fevereiro'+(E.ami?' · AMI n.º '+e(E.ami):'')+(gv('contrato_ref')?' · Ref. '+e(gv('contrato_ref')):'')+'</div></div>');
+ add('<div class="eb"><strong>'+e(E.nome)+'</strong>, com sede social em '+e(E.sede)+', com capital social de '+e(E.capital)+', matriculada na '+e(E.conservatoria)+', sob o número único de matrícula e de NIPC '+e(E.nipc)+', detentora da licença AMI N.º '+e(E.ami)+', emitida pelo Instituto dos Mercados Públicos, do Imobiliário e da Construção, I.P. (IMPIC, I.P), adiante designada como <strong>«Primeira Contratante»</strong> ou <strong>«Mediadora»</strong>;</div>');
+ add('<div class="partes"><strong>e</strong><br>'+clientesTexto()+',<br>adiante <strong>«Segundo(s) Contratante(s)»</strong>;</div>');
+ add('<p class="intro">Celebram o presente <strong>Contrato de Mediação Imobiliária</strong>, regido pelas cláusulas seguintes e, supletivamente, pela Lei n.º 15/2013, de 8 de Fevereiro.</p>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 1ª</div><div class="cl-s">(Identificação do Imóvel)</div>');
+ add('<p>1 – O presente contrato tem por objeto a mediação para a <strong>Venda</strong> do seguinte imóvel:</p>');
+ add('<p class="ind">'+iDesc+'.</p>');
+ add('<p>2 – Descrito na Conservatória do Registo Predial de '+e(gv('imovel_crp')||'___')+', sob a descrição n.º '+e(gv('imovel_crp_num')||'___')+(fracaoVal?', fração autónoma '+e(fracaoVal):'')+', inscrito na matriz predial '+e(gv('imovel_matriz_tipo'))+', '+artigosTexto+'.</p>');
+ if (imovelTipo === 'edificio' && gv('edificio_tipo') === 'Propriedade Horizontal (PH)') {
+ const fracList = [];
+ document.querySelectorAll('#fracoes_container .artigo-block').forEach((b,i) => {
+ const n = i+1;
+ const des = document.getElementById('frac'+n+'_designacao')?.value||'';
+ const dst = document.getElementById('frac'+n+'_destino')?.value||'';
+ const art = document.getElementById('frac'+n+'_artigo')?.value||'';
+ const crpNum = document.getElementById('frac'+n+'_crp_num')?.value||'';
+ const area = document.getElementById('frac'+n+'_area')?.value||'';
+ const piso = document.getElementById('frac'+n+'_piso')?.value||'';
+ if (des) {
+ let txt = 'Fracção '+e(des)+(piso?' ('+e(piso)+')':'')+', destinada a '+e(dst);
+ if (art) txt += ', artigo matricial '+e(art);
+ if (crpNum) txt += ', descrição n.º '+e(crpNum);
+ if (area && area !== '-') txt += ', com área bruta privativa de '+e(area)+' m²';
+ const certTipo = document.getElementById('frac'+n+'_cert_tipo')?.value||'';
+ const certNum = document.getElementById('frac'+n+'_cert_num')?.value||'';
+ const certVal = document.getElementById('frac'+n+'_cert_val')?.value||'';
+ if (certTipo === 'possui' && certNum) txt += ', Certificado Energético n.º '+e(certNum)+(certVal?', válido até '+fmtData(certVal):'');
+ else if (certTipo === 'em_obtencao') txt += ', Certificado Energético em processo de obtenção';
+ else if (certTipo === 'dispensado') txt += ', dispensado de Certificado Energético';
+ fracList.push(txt);
+ }
+ });
+ if (fracList.length > 0) {
+ add('<p>3 – O prédio é constituído pelas seguintes fracções autónomas:</p>');
+ add('<div class="ind">'+fracList.map((f,i) => '<p>'+(i+1)+'ª — '+f+'.</p>').join('')+'</div>');
+ }
+ }
+ if (imovelTipo === 'moradia' && gv('imovel_destino_mor') === 'Misto') {
+ // Artigos urbanos extras
+ let urbExtras = '';
+ document.querySelectorAll('#artigos_urbanos_extra_container .artigo-block').forEach((b,i) => {
+ const n = i+1;
+ const crp = document.getElementById('urb'+n+'_crp')?.value||'';
+ const crpNum = document.getElementById('urb'+n+'_crp_num')?.value||'';
+ const art = document.getElementById('urb'+n+'_artigo')?.value||'';
+ const freg = document.getElementById('urb'+n+'_freg')?.value||'';
+ const conc = document.getElementById('urb'+n+'_conc')?.value||'';
+ const mat = document.getElementById('urb'+n+'_matriz_tipo')?.value||'';
+ if (art) urbExtras += ' Adicionalmente, artigo '+e(art)+(freg?' da freguesia de '+e(freg):'')+(conc?', concelho de '+e(conc):'')+(mat?', matriz predial '+e(mat):'')+', descrito na CRP de '+e(crp)+', descrição n.º '+e(crpNum)+'.';
+ });
+ // Artigos rústicos extras
+ let rusExtras = '';
+ document.querySelectorAll('#artigos_rusticos_extra_container .artigo-block').forEach((b,i) => {
+ const n = i+1;
+ const crp = document.getElementById('rus'+n+'_crp')?.value||'';
+ const crpNum = document.getElementById('rus'+n+'_crp_num')?.value||'';
+ const art = document.getElementById('rus'+n+'_artigo')?.value||'';
+ const freg = document.getElementById('rus'+n+'_freg')?.value||'';
+ const conc = document.getElementById('rus'+n+'_conc')?.value||'';
+ const mat = document.getElementById('rus'+n+'_matriz_tipo')?.value||'';
+ if (art) rusExtras += ' Adicionalmente, artigo '+e(art)+(freg?' da freguesia de '+e(freg):'')+(conc?', concelho de '+e(conc):'')+(mat?', matriz predial '+e(mat):'')+', descrito na CRP de '+e(crp)+', descrição n.º '+e(crpNum)+'.';
+ });
+ add('<p>3 – A parte rústica encontra-se descrita na Conservatória do Registo Predial de '+e(gv('rust_crp')||'___')+', sob a descrição n.º '+e(gv('rust_crp_num')||'___')+', inscrita na matriz predial '+e(gv('rust_matriz_tipo'))+', artigo '+e(gv('rust_artigo'))+(gv('rust_matriz_freg')?', da freguesia de '+e(gv('rust_matriz_freg')):'')+(gv('rust_matriz_conc')?', do concelho de '+e(gv('rust_matriz_conc')):'')+'.'+(rusExtras||'')+'</p>');
+ if (urbExtras) add('<p>4 – Artigos urbanos adicionais:'+urbExtras+'</p>');
+ }
+ add('<p>3 – '+licT+'</p>');
+ add('<p>4 – '+certT+'</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 2ª</div><div class="cl-s">(Preço)</div>');
+ add('<p>O imóvel é colocado à venda pelo preço de <strong>'+preco.toLocaleString('pt-PT')+'€</strong> ('+e(gv('neg_preco_extenso'))+'), podendo a Mediadora promover o negócio por preço diferente desde que autorizada por escrito pelo(s) Segundo(s) Contratante(s).</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 3ª</div><div class="cl-s">(Ónus e Encargos)</div>');
+ add('<p>'+onT+'</p>');
+ add('<p>2 – Em caso de existência de ónus ou encargos, o(s) Segundo(s) Contratante(s) obriga(m)-se a comunicar à Mediadora qualquer alteração de imediato.</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 4ª</div><div class="cl-s">(Regime de Contratação)</div>');
+ add('<p>1 – O(s) Segundo(s) Contratante(s) contrata(m) a Mediadora em regime de:</p>');
+ add('<div class="ind">');
+ add('<div class="chk"><div class="box">'+(regimeVal==='Exclusividade'?'&#10003;':'&nbsp;')+'</div><span>Exclusividade</span></div>');
+ add('<div class="chk"><div class="box">'+(regimeVal==='Não exclusividade'?'&#10003;':'&nbsp;')+'</div><span>Não exclusividade</span></div>');
+ add('</div>');
+ add('<p>2 – Em regime de exclusividade, só a Mediadora contratada tem o direito de promover o negócio durante o período de vigência do contrato, nos termos da legislação aplicável.</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 5ª</div><div class="cl-s">(Remuneração)</div>');
+ add('<p>1 – A remuneração só é devida se a Mediadora conseguir destinatário que celebre o negócio visado, nos termos do artigo 19.º da Lei n.º 15/2013.</p>');
+ add('<p>2 – O(s) Segundo(s) Contratante(s) obrigam-se a pagar à Mediadora, a título de remuneração:</p>');
+ add('<div class="ind"><div class="chk"><div class="box">&#10003;</div><span>Percentagem sobre o preço de venda</span></div>');
+ add('<p style="margin-top:4pt;">'+remT+'</p></div>');
+ add('<p>3 – Condições de pagamento:</p>');
+ add('<div class="ind">');
+ add('<div class="chk"><div class="box">'+(pagVal==='escritura'?'&#10003;':'&nbsp;')+'</div><span>Total aquando da escritura ou conclusão do negócio.</span></div>');
+ add('<div class="chk"><div class="box">'+(pagVal==='promessa_escritura'?'&#10003;':'&nbsp;')+'</div><span>'+pagT+'</span></div>');
+ add('</div></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 6ª</div><div class="cl-s">(Obtenção de Documentos e Reembolso de Despesas)</div>');
+ add('<p>1 – Sempre que a Mediadora adiante despesas para obtenção de documentação em nome do Cliente — certidões, licenças, cadernetas prediais ou outros documentos junto de entidades públicas — o Cliente obriga-se a reembolsar integralmente esses montantes.</p>');
+ add('<p>2 – O reembolso é efetuado mediante apresentação de fatura ou comprovativo e é exigível independentemente da conclusão do negócio.</p>');
+ add('<p>3 – O reembolso é exigível na data da escritura pública ou, se o negócio não se concretizar por razão imputável ao Cliente, no prazo de quinze (15) dias após notificação escrita.</p>');
+ add('<p>4 – Consideram-se despesas reembolsáveis: licença de utilização, certidão predial, caderneta predial, certidão de teor e taxas pagas em nome do Cliente.</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 7ª</div><div class="cl-s">(Garantias da Atividade de Mediação)</div>');
+ add('<p>A Mediadora celebrou contrato de seguro obrigatório de responsabilidade civil no valor de € '+e(E.seguro_valor)+' ('+e(E.seguro_valor_extenso)+' Euros), apólice n.º '+e(E.seguro_apolice)+', seguradora '+e(E.seguro_seguradora)+'.</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 8ª</div><div class="cl-s">(Prazo de Duração do Contrato)</div>');
+ add('<p>1 – O presente contrato tem validade de '+e(prazo)+' ('+ne(prazo)+') meses a partir da data de celebração, renovando-se automaticamente por iguais períodos.</p>');
+ add('<p>2 – Qualquer das partes pode denunciá-lo mediante comunicação escrita com antecedência mínima de 10 dias relativamente ao termo do prazo em curso.</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 9ª</div><div class="cl-s">(Proteção de Dados — RGPD)</div>');
+ add('<p>Os dados pessoais são tratados nos termos do RGPD (Reg. UE 2016/679) exclusivamente para execução do contrato e cumprimento de obrigações legais, sendo conservados pelo prazo legal de 7 anos. Os titulares podem exercer os seus direitos através dos contactos da Mediadora.</p>');
+ add('<p>'+rgpdT+'</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="cl"><div class="cl-t">Cláusula 10ª</div><div class="cl-s">(Resolução de Litígios)</div>');
+ add('<p>Para resolução de litígios emergentes do presente contrato, as partes elegem o foro da comarca onde se situa o imóvel, com renúncia a qualquer outro.</p></div>');
+
+ add('<hr class="dv">');
+ add('<div class="sig-sec"><p style="font-size:9.5pt;">Feito em <strong>'+e(local)+'</strong>, aos <strong>'+dataAss+'</strong>, em dois exemplares de igual valor, ficando um em poder de cada parte.</p><div class="sig-grid"><div class="sig-box"><div class="sig-label">A Primeira Contratante — A Mediadora</div><div class="sig-blank"></div><div class="sig-name">'+e(E.nome)+'</div></div>'+sigBoxes()+'</div></div>');
+ add('<div class="footer">Contrato de Mediação Imobiliária · '+e(E.nome)+(E.ami?' · AMI n.º '+e(E.ami):'')+' · Lei n.º 15/2013, de 8 de Fevereiro</div>');
+
+ const body = parts.join('');
+ const css = `
+ *{margin:0;padding:0;box-sizing:border-box;}
+ body{font-family:"DM Sans",Helvetica,Arial,sans-serif;font-size:10pt;color:#1a1612;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+ .page{width:210mm;min-height:297mm;padding:12mm 14mm;margin:0 auto;}
+ h1{font-family:"Cormorant Garamond",Georgia,serif;font-size:20pt;font-weight:700;margin-bottom:3pt;}
+ .subtitle{font-size:9pt;color:#5c5449;margin-bottom:12pt;letter-spacing:.04em;}
+ .hl{border-bottom:2pt solid #b8935a;margin-bottom:12pt;padding-bottom:8pt;text-align:center;}
+ .eb{font-size:9pt;margin-bottom:12pt;line-height:1.6;background:#f9f7f3;border-left:3pt solid #b8935a;padding:8pt 10pt;}
+ .partes{margin-bottom:10pt;font-size:9.5pt;line-height:1.6;white-space:pre-wrap;}
+ .intro{font-size:9.5pt;line-height:1.65;margin-bottom:10pt;text-align:justify;}
+ hr.dv{border:none;border-top:.5pt solid #d8cfc0;margin:8pt 0;}
+ .cl{margin-bottom:8pt;}.cl-t{font-weight:700;font-size:10pt;margin-bottom:1pt;}
+ .cl-s{font-weight:700;font-size:9.5pt;margin-bottom:5pt;}
+ .cl p{font-size:9.5pt;line-height:1.65;margin-bottom:4pt;text-align:justify;word-wrap:break-word;white-space:pre-wrap;}
+ .ind{padding-left:14pt;font-size:9.5pt;line-height:1.6;margin-bottom:3pt;}
+ .chk{display:flex;align-items:flex-start;gap:5pt;margin-bottom:3pt;font-size:9.5pt;line-height:1.4;}
+ .box{width:10pt;height:10pt;border:.8pt solid #1a1612;flex-shrink:0;margin-top:1pt;font-size:8pt;text-align:center;line-height:10pt;}
+ .sig-sec{margin-top:20pt;break-before:page;page-break-before:always;}
+ .sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:16pt;margin-top:14pt;break-inside:avoid;page-break-inside:avoid;}
+ .sig-box{border-top:.8pt solid #1a1612;padding-top:6pt;break-inside:avoid;page-break-inside:avoid;}
+ .sig-label{font-size:8pt;color:#5c5449;margin-bottom:28pt;}
+ .sig-blank{height:28pt;}
+ .sig-name{font-size:8.5pt;font-weight:500;border-top:.5pt solid #aaa;padding-top:4pt;}
+ .footer{margin-top:16pt;border-top:.5pt solid #d8cfc0;padding-top:6pt;font-size:7.5pt;color:#8a7d68;text-align:center;}
+ @media print{body{padding:0;}.page{padding:8mm 10mm 12mm;}@page{size:A4;margin:6mm 8mm 12mm;} @page{@bottom-right{content:"Página " counter(page);font-size:8pt;color:#888;font-family:Arial,sans-serif;}}}`;
+
+ const iframe = document.getElementById('__pdf_frame') || (() => {
+ const f = document.createElement('iframe');
+ f.id = '__pdf_frame';
+ f.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:0;height:0;border:none;';
+ document.body.appendChild(f);
+ return f;
+ })();
+
+ iframe.srcdoc = '<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><style>'+css+'</style></head><body><div class="page">'+body+'</div></body></html>';
+ iframe.onload = function() {
+ try { iframe.contentWindow.focus(); iframe.contentWindow.print(); }
+ catch(err) {
+ const a = document.createElement('a');
+ const blob = new Blob([iframe.srcdoc], {type:'text/html;charset=utf-8'});
+ a.href = URL.createObjectURL(blob);
+ a.download = 'CMI_'+gv('contrato_ref')+'_'+gv('contrato_data')+'.html';
+ a.click();
+ }
+ };
+}
+
+// ═══ INIT ═══
+addProprietario();
+</script>
+</body>
+</html>

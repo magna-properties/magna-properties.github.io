@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC — Pessoa Coletiva</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1a1612; --ink-light:#5c5449; --paper:#faf8f4; --cream:#f2ede4; --gold:#b8935a; --gold-light:#d4a96a; --red:#8b2c2c; --border:#d8cfc0; --success:#2d6a4f; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; }
+  .topbar { background:#0c0b09; color:var(--paper); padding:16px 24px; display:flex; align-items:center; justify-content:center; position:sticky; top:0; z-index:100; }
+  .topbar-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:#c4a35a; letter-spacing:0.05em; }
+  .topbar-badge { position:absolute; right:24px; font-size:0.78rem; padding:3px 10px; border-radius:10px; border:1px solid #c4a35a; color:#c4a35a; }
+  .topbar-sub { font-size:0.78rem; color:#6b6358; margin-top:3px; letter-spacing:0; text-transform:none; }
+  .progress-bar { background:#1a1812; height:3px; }
+  .progress-fill { background:linear-gradient(90deg,#c4a35a,#d4b06a); height:100%; transition:width 0.5s ease; }
+  .steps-nav { display:none !important; }
+  .step-pill { font-size:0.78rem; letter-spacing:0; text-transform:none; padding:4px 12px; border-radius:20px; cursor:pointer; transition:all 0.2s; border:1px solid #3a3530; color:#888; background:transparent; }
+  .step-pill.active { background:#c4a35a; color:#0c0b09; border-color:#c4a35a; font-weight:500; }
+  .step-pill.done { background:#1a1812; color:#c4a35a; border-color:#2a2720; }
+  .main { max-width:860px; margin:40px auto; padding:0 20px 80px; }
+  .section-card { background:var(--paper); border:1px solid var(--border); border-radius:2px; padding:36px 40px; display:block; margin-bottom:20px; }
+  
+  .section-header { margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+  .section-number { font-size:0.78rem; letter-spacing:0; text-transform:none; color:var(--gold); margin-bottom:6px; }
+  .section-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; line-height:1.2; }
+  .section-title-en { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:400; color:var(--ink-light); font-style:italic; margin-top:2px; }
+  .section-desc { font-size:0.88rem; color:var(--ink-light); margin-top:6px; }
+  .sub-title { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; padding:8px 0; border-top:1px solid var(--border); margin:20px 0 14px; color:var(--ink); }
+  .sub-title:first-of-type { border-top:none; margin-top:0; }
+  .sub-title span { font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:400; color:var(--ink-light); font-style:italic; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px 20px; }
+  .form-grid.cols-1 { grid-template-columns:1fr; }
+  .form-grid.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field label { font-size:0.88rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:500; }
+  .field label .en { font-style:italic; text-transform:none; letter-spacing:0; font-weight:400; color:#9a8e82; font-size:0.8rem; }
+  .field input,.field select,.field textarea { border:1px solid var(--border); background:white; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:1rem; color:var(--ink); border-radius:4px; transition:border-color 0.15s; width:100%; }
+  .field input:focus,.field select:focus,.field textarea:focus { outline:none; border-color:var(--gold); }
+  .field textarea { resize:vertical; min-height:70px; }
+  .req { color:var(--red); }
+  .check-group { display:flex; flex-wrap:wrap; gap:10px; }
+  .check-option { display:flex; align-items:flex-start; gap:10px; padding:12px 16px; border:1.5px solid var(--border); border-radius:24px; cursor:pointer; transition:all 0.15s; background:white; flex:1; min-width:180px; color:var(--ink-light); }
+  .check-option:hover { border-color:#c4a35a; background:#fdf9f3; color:var(--ink); }
+  .check-option.selected { border-color:#c4a35a; background:#fdf6e8; color:var(--ink); box-shadow:0 2px 8px rgba(184,147,90,0.2); }
+  .check-option input[type='radio'], .check-option input[type='checkbox'] { width:16px; height:16px; min-width:16px; margin-top:2px; accent-color:var(--gold); flex-shrink:0; pointer-events:none; }
+  .radio-error .check-option { border-color:var(--red)!important; }
+  .radio-error { outline:2px solid var(--red); outline-offset:4px; border-radius:2px; }
+  .check-label strong { display:block; font-size:0.95rem; font-weight:500; margin-bottom:1px; }
+  .check-label span { color:var(--ink-light); font-size:0.82rem; }
+  .check-label .en { color:#9a8e82; font-size:0.78rem; font-style:italic; display:block; }
+  .titular-block { border:1px solid var(--border); border-radius:8px; padding:20px; background:#fdfaf6; margin-bottom:14px; }
+  .titular-block .titular-num { font-size:0.78rem; letter-spacing:0; text-transform:none; color:var(--gold); margin-bottom:12px; font-weight:500; }
+  .btn-add { font-family:'DM Sans',sans-serif; font-size:0.88rem; letter-spacing:0; text-transform:none; font-weight:500; padding:10px 20px; border-radius:24px; cursor:pointer; background:transparent; color:var(--gold); border:1.5px dashed var(--gold); transition:all 0.2s; margin-top:4px; }
+  .btn-add:hover { background:#fdf6e8; }
+  .btn-remove { font-family:'DM Sans',sans-serif; font-size:0.78rem; letter-spacing:0; text-transform:none; padding:4px 12px; border-radius:20px; cursor:pointer; background:transparent; color:var(--red); border:1px solid #e8b4b4; transition:all 0.2s; float:right; }
+  .btn-remove:hover { background:#fdf0f0; }
+  .divider { border:none; border-top:1px solid var(--border); margin:24px 0; }
+  .info-box { background:#f0f7f4; border-left:3px solid var(--success); padding:14px 18px; border-radius:0 2px 2px 0; font-size:1rem; color:#2d5a47; line-height:1.5; margin-bottom:16px; }
+  .info-box strong { display:block; margin-bottom:2px; font-weight:400; }
+  .warn-box { background:#fff8f0; border-left:3px solid var(--gold); padding:14px 18px; border-radius:0 2px 2px 0; font-size:1rem; color:#7a5c2a; line-height:1.5; margin-bottom:16px; }
+  .warn-box strong { display:block; margin-bottom:2px; font-weight:400; }
+  .nav-buttons { display:flex; justify-content:space-between; align-items:center; margin-top:36px; padding-top:24px; border-top:1px solid var(--border); }
+  .btn { font-family:'DM Sans',sans-serif; font-size:0.88rem; letter-spacing:0; text-transform:none; font-weight:500; padding:12px 28px; border-radius:24px; cursor:pointer; border:none; transition:all 0.2s; }
+  .btn-ghost { background:transparent; color:var(--ink-light); border:1px solid var(--border); border-radius:24px; }
+  .btn-ghost:hover { border-color:var(--ink-light); }
+  .btn-primary { background:#1a2d4a; color:white; border-radius:24px; }
+  .btn-primary:hover { background:#2e2a25; }
+  .btn-gold { background:var(--gold); color:white; font-size:0.88rem; padding:14px 36px; border-radius:24px; box-shadow:0 2px 8px rgba(184,147,90,0.3); }
+  .btn-gold:hover { background:#d4b06a; box-shadow:0 4px 14px rgba(184,147,90,0.4); }
+  .cb-label strong { font-size:0.88rem; display:block; font-weight:400; }
+  .cb-label .cb-sub { font-size:0.82rem; color:var(--ink-light); }
+  .field-error input,.field-error select,.field-error textarea { border-color:var(--red)!important; box-shadow:0 0 0 3px rgba(139,44,44,.12)!important; }
+  .field-error-msg { font-size:0.82rem; color:var(--red); margin-top:4px; }
+  .step-error-banner { background:#fdf0f0; border:1px solid #e8b4b4; border-left:3px solid var(--red); padding:12px 16px; font-size:0.88rem; color:#7a2222; margin-bottom:20px; display:none; }
+  .step-error-banner.show { display:block; }
+  .step-error-banner strong { display:block; margin-bottom:2px; }
+  @media(max-width:600px){ .form-grid,.form-grid.cols-3{ grid-template-columns:1fr; } .section-card{ padding:20px 16px; } .topbar,.steps-nav{ padding-left:16px; padding-right:16px; } }
+
+  .lang-toggle{position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;gap:6px}
+  .lang-btn{font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.1em;padding:5px 11px;border-radius:20px;border:1px solid #3a3528;color:#6b6358;background:transparent;cursor:pointer;transition:all .2s}
+  .lang-btn.active{background:#c4a35a;color:#0c0b09;border-color:#c4a35a}
+</style>
+</head>
+<body class="lang-pt">
+
+<div class="topbar" style="position:relative">
+  <div style="text-align:center;">
+    <div class="topbar-title">Magna Properties</div>
+    <div class="topbar-sub" data-trans="topbar-sub">Ficha de Branqueamento de Capitais — Pessoa Coletiva</div>
+  </div>
+  <div style="position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;gap:6px">
+    <button class="lang-btn active" id="btn-pt" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+<div style="height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light),transparent)"></div>
+</div>
+
+<div class="main">
+
+<!-- PASSO 1 — IDENTIFICAÇÃO DA EMPRESA -->
+<div class="section-card active" id="step-1">
+  <div class="section-header">
+    <div class="section-number" data-trans="step1">Passo 01 / 03</div>
+    <div class="section-title" data-trans="title1">Identificação da Empresa</div>
+    
+    <div class="section-desc" data-trans="desc1">Dados da pessoa coletiva</div>
+  </div>
+  <div class="step-error-banner" id="err-1"><strong>⚠️ Campos obrigatórios em falta</strong>Preencha todos os campos assinalados com * antes de avançar.</div>
+
+  <!-- Tipo -->
+  <!-- Sede -->
+  <div class="sub-title" style="border-top:none;margin-top:0" data-trans="sub-sede">Localização da Sede</div>
+  <div class="check-group" id="sede_group">
+    <div class="check-option" onclick="selectRadio(this)"><input type="radio" name="sede" value="nacional"><div class="check-label"><strong data-trans="chk-sede-nacional">Sede em Território Nacional</strong></div></div>
+    <div class="check-option" onclick="selectRadio(this)"><input type="radio" name="sede" value="estrangeiro"><div class="check-label"><strong data-trans="chk-sede-estrangeiro">Sede no Estrangeiro</strong></div></div>
+  </div>
+
+  <!-- Identificação -->
+  <div class="sub-title" data-trans="sub-a">A. Identificação Completa</div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-denom">Denominação Social <span class="req">*</span></label><input type="text" id="denominacao" placeholder="Nome completo da sociedade" data-ph-pt="Nome completo da sociedade" data-ph-en="Full company name"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-objeto">Objeto Social <span class="req">*</span></label><input type="text" id="objeto" placeholder="Ex: Compra e venda de imóveis" data-ph-pt="Ex: Compra e venda de imóveis" data-ph-en="Ex: Real estate trading"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-morada-sede">Morada da Sede <span class="req">*</span></label><input type="text" id="morada_sede" placeholder="Rua, n.º, andar, CP, cidade, país" data-ph-pt="Rua, n.º, andar, CP, cidade, país" data-ph-en="Street, no., floor, postcode, city, country"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid">
+    <div class="field"><label data-trans="lbl-forma">Forma Jurídica <span class="req">*</span></label>
+      <select id="forma_juridica" data-trans-select="forma_juridica">
+        <option value="">— Selecionar</option>
+        <option data-pt="Sociedade por Quotas (Lda.)" data-en="Limited Liability Company (Lda.)">Sociedade por Quotas (Lda.)</option>
+        <option data-pt="Sociedade Anónima (S.A.)" data-en="Public Limited Company (S.A.)">Sociedade Anónima (S.A.)</option>
+        <option data-pt="Sociedade Unipessoal por Quotas" data-en="Single-Member LLC">Sociedade Unipessoal por Quotas</option>
+        <option data-pt="Sucursal" data-en="Branch">Sucursal</option>
+        <option data-pt="Outra" data-en="Other">Outra</option>
+      </select>
+    </div>
+    <div class="field"><label data-trans="lbl-nipc">NIF / NIPC <span class="req">*</span></label><input type="text" id="nipc" placeholder="000 000 000" data-ph-pt="000 000 000" data-ph-en="000 000 000"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-3">
+    <div class="field"><label data-trans="lbl-data-const">Data de Constituição <span class="req">*</span></label><input type="date" id="data_const"></div>
+    <div class="field"><label data-trans="lbl-pais-const">País de Constituição <span class="req">*</span></label><input type="text" id="pais_const" placeholder="Ex: Portugal" data-ph-pt="Ex: Portugal" data-ph-en="Ex: Portugal"></div>
+    <div class="field"><label data-trans="lbl-cae">CAE <span class="req">*</span></label><input type="text" id="cae" placeholder="Ex: 68100" data-ph-pt="Ex: 68100" data-ph-en="Ex: 68100"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid">
+    <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="email" placeholder="geral@empresa.pt" data-ph-pt="geral@empresa.pt" data-ph-en="info@company.com"></div>
+    <div class="field"><label data-trans="lbl-tel">Telefone <span class="req">*</span></label><input type="tel" id="telefone" placeholder="+351 210 000 000" data-ph-pt="+351 210 000 000" data-ph-en="+351 210 000 000"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid">
+    <div class="field"><label data-trans="lbl-marca">Marca</label><input type="text" id="marca" placeholder="Ex: Nome comercial" data-ph-pt="Ex: Nome comercial" data-ph-en="Ex: Trading name"></div>
+    <div class="field"><label data-trans="lbl-suc">Sucursais</label><input type="text" id="sucursais" placeholder="Ex: Lisboa, Porto" data-ph-pt="Ex: Lisboa, Porto" data-ph-en="Ex: Lisbon, Porto"></div>
+  </div>
+
+  <div class="nav-buttons">
+    <div></div>
+  </div>
+</div>
+
+<!-- PASSO 2 — TITULARES, BENEFICIÁRIOS E FUNDOS -->
+<div class="section-card" id="step-2">
+  <div class="section-header">
+    <div class="section-number" data-trans="step2">Passo 02 / 03</div>
+    <div class="section-title" data-trans="title2">Titulares, Beneficiários e Fundos</div>
+    
+    <div class="section-desc" data-trans="desc-obrig">Obrigatório por lei</div>
+  </div>
+  <div class="step-error-banner" id="err-2"><strong>⚠️ Campos obrigatórios em falta</strong>Preencha todos os campos assinalados com * antes de avançar.</div>
+
+  <!-- Titulares dos Órgãos de Administração -->
+  <div class="sub-title" style="border-top:none;margin-top:0" data-trans="sub-b">B. Titulares dos Órgãos de Administração</div>
+  <div class="info-box"><strong><span data-trans="ib-ger">Gerentes, administradores ou procuradores com poderes de gestão</span></strong><span data-trans="ib-add-tit">Adicione todos os titulares. Mínimo 1 obrigatório.</span></div>
+  <div id="titulares_container"></div>
+  <button class="btn-add" onclick="addTitular()" data-trans="btn-add-tit">+ Adicionar Titular</button>
+
+  <hr class="divider">
+
+  <!-- Beneficiários Efetivos -->
+  <div class="sub-title" data-trans="sub-c">C. Beneficiários Efetivos (RCBE)</div>
+  <div class="warn-box"><strong><span data-trans="wb-rcbe">Registo Central do Beneficiário Efetivo</span></strong><span data-trans="wb-rcbe-desc">Pessoas singulares que, em última instância, detêm ou controlam a empresa — geralmente quem detém mais de 25% do capital.</span></div>
+  <div id="beneficiarios_container"></div>
+  <button class="btn-add" onclick="addBeneficiario()" data-trans="btn-add-ben">+ Adicionar Beneficiário</button>
+
+  <hr class="divider">
+
+  <!-- Representação Legal -->
+  <div class="sub-title" data-trans="sub-d">D. Representação Legal</div>
+  <div class="warn-box"><strong data-trans="warn-rep">Quem representa a empresa nesta transação</strong></div>
+  <div class="check-group" id="rep_tipo_group" style="margin-bottom:14px">
+    <div class="check-option" onclick="selectRadio(this)"><input type="radio" name="rep_tipo" value="Procurador / Procurator"><div class="check-label"><strong data-trans="chk-procurador">Procurador</strong></div></div>
+    <div class="check-option" onclick="selectRadio(this)"><input type="radio" name="rep_tipo" value="Gerente / Manager"><div class="check-label"><strong data-trans="chk-gerente">Gerente</strong></div></div>
+    <div class="check-option" onclick="selectRadio(this)"><input type="radio" name="rep_tipo" value="Administrador / Administrator"><div class="check-label"><strong data-trans="chk-administrador">Administrador</strong></div></div>
+  </div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-rep-nome">Nome Completo do Representante <span class="req">*</span></label><input type="text" id="rep_nome" placeholder="Nome completo" data-ph-pt="Nome completo" data-ph-en="Full name" data-ph-pt="Nome completo" data-ph-en="Full name"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-rep-morada">Morada do Representante <span class="req">*</span></label><input type="text" id="rep_morada" placeholder="Morada completa" data-ph-pt="Morada completa" data-ph-en="Full address"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-3">
+    <div class="field"><label data-trans="lbl-rep-doc">Doc. Identificação Nº <span class="req">*</span></label><input type="text" id="rep_doc" placeholder="CC / Passaporte" data-ph-pt="CC / Passaporte" data-ph-en="ID Card / Passport" data-ph-pt="CC / Passaporte" data-ph-en="ID Card / Passport"></div>
+    <div class="field"><label data-trans="lbl-val-req">Válido até <span class="req">*</span></label><input type="date" id="rep_val"></div>
+    <div class="field"><label>NIF <span class="req">*</span></label><input type="text" id="rep_nif" placeholder="000 000 000" data-ph-pt="000 000 000" data-ph-en="000 000 000" data-ph-pt="000 000 000" data-ph-en="000 000 000"></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- PPE -->
+  <div class="sub-title" data-trans="sub-ppe">E. Pessoa Politicamente Exposta</div>
+  <div class="warn-box"><strong data-trans="warn-ppe">O que é uma PPE?</strong><span data-trans="warn-ppe-desc"> Algum dos titulares, beneficiários ou representante desempenha ou desempenhou nos últimos 12 meses cargo público ou político?</span></div>
+  <div class="check-group" id="ppe_group">
+    <div class="check-option" onclick="selectPPE(this,'sim')"><input type="radio" name="ppe" value="sim"><div class="check-label"><strong data-trans="chk-sim">✅ Sim</strong></div></div>
+    <div class="check-option" onclick="selectPPE(this,'nao')"><input type="radio" name="ppe" value="nao"><div class="check-label"><strong data-trans="chk-nao">❌ Não</strong></div></div>
+  </div>
+  <div id="ppe_detail" style="display:none;margin-top:12px">
+    <div class="form-grid cols-1"><div class="field"><label data-trans="lbl-ppe-id">Identificação e cargo <span class="req">*</span></label><input type="text" id="ppe_info" placeholder="Ex: João Silva — Deputado / MP 2020-2024" data-ph-pt="Ex: João Silva — Deputado / MP 2020-2024" data-ph-en="Ex: João Silva — Member of Parliament 2020-2024"></div></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Fundos e Transação -->
+  <div class="sub-title" data-trans="sub-f-info">F. Informações da Transação</div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-finalidade">Finalidade da Aquisição <span class="req">*</span></label>
+      <select id="finalidade" data-trans-select="finalidade">
+        <option value="">— Selecionar</option>
+        <option data-pt="Habitação" data-en="Residential">Habitação</option>
+        <option data-pt="Arrendamento" data-en="Rental">Arrendamento</option>
+        <option data-pt="Investimento" data-en="Investment">Investimento</option>
+        <option data-pt="Instalação de Sede" data-en="Company Headquarters">Instalação de Sede</option>
+        <option data-pt="Outro" data-en="Other">Outro</option>
+      </select>
+    </div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="sub-title" data-trans="sub-f2">F2. Origem dos Fundos</div>
+  <div class="info-box" style=""><strong data-trans="info-select">Selecione todas as aplicáveis</strong></div>
+  <div class="check-group" id="fundos_group" style="flex-direction:column">
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Fundos Próprios"><div class="check-label"><strong data-trans="cb-fundos">Fundos Próprios</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Financiamento Bancário"><div class="check-label"><strong data-trans="cb-financ">Financiamento Bancário</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Venda de Ativo"><div class="check-label"><strong data-trans="cb-venda">Venda de Ativo</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCBOutros(this)"><input type="checkbox" value="outros"><div class="check-label"><strong data-trans="cb-outro2">Outro</strong></div></div>
+  </div>
+  <div id="fundos_outros_wrap" style="display:none;margin-top:10px">
+    <div class="field"><label data-trans="lbl-spec-req">Especifique <span class="req">*</span></label><input type="text" id="fundos_outros" placeholder="Descreva" data-ph-pt="Descreva" data-ph-en="Describe"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="sub-title" data-trans="sub-f3">F3. Meios de Pagamento</div>
+  <div class="check-group" id="pagamento_group" style="flex-direction:column">
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Transferência Bancária"><div class="check-label"><strong data-trans="cb-transf">Transferência Bancária</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Cheque Bancário"><div class="check-label"><strong data-trans="cb-cheque">Cheque Bancário</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCBPagOutros(this)"><input type="checkbox" value="outros_pag"><div class="check-label"><strong data-trans="cb-outro2">Outro</strong></div></div>
+  </div>
+  <div id="pag_outros_wrap" style="display:none;margin-top:10px">
+    <div class="field"><label data-trans="lbl-spec">Especifique</label><input type="text" id="pag_outros" placeholder="Descreva" data-ph-pt="Descreva" data-ph-en="Describe"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-obs">Observações</label><textarea id="observacoes" placeholder="Notas adicionais" data-ph-pt="Notas adicionais" data-ph-en="Additional notes"></textarea></div>
+  </div>
+
+  <div class="nav-buttons">
+  </div>
+</div>
+
+<!-- PASSO 3 — RGPD E FECHO -->
+<div class="section-card" id="step-3">
+  <div class="section-header">
+    <div class="section-number" data-trans="step3">Passo 03 / 03</div>
+    <div class="section-title" data-trans="title3">RGPD e Fecho</div>
+    
+    <div class="section-desc" data-trans="desc-auth">Autorização de dados e assinatura</div>
+  </div>
+  <div class="step-error-banner" id="err-3"><strong>⚠️ Campos obrigatórios em falta</strong>Preencha todos os campos assinalados com * antes de avançar.</div>
+
+  <div class="sub-title" style="border-top:none;margin-top:0" data-trans="sub-g-prot">G. Proteção de Dados</div>
+  <div class="info-box"><strong data-trans="ib-rgpd">Informação ao cliente</strong><span data-trans="ib-rgpd-desc2">Os dados recolhidos serão usados exclusivamente para cumprimento da Lei 83/2017 e procedimentos internos, de acordo com o RGPD (EU) 2016/679. Conservados por mínimo de 7 anos.</span></div>
+  <div class="check-group" id="rgpd_group">
+    <div class="check-option" onclick="selectRadio(this)"><input type="radio" name="rgpd" value="sim"><div class="check-label"><strong data-trans="chk-li">✅ Li e concordo</strong><span data-trans="chk-li-desc">Autorizo o tratamento dos dados para as finalidades descritas.</span></div></div>
+  </div>
+  <div style="height:8px"></div>
+  <div class="warn-box" style=""><span data-trans="wb-auth">Autorização obrigatória por lei para qualquer negócio imobiliário.</span></div>
+
+  <hr class="divider">
+
+  <div class="sub-title" data-trans="sub-local-data">Local e Data</div>
+  <div class="info-box" style=""><strong>ℹ️ Assinatura</strong><span data-trans="sig-info"> Após imprimir, o representante da empresa rubrica todas as folhas e assina na última folha. Deverá enviar-nos o documento digitalizado por email e levar o original para a assinatura do Contrato Promessa Compra e Venda (CPCV).</span></div>
+  <div class="form-grid cols-2">
+    <div class="field"><label data-trans="lbl-local">Local <span class="req">*</span></label><input type="text" id="local" placeholder="Ex: Faro" data-ph-pt="Ex: Faro" data-ph-en="Ex: Faro"></div>
+    <div class="field"><label data-trans="lbl-data-local">Data <span class="req">*</span></label><input type="date" id="data_ass"></div>
+  </div>
+
+  <!-- Linha de assinatura -->
+  <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);text-align:center">
+    <div style="display:inline-block;width:340px;margin:0 auto">
+      <div style="border-bottom:1px solid var(--ink);height:48px;margin-bottom:8px"></div>
+      <div style="font-size:0.78rem;color:var(--ink-light);text-align:center" data-trans="sig-line-nome">Assinatura do Representante Legal</div>
+    </div>
+  </div>
+
+  <div class="nav-buttons" style="justify-content:center;margin-top:32px">
+    <button class="btn btn-gold" onclick="gerarPDF()" data-trans="btn-pdf">🖨 Imprimir / Gerar PDF</button>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+function setLang(l){
+  document.body.classList.toggle('lang-pt',l==='pt');
+  document.body.classList.toggle('lang-en',l==='en');
+  document.getElementById('btn-pt').classList.toggle('active',l==='pt');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  const i=l==='pt'?0:1;
+  // Swap placeholders
+  document.querySelectorAll('[data-ph-en]').forEach(el=>{
+    el.placeholder=l==='en'?el.dataset.phEn:el.dataset.phPt;
+  });
+  // Translate select options
+  document.querySelectorAll('[data-trans-select]').forEach(sel=>{
+    const cur=sel.value;
+    if(sel.options[0]) sel.options[0].text=l==='en'?'— Select':'— Selecionar';
+    Array.from(sel.options).slice(1).forEach(opt=>{
+      if(opt.dataset.pt&&opt.dataset.en) opt.text=l==='en'?opt.dataset.en:opt.dataset.pt;
+    });
+    sel.value=cur;
+  });
+  // Swap translations
+  document.querySelectorAll('[data-trans]').forEach(el=>{
+    const k=el.dataset.trans;if(TRANS_K[k]){
+      const req=el.querySelector('.req');
+      el.textContent=TRANS_K[k][i];
+      if(req)el.appendChild(req);
+    }
+  });
+}
+
+const TRANS_K={
+  'topbar-sub':['Ficha de Branqueamento de Capitais — Pessoa Coletiva','Anti-Money Laundering Form — Legal Entity'],
+  'title1':['Identificação da Empresa','Company Identification'],
+  'title2':['Titulares, Beneficiários e Fundos','Holders, Beneficial Owners & Funds'],
+  'sub-tipo':['Tipo de Interveniente','Role in Transaction'],
+  'sub-sede':['Localização da Sede','Headquarters Location'],
+  'sub-a':['A. Identificação Completa','A. Full Identification'],
+  'sub-b':['B. Titulares dos Órgãos de Administração','B. Administration Body Holders'],
+  'sub-c':['C. Beneficiários Efetivos (RCBE)','C. Beneficial Owners (RCBE)'],
+  'sub-d':['D. Representação Legal','D. Legal Representation'],
+  'sub-e':['E. Origem e Natureza dos Fundos','E. Source and Nature of Funds'],
+  'sub-f':['F. Finalidade da Operação','F. Purpose of Transaction'],
+  'sub-g':['G. Declaração e Assinatura','G. Declaration and Signature'],
+  'lbl-denom':['Denominação Social','Company Name'],
+  'lbl-objeto':['Objeto Social','Corporate Object'],
+  'lbl-morada-sede':['Morada da Sede','Headquarters Address'],
+  'lbl-forma':['Forma Jurídica','Legal Form'],
+  'lbl-nipc':['NIF / NIPC','Tax Identification Number'],
+  'lbl-data-const':['Data de Constituição','Constitution Date'],
+  'lbl-pais-const':['País de Constituição','Constitution Country'],
+  'lbl-cae':['CAE','Economic Activity Code'],
+  'lbl-tel':['Telefone','Phone'],
+  'lbl-marca':['Marca','Brand'],
+  'lbl-suc':['Sucursais','Branches'],
+  'ib-rgpd-desc2':['Os dados recolhidos serão usados exclusivamente para cumprimento da Lei 83/2017 e procedimentos internos, de acordo com o RGPD (EU) 2016/679. Conservados por mínimo de 7 anos.','Data collected will be used solely for Law 83/2017 compliance and internal procedures, per GDPR (EU) 2016/679. Retained for a minimum of 7 years.'],
+  'chk-li':['✅ Li e concordo','✅ I have read and agree'],
+  'chk-li-desc':['Autorizo o tratamento dos dados para as finalidades descritas.','I authorize the processing of data for the purposes described.'],
+  'lbl-local':['Local','Place'],
+  'lbl-data-local':['Data','Date'],
+  'sig-info':[' Após imprimir, o representante da empresa rubrica todas as folhas e assina na última folha. Deverá enviar-nos o documento digitalizado por email e levar o original para a assinatura do Contrato Promessa Compra e Venda (CPCV).',' After printing, the company representative initials all pages and signs the last page. Please send us the scanned document by email and bring the original to the signing of the Promissory Purchase and Sale Agreement (CPCV).'],
+  'sig-line-nome':['Assinatura do Representante Legal','Legal Representative Signature'],
+  'sig-line-rubrica':['Rubrica','Initials'],
+  'lbl-rep-nome':['Nome Completo do Representante','Representative Full Name'],
+  'lbl-rep-morada':['Morada do Representante','Representative Address'],
+  'lbl-rep-doc':['Doc. Identificação Nº','ID Document No.'],
+  'lbl-emit':['Emitido por','Issued by'],
+  'lbl-val':['Validade','Validity'],
+  'lbl-nif':['NIF (se aplicável)','Tax ID (if applicable)'],
+  'lbl-nac':['Nacionalidade','Nationality'],
+  'lbl-nasc':['Data de Nascimento','Date of Birth'],
+  'lbl-cargo':['Cargo / Função','Position / Role'],
+  'lbl-pct':['Percentagem de Capital','Capital Percentage'],
+  'lbl-nome-ent':['Nome / Entidade','Name / Entity'],
+  'lbl-origem':['Origem dos Fundos','Source of Funds'],
+  'lbl-vol':['Volume estimado','Estimated Volume'],
+  'lbl-final':['Finalidade','Purpose'],
+  'lbl-valor':['Valor da Operação','Transaction Value'],
+  'lbl-data-ass':['Data e Local de Assinatura','Date and Place of Signature'],
+  'lbl-gerente':['Nome do Gerente / Responsável','Manager / Responsible Name'],
+  'lbl-cargo2':['Cargo','Position'],
+  'lbl-nome-de':['Em nome de','On behalf of'],
+  'btn-submit':['Submeter Ficha','Submit KYC Form'],
+  'chk-vend-desc':['Empresa proprietária que contrata a agência para vender','Company owner hiring the agency to sell'],
+  'chk-comp-desc':['Empresa interessada em adquirir o imóvel','Company interested in purchasing the property'],
+  'chk-vendedor':['🏠 Vendedor','🏠 Seller'],
+  'chk-comprador':['🔑 Comprador','🔑 Buyer'],
+  'chk-sede-nacional':['Sede em Território Nacional','Headquarters in National Territory'],
+  'chk-sede-estrangeiro':['Sede no Estrangeiro','Headquarters Abroad'],
+  'chk-procurador':['Procurador','Procurator'],
+  'chk-gerente':['Gerente','Manager'],
+  'chk-administrador':['Administrador','Administrator'],
+  'desc1':['Dados da pessoa coletiva','Corporate entity details'],
+  'desc-obrig':['Obrigatório por lei','Required by law'],
+  'warn-rep':['Quem representa a empresa nesta transação','Who represents the company in this transaction'],
+  'warn-ppe':['O que é uma PPE?','What is a PEP?'],
+  'warn-ppe-desc':[' Algum dos titulares, beneficiários ou representante desempenha ou desempenhou nos últimos 12 meses cargo público ou político?',' Does any holder, beneficial owner or representative hold or have held in the last 12 months a public or political office?'],
+  'chk-sim':['✅ Sim','✅ Yes'],
+  'chk-nao':['❌ Não','❌ No'],
+  'info-select':['Selecione todas as aplicáveis','Select all applicable'],
+  'cb-fundos':['Fundos Próprios','Own Funds'],
+  'cb-financ':['Financiamento Bancário','Bank Financing'],
+  'cb-venda':['Venda de Ativo','Sale of Asset'],
+  'cb-outro':['Outro','Other'],
+  'cb-transf':['Transferência Bancária','Bank Transfer'],
+  'cb-cheque':['Cheque Bancário','Bank Cheque'],
+  'cb-outro2':['Outro','Other'],
+  'lbl-obs':['Observações','Observations'],
+  'lbl-quota':['Quota','Share'],
+  'btn-ant':['← Anterior','← Back'],
+  'ib-ger':['Gerentes, administradores ou procuradores com poderes de gestão','Managers, administrators or attorneys with management powers'],
+  'ib-add-tit':['Adicione todos os titulares. Mínimo 1 obrigatório.','Add all holders. Minimum 1 required.'],
+  'wb-rcbe':['Registo Central do Beneficiário Efetivo','Central Register of Beneficial Owners'],
+  'wb-rcbe-desc':['Pessoas singulares que, em última instância, detêm ou controlam a empresa — geralmente quem detém mais de 25% do capital.','Natural persons who ultimately own or control the company — generally those holding more than 25% of the share capital.'],
+  'lbl-ppe-id':['Identificação e cargo','Name and office'],
+  'lbl-spec-req':['Especifique','Please specify'],
+  'lbl-spec':['Especifique','Please specify'],
+  'desc-auth':['Autorização de dados e assinatura','Data authorisation & signature'],
+  'ib-rgpd':['Informação ao cliente','Client information'],
+  'ib-rgpd-desc':['Os dados recolhidos serão usados exclusivamente para cumprimento das obrigações legais de prevenção do branqueamento de capitais e financiamento do terrorismo, nos termos da Lei n.º 83/2017.','The data collected will be used solely for compliance with legal obligations to prevent money laundering and terrorist financing, under Law No. 83/2017.'],
+  'chk-auth':['Autorizo a Magna Properties','I authorize Magna Properties'],
+  'wb-auth':['Autorização obrigatória por lei para qualquer negócio imobiliário.','Authorisation required by law for any real estate transaction.'],
+
+  'btn-add-tit':["+ Adicionar Titular","+ Add Holder"],
+  'btn-add-ben':["+ Adicionar Beneficiário","+ Add Beneficial Owner"],
+  'btn-pdf':["🖨 Imprimir / Gerar PDF","🖨 Print / Generate PDF"],
+  'lbl-finalidade':["Finalidade da Aquisição","Purpose of Acquisition"],
+  'lbl-val-req':["Válido até","Validity"],
+  'sub-f-info':["F. Informações da Transação","F. Transaction Information"],
+  'sub-f2':["F2. Origem dos Fundos","F2. Source of Funds"],
+  'sub-f3':["F3. Meios de Pagamento","F3. Means of Payment"],
+  'sub-g-prot':["G. Proteção de Dados","G. Data Protection"],
+  'sub-local-data':["Local e Data","Place and Date"],
+  'sub-ppe':["E. Pessoa Politicamente Exposta","E. Politically Exposed Person"],
+  'title3':["RGPD e Fecho","GDPR & Closing"],
+  'step1':['Passo 01 / 03','Step 01 / 03'],
+  'step2':['Passo 02 / 03','Step 02 / 03'],
+  'step3':['Passo 03 / 03','Step 03 / 03'],
+  'tit-num-lbl':['Titular','Holder'],
+  'btn-remover':['× Remover','× Remove'],
+  'lbl-nome-comp':['Nome Completo','Full Name'],
+};
+
+const EMPRESA = { nome:"MAGNA PROPERTIES", ami:"" };
+let currentStep=1; const totalSteps=3;
+const ciEstados={cc:null,cert:null,rcbe:null,proc:null};
+let nTitulares=0; let nBenef=0;
+
+// Navigation
+function goToStep(n){if(n>currentStep)return;document.getElementById('step-'+currentStep).classList.remove('active');document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');document.querySelectorAll('.step-pill')[currentStep-1].classList.add('done');currentStep=n;document.getElementById('step-'+n).classList.add('active');document.querySelectorAll('.step-pill')[n-1].classList.remove('done');document.querySelectorAll('.step-pill')[n-1].classList.add('active');updateProgress();window.scrollTo({top:0,behavior:'instant'});}
+function nextStep(){if(!validateStep(currentStep))return;document.getElementById('step-'+currentStep).classList.remove('active');document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');document.querySelectorAll('.step-pill')[currentStep-1].classList.add('done');currentStep++;document.getElementById('step-'+currentStep).classList.add('active');document.querySelectorAll('.step-pill')[currentStep-1].classList.add('active');updateProgress();window.scrollTo({top:0,behavior:'instant'});}
+function prevStep(){if(currentStep<=1)return;document.getElementById('step-'+currentStep).classList.remove('active');document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');currentStep--;document.getElementById('step-'+currentStep).classList.add('active');document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('done');document.querySelectorAll('.step-pill')[currentStep-1].classList.add('active');updateProgress();window.scrollTo({top:0,behavior:'instant'});}
+function updateProgress(){document.getElementById('progress').style.width=(currentStep/totalSteps*100)+'%';}
+
+function selectTipo(el,val){
+  document.querySelectorAll('[name="tipo_interv"]').forEach(r=>{r.checked=false;r.closest('.check-option').classList.remove('selected');});
+  el.classList.add('selected');
+  const inp=el.querySelector('input[type="radio"]');if(inp)inp.checked=true;
+  document.getElementById('badge-tipo').textContent=val;
+  document.getElementById('badge-tipo').style.color=val==='VENDEDOR'?'#d4a96a':'#2d6a4f';
+}
+function selectRadio(el){
+  const inp=el.querySelector('input[type="radio"]');if(!inp)return;
+  const n=inp.name;
+  document.querySelectorAll('[name="'+n+'"]').forEach(r=>{r.checked=false;r.closest('.check-option').classList.remove('selected');});
+  el.classList.add('selected');inp.checked=true;
+}
+function selectPPE(el,val){
+  document.querySelectorAll('[name="ppe"]').forEach(r=>{r.checked=false;r.closest('.check-option').classList.remove('selected');});
+  el.classList.add('selected');
+  const inp=el.querySelector('input[type="radio"]');if(inp)inp.checked=true;
+  document.getElementById('ppe_detail').style.display=val==='sim'?'block':'none';
+}
+function toggleCB(el){
+  el.classList.toggle('selected');
+  const cb=el.querySelector('input[type="checkbox"]');if(cb)cb.checked=el.classList.contains('selected');
+}
+function toggleCBOutros(el){
+  el.classList.toggle('selected');
+  const cb=el.querySelector('input[type="checkbox"]');if(cb)cb.checked=el.classList.contains('selected');
+  document.getElementById('fundos_outros_wrap').style.display=el.classList.contains('selected')?'block':'none';
+}
+function toggleCBPagOutros(el){
+  el.classList.toggle('selected');
+  const cb=el.querySelector('input[type="checkbox"]');if(cb)cb.checked=el.classList.contains('selected');
+  document.getElementById('pag_outros_wrap').style.display=el.classList.contains('selected')?'block':'none';
+}
+
+// Dynamic titular blocks
+function addTitular(){
+  nTitulares++;
+  const n=nTitulares;
+  const div=document.createElement('div');
+  div.className='titular-block'; div.id='tit-'+n;
+  div.innerHTML=`<div class="titular-num"><span data-trans="tit-num-lbl">${n}º Titular</span> <button class="btn-remove" onclick="removeBlock('tit-${n}')" data-trans="btn-remover">× Remover</button></div>
+  <div class="form-grid cols-1" style="margin-bottom:14px"><div class="field"><label data-trans="lbl-nome-comp">Nome Completo <span class="req">*</span></label><input type="text" id="tit_nome_${n}" placeholder="Nome completo" data-ph-pt="Nome completo" data-ph-en="Full name"></div></div>
+  <div class="form-grid" style="margin-bottom:14px">
+    <div class="field"><label data-trans="lbl-cargo">Cargo <span class="req">*</span></label><input type="text" id="tit_cargo_${n}" placeholder="Ex: Gerente" data-ph-pt="Ex: Gerente" data-ph-en="Ex: Manager"></div>
+    <div class="field"><label data-trans="lbl-quota">Quota</label><input type="text" id="tit_quota_${n}" placeholder="Ex: 50%" data-ph-pt="Ex: 50%" data-ph-en="Ex: 50%"></div>
+  </div>
+  <div class="form-grid cols-3">
+    <div class="field"><label data-trans="lbl-rep-doc">Doc. Identificação Nº <span class="req">*</span></label><input type="text" id="tit_doc_${n}" placeholder="CC / Passaporte" data-ph-pt="CC / Passaporte" data-ph-en="ID Card / Passport"></div>
+    <div class="field"><label data-trans="lbl-val">Válido até</label><input type="date" id="tit_val_${n}"></div>
+    <div class="field"><label>NIF <span class="req">*</span></label><input type="text" id="tit_nif_${n}" placeholder="000 000 000" data-ph-pt="000 000 000" data-ph-en="000 000 000"></div>
+  </div>`;
+  document.getElementById('titulares_container').appendChild(div);
+  const _l=document.body.classList.contains('lang-en')?'en':'pt';
+  const _i=_l==='en'?1:0;
+  div.querySelectorAll('[data-trans]').forEach(el=>{const k=el.dataset.trans;if(TRANS_K[k]){const r=el.querySelector('.req');el.textContent=TRANS_K[k][_i];if(r)el.appendChild(r);}});
+  div.querySelectorAll('[data-ph-en]').forEach(el=>{el.placeholder=_l==='en'?el.dataset.phEn:el.dataset.phPt;});
+}
+
+function addBeneficiario(){
+  nBenef++;
+  const n=nBenef;
+  const div=document.createElement('div');
+  div.className='titular-block'; div.id='ben-'+n;
+  div.innerHTML=`<div class="titular-num"><span data-trans="ben-num-lbl">${n}º Beneficiário Efetivo</span> <button class="btn-remove" onclick="removeBlock('ben-${n}')" data-trans="btn-remover">× Remover</button></div>
+  <div class="form-grid cols-1" style="margin-bottom:14px"><div class="field"><label data-trans="lbl-nome-comp">Nome Completo <span class="req">*</span></label><input type="text" id="ben_nome_${n}" placeholder="Nome completo" data-ph-pt="Nome completo" data-ph-en="Full name"></div></div>
+  <div class="form-grid" style="margin-bottom:14px">
+    <div class="field"><label data-trans="lbl-cargo">Cargo <span class="req">*</span></label><input type="text" id="ben_cargo_${n}" placeholder="Ex: Sócio-Gerente" data-ph-pt="Ex: Sócio-Gerente" data-ph-en="Ex: Managing Partner"></div>
+    <div class="field"><label data-trans="lbl-quota">Quota</label><input type="text" id="ben_quota_${n}" placeholder="Ex: 75%" data-ph-pt="Ex: 75%" data-ph-en="Ex: 75%"></div>
+  </div>
+  <div class="form-grid cols-3">
+    <div class="field"><label data-trans="lbl-rep-doc">Doc. Identificação Nº <span class="req">*</span></label><input type="text" id="ben_doc_${n}" placeholder="CC / Passaporte" data-ph-pt="CC / Passaporte" data-ph-en="ID Card / Passport"></div>
+    <div class="field"><label data-trans="lbl-val">Válido até</label><input type="date" id="ben_val_${n}"></div>
+    <div class="field"><label>NIF <span class="req">*</span></label><input type="text" id="ben_nif_${n}" placeholder="000 000 000" data-ph-pt="000 000 000" data-ph-en="000 000 000"></div>
+  </div>`;
+  document.getElementById('beneficiarios_container').appendChild(div);
+  const _lb=document.body.classList.contains('lang-en')?'en':'pt';
+  const _ib=_lb==='en'?1:0;
+  div.querySelectorAll('[data-trans]').forEach(el=>{const k=el.dataset.trans;if(TRANS_K[k]){const r=el.querySelector('.req');el.textContent=TRANS_K[k][_ib];if(r)el.appendChild(r);}});
+  div.querySelectorAll('[data-ph-en]').forEach(el=>{el.placeholder=_lb==='en'?el.dataset.phEn:el.dataset.phPt;});
+}
+
+function removeBlock(id){const el=document.getElementById(id);if(el)el.remove();}
+
+// Checklist
+function toggleCI(id,event){if(event.target.classList.contains('btn-na-sm'))return;if(ciEstados[id]==='na')return;ciEstados[id]=ciEstados[id]==='done'?null:'done';renderCI(id);}
+function toggleNA(id,event){event.stopPropagation();ciEstados[id]=ciEstados[id]==='na'?null:'na';renderCI(id);}
+function renderCI(id){const item=document.getElementById('ci-'+id);const box=document.getElementById('cb-'+id);item.classList.remove('done','na');if(ciEstados[id]==='done'){item.classList.add('done');box.textContent='✓';}else if(ciEstados[id]==='na'){item.classList.add('na');box.textContent='—';}else box.textContent='☐';}
+
+// Helpers
+function getRadio(name){const e=document.querySelector('[name="'+name+'"]:checked');return e?e.value:'';}
+function getChecked(groupId){return Array.from(document.querySelectorAll('#'+groupId+' input[type="checkbox"]:checked')).map(e=>e.value).filter(v=>v!=='outros'&&v!=='outros_pag');}
+function gv(id){const e=document.getElementById(id);return e?(e.value||''):''}
+function fmtData(d){if(!d)return '____';const[y,m,day]=d.split('-');return day+'/'+m+'/'+y;}
+
+// Validation
+function reqRadio(name,msg,errors,groupId){if(!getRadio(name)){errors.push({msg,banner:true});if(groupId){const g=document.getElementById(groupId);if(g){g.classList.add('radio-error');if(!g.nextElementSibling||!g.nextElementSibling.classList.contains('radio-error-msg')){const s=document.createElement('div');s.className='field-error-msg radio-error-msg';s.style.marginTop='6px';s.innerHTML='⚠ '+msg;g.after(s);}g.querySelectorAll('input').forEach(r=>{r.addEventListener('change',()=>{g.classList.remove('radio-error');const em=g.nextElementSibling;if(em&&em.classList.contains('radio-error-msg'))em.remove();},{once:true});});}}}}
+function reqCheckGroup(groupId,msg,errors){if(!document.querySelector('#'+groupId+' input:checked')){errors.push({msg,banner:true});const g=document.getElementById(groupId);if(g){g.classList.add('radio-error');if(!g.nextElementSibling||!g.nextElementSibling.classList.contains('radio-error-msg')){const s=document.createElement('div');s.className='field-error-msg radio-error-msg';s.style.marginTop='6px';s.innerHTML='⚠ '+msg;g.after(s);}g.querySelectorAll('input').forEach(r=>{r.addEventListener('change',()=>{g.classList.remove('radio-error');const em=g.nextElementSibling;if(em&&em.classList.contains('radio-error-msg'))em.remove();},{once:true});});}}}
+function validateStep(step){
+  clearErrors(step);const errors=[];
+  if(step===1){
+    reqRadio('sede','Selecione a localização da sede',errors,'sede_group');
+    req('denominacao','Denominação social obrigatória',errors);req('objeto','Objeto social obrigatório',errors);req('morada_sede','Morada da sede obrigatória',errors);req('forma_juridica','Forma jurídica obrigatória',errors);req('nipc','NIF/NIPC obrigatório',errors);req('data_const','Data de constituição obrigatória',errors);req('pais_const','País de constituição obrigatório',errors);req('cae','CAE obrigatório',errors);req('email','Email obrigatório',errors);req('telefone','Telefone obrigatório',errors);
+  }else if(step===2){
+    const titBlocks=document.querySelectorAll('#titulares_container .titular-block');
+    if(titBlocks.length===0)errors.push({msg:'Adicione pelo menos 1 titular dos órgãos de administração',banner:true});
+    titBlocks.forEach((b,i)=>{const n=i+1;reqEl(document.getElementById('tit_nome_'+n),'Nome do '+(n)+'º titular obrigatório',errors);reqEl(document.getElementById('tit_cargo_'+n),'Cargo do '+(n)+'º titular obrigatório',errors);reqEl(document.getElementById('tit_quota_'+n),'Quota do '+(n)+'º titular obrigatória',errors);reqEl(document.getElementById('tit_doc_'+n),'Doc. do '+(n)+'º titular obrigatório',errors);reqEl(document.getElementById('tit_nif_'+n),'NIF do '+(n)+'º titular obrigatório',errors);});
+    req('rep_nome','Nome do representante obrigatório',errors);req('rep_morada','Morada do representante obrigatória',errors);req('rep_doc','Doc. do representante obrigatório',errors);req('rep_val','Validade do doc. do representante obrigatória',errors);req('rep_nif','NIF do representante obrigatório',errors);
+    reqRadio('ppe','Indique se existe PPE (Pessoa Politicamente Exposta)',errors,'ppe_group');
+    if(getRadio('ppe')==='sim')req('ppe_info','Identifique o cargo PPE',errors);
+    req('finalidade','Finalidade da aquisição obrigatória',errors);
+    reqCheckGroup('fundos_group','Selecione a origem dos fundos',errors);
+    reqCheckGroup('pagamento_group','Selecione o meio de pagamento',errors);
+  }else if(step===3){
+    reqRadio('rgpd','A autorização RGPD é obrigatória por lei',errors,'rgpd_group');
+    req('local','Local de assinatura obrigatório',errors);req('data_ass','Data de assinatura obrigatória',errors);
+  }
+  if(errors.length>0){const b=document.getElementById('err-'+step);if(b)b.classList.add('show');const fe=document.querySelector('#step-'+step+' .field-error, #step-'+step+' .radio-error');const t=fe||b;if(t)t.scrollIntoView({behavior:'instant',block:'center'});return false;}
+  return true;
+}
+function req(id,msg,errors){const el=document.getElementById(id);if(!el)return;if(!el.value.trim()){errors.push({id,msg});const f=el.closest('.field');if(f){f.classList.add('field-error');if(!f.querySelector('.field-error-msg')){const s=document.createElement('div');s.className='field-error-msg';s.innerHTML='⚠ '+msg;f.appendChild(s);}}el.addEventListener('input',()=>{if(el.value.trim()){f&&f.classList.remove('field-error');f&&f.querySelector('.field-error-msg')?.remove();}});el.addEventListener('change',()=>{if(el.value.trim()){f&&f.classList.remove('field-error');f&&f.querySelector('.field-error-msg')?.remove();}});}}
+function reqEl(el,msg,errors){if(!el)return;if(!el.value.trim()){errors.push({id:el.id,msg});const f=el.closest('.field');if(f){f.classList.add('field-error');if(!f.querySelector('.field-error-msg')){const s=document.createElement('div');s.className='field-error-msg';s.innerHTML='⚠ '+msg;f.appendChild(s);}}el.addEventListener('input',()=>{if(el.value.trim()){f&&f.classList.remove('field-error');f&&f.querySelector('.field-error-msg')?.remove();}});}}
+function clearErrors(step){const c=document.getElementById('step-'+step);if(!c)return;c.querySelectorAll('.field-error').forEach(f=>f.classList.remove('field-error'));c.querySelectorAll('.radio-error').forEach(f=>f.classList.remove('radio-error'));c.querySelectorAll('.field-error-msg,.radio-error-msg').forEach(m=>m.remove());const b=document.getElementById('err-'+step);if(b)b.classList.remove('show');}
+
+// PDF
+function gerarPDF(){
+  if(!validateStep(1))return;
+  if(!validateStep(2))return;
+  if(!validateStep(3))return;
+  function e(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+  const tipoInt=getRadio('tipo_interv')||'\u2014';
+  const sede=getRadio('sede');
+  const sedePT=sede==='nacional'?'Sede Nacional / National HQ':sede==='estrangeiro'?'Sede Estrangeiro / Foreign HQ':'\u2014';
+  const denominacao=gv('denominacao'),objeto=gv('objeto'),moradaSede=gv('morada_sede'),formaJur=gv('forma_juridica'),nipc=gv('nipc');
+  const dataConst=fmtData(gv('data_const')),paisConst=gv('pais_const'),cae=gv('cae'),marca=gv('marca'),sucursais=gv('sucursais');
+  const email=gv('email'),telefone=gv('telefone');
+  const repTipo=getRadio('rep_tipo')||'\u2014',repNome=gv('rep_nome'),repMorada=gv('rep_morada'),repDoc=gv('rep_doc'),repVal=fmtData(gv('rep_val')),repNif=gv('rep_nif');
+  const ppe=getRadio('ppe'),ppeInfo=gv('ppe_info'),finalid=gv('finalidade'),obs=gv('observacoes');
+  const local=gv('local'),dataAss=fmtData(gv('data_ass'));
+  const fundos=getChecked('fundos_group');
+  if(document.querySelector('#fundos_group input[value="outros"]:checked'))fundos.push('Outro: '+gv('fundos_outros'));
+  const fundosT=fundos.join(' \u00b7 ')||'\u2014';
+  const pag=getChecked('pagamento_group');
+  if(document.getElementById('pag_outros_wrap').style.display!=='none'&&gv('pag_outros'))pag.push('Outro: '+gv('pag_outros'));
+  const pagT=pag.join(' \u00b7 ')||'\u2014';
+  const parts=[];const add=h=>parts.push(h);
+  add('<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8"><title>KYC \u2014 Ficha de Empresa<\/title><style>@page{size:A4;margin:18mm}@media print{html{-webkit-print-color-adjust:exact;print-color-adjust:exact}}*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;font-size:9.5pt;color:#1a1612;line-height:1.45}h1{font-size:13pt;font-weight:bold;text-align:center;margin-bottom:3pt}.sub{font-size:8pt;color:#5c5449;text-align:center;margin-bottom:2pt}.subi{font-size:7.5pt;color:#5c5449;font-style:italic;text-align:center;margin-bottom:6pt}.hl{border-top:1.5pt solid #1a1612;margin:4pt 0}.tr{font-size:9pt;font-weight:bold;margin:4pt 0}.sh{background:#f5f0e8;padding:5pt 6pt;margin:10pt 0 4pt;border-left:3pt solid #b8935a}.sh strong{font-size:9pt;text-transform:uppercase}.sh em{display:block;font-size:8pt;color:#5c5449;font-style:italic}.fr{margin-bottom:6pt;padding-bottom:4pt;border-bottom:.5pt solid #d8cfc0}.fl{font-size:8pt;font-weight:bold}.fle{font-size:7pt;font-style:italic;color:#7a6e5e;margin-left:4pt}.fv{font-size:9.5pt;padding-left:6pt;margin-top:2pt}.ts{background:#faf8f4;border:.5pt solid #d8cfc0;padding:5pt 8pt;margin:4pt 0 6pt}.tn{font-size:7.5pt;font-weight:bold;color:#b8935a;text-transform:uppercase;margin-bottom:4pt}.cr{font-size:9pt;margin:3pt 0}.dc{margin:8pt 0 4pt;font-size:9pt}.dce{font-size:8pt;color:#5c5449;font-style:italic;margin-bottom:6pt}.sl{border-top:1pt solid #1a1612;margin-top:18pt}.slb{font-size:7.5pt;color:#5c5449;margin-top:3pt}.dv{border-top:.5pt solid #d8cfc0;margin:8pt 0}.ib{border-top:1.5pt solid #d8cfc0;margin-top:14pt;padding-top:8pt}.it{font-size:7.5pt;text-align:center;color:#5c5449;font-weight:bold;text-transform:uppercase;margin-bottom:6pt}.ci{font-size:8.5pt;color:#5c5449;margin:3pt 0}.ft{border-top:.5pt solid #d8cfc0;margin-top:14pt;padding-top:5pt;text-align:center;font-size:7.5pt;color:#7a6e5e}.ob{background:#faf8f4;border:.5pt solid #d8cfc0;padding:5pt 8pt;font-size:9pt;margin-top:4pt}<\/style><\/head><body class="lang-pt">');
+  add('<h1>FICHA DE CLIENTE \u2014 KNOW YOUR CLIENT<\/h1>');
+  add('<div class="sub">Lei n.\u00ba 83/2017, de 18 de Agosto \u00b7 Regulamento 276/2019<\/div>');
+  add('<div class="subi">Law 83/2017 of 18 August and Regulation 276/2019<\/div>');
+  add('<div class="hl"><\/div>');
+  add('<div class="tr">PESSOA COLETIVA / CORPORATE \u00a0\u00a0\u00a0 Tipo / Role: '+e(tipoInt)+' \u00a0\u00a0\u00a0 '+e(sedePT)+'<\/div>');
+  add('<div class="hl"><\/div>');
+  function frow(pt,en,val){add('<div class="fr"><span class="fl">'+pt+'<\/span><span class="fle">\/ '+en+'<\/span><div class="fv">'+e(val||'\u2014')+'<\/div><\/div>');}
+  add('<div class="sh"><strong>A. Identificação Completa<\/strong><em>Full Identification<\/em><\/div>');
+  frow('Denominação Social','Company Name',denominacao);frow('Objeto Social','Corporate Object',objeto);frow('Morada da Sede','Headquarters Address',moradaSede);frow('Forma Jurídica','Legal Form',formaJur);frow('NIF / NIPC','Tax Identification Number',nipc);
+  frow('Data de Constituição \u00b7 País','Constitution Date \u00b7 Country',dataConst+' \u00b7 '+paisConst);
+  if(cae)frow('CAE','Economic Activity Code',cae);if(marca)frow('Marca','Brand',marca);if(sucursais)frow('Sucursais','Branches',sucursais);
+  frow('Email \u00b7 Telefone','Email \u00b7 Phone',email+' \u00b7 '+telefone);
+  add('<div class="sh"><strong>B. Titulares dos Órgãos de Administração<\/strong><em>Administration Body Holders<\/em><\/div>');
+  const titBlocks=document.querySelectorAll('#titulares_container .titular-block');
+  if(titBlocks.length===0){add('<div class="fv" style="color:#7a6e5e;font-style:italic;">(Nenhum titular adicionado)<\/div>');}
+  else{titBlocks.forEach((b,i)=>{const n=i+1;const tNome=document.getElementById('tit_nome_'+n)?.value||'\u2014';const tCargo=document.getElementById('tit_cargo_'+n)?.value||'\u2014';const tQuota=document.getElementById('tit_quota_'+n)?.value||'\u2014';const tDoc=document.getElementById('tit_doc_'+n)?.value||'\u2014';const tVal=fmtData(document.getElementById('tit_val_'+n)?.value||'');const tNif=document.getElementById('tit_nif_'+n)?.value||'\u2014';add('<div class="ts"><div class="tn">'+n+'\u00ba Titular / '+n+(n===1?'st':n===2?'nd':'th')+' Holder<\/div>');frow('Nome \u00b7 Cargo \u00b7 Quota','Name \u00b7 Post \u00b7 Share',tNome+' \u00b7 '+tCargo+' \u00b7 '+tQuota);frow('Doc. ID \u00b7 Válido até \u00b7 NIF','ID \u00b7 Valid Until \u00b7 NIF',tDoc+' \u00b7 '+tVal+' \u00b7 '+tNif);add('<\/div>');});}
+  const benBlocks=document.querySelectorAll('#beneficiarios_container .titular-block');
+  if(benBlocks.length>0){add('<div class="sh"><strong>C. Beneficiários Efetivos (RCBE)<\/strong><em>Beneficial Owners \u2014 Law 89/2017<\/em><\/div>');benBlocks.forEach((b,i)=>{const n=i+1;const bNome=document.getElementById('ben_nome_'+n)?.value||'\u2014';const bCargo=document.getElementById('ben_cargo_'+n)?.value||'\u2014';const bQuota=document.getElementById('ben_quota_'+n)?.value||'\u2014';const bDoc=document.getElementById('ben_doc_'+n)?.value||'\u2014';const bVal=fmtData(document.getElementById('ben_val_'+n)?.value||'');const bNif=document.getElementById('ben_nif_'+n)?.value||'\u2014';add('<div class="ts"><div class="tn">'+n+'\u00ba Beneficiário / '+n+(n===1?'st':n===2?'nd':'th')+' Beneficial Owner<\/div>');frow('Nome \u00b7 Cargo \u00b7 Quota','Name \u00b7 Post \u00b7 Share',bNome+' \u00b7 '+bCargo+' \u00b7 '+bQuota);frow('Doc. ID \u00b7 Válido até \u00b7 NIF','ID \u00b7 Valid Until \u00b7 NIF',bDoc+' \u00b7 '+bVal+' \u00b7 '+bNif);add('<\/div>');});}
+  add('<div class="sh"><strong>D. Representação Legal<\/strong><em>Legal Representation<\/em><\/div>');
+  frow('Tipo de Representação','Type of Representation',repTipo);frow('Nome do Representante','Representative Name',repNome);if(repMorada)frow('Morada do Representante','Representative Address',repMorada);frow('Doc. ID \u00b7 Válido até \u00b7 NIF','ID \u00b7 Valid Until \u00b7 NIF',repDoc+' \u00b7 '+repVal+' \u00b7 '+repNif);
+  add('<div class="sh"><strong>E. Qualidade de Pessoa Interveniente \u2014 PPE<\/strong><em>Intervening Person Status \u2014 Politically Exposed Person<\/em><\/div>');
+  add('<div class="cr">'+(ppe==='sim'?'\u2611':'\u2610')+' Pessoa Politicamente Exposta / Politically Exposed Person'+(ppe==='sim'&&ppeInfo?' \u2014 '+e(ppeInfo):'')+' <\/div>');
+  add('<div class="cr">'+(ppe==='nao'?'\u2611':'\u2610')+' Não Aplicável / Not Applicable<\/div>');
+  add('<div class="sh"><strong>F. Informações da Transação<\/strong><em>Transaction Information<\/em><\/div>');
+  add('<div class="fr"><span class="fl">Origem dos Fundos<\/span><span class="fle">\/ Source of Funds<\/span><div class="fv">'+fundosT+'<\/div><\/div>');
+  frow('Finalidade da Aquisição','Purpose of Acquisition',finalid);
+  add('<div class="fr"><span class="fl">Meios de Pagamento<\/span><span class="fle">\/ Means of Payment<\/span><div class="fv">'+pagT+'<\/div><\/div>');
+  if(obs)add('<div class="fl">Observações / Observations:<\/div><div class="ob">'+e(obs)+'<\/div>');
+  add('<div class="dv"><\/div>');
+  add('<div class="dc">Declaro que todas as afirmações prestadas são verdadeiras.<\/div>');
+  add('<div class="dce">I declare that all the statements made are true.<\/div>');
+  add('<div style="margin-top:6pt;font-size:9pt;">'+e(local)+', '+dataAss+'<\/div>');
+  add('<table style="width:100%;margin-top:4pt;"><tr><td style="width:55%;padding-right:20pt;"><div class="sl"><\/div><div class="slb">Assinatura do representante / Representative signature<\/div><\/td><td style="width:45%;"><div class="sl"><\/div><div class="slb">Rubrica / Initials<\/div><\/td><\/tr><\/table>');
+  add('<div class="sh"><strong>G. Proteção de Dados Pessoais<\/strong><em>Personal Data Protection Policy<\/em><\/div>');
+  add('<div class="dc">Os dados recolhidos serão usados exclusivamente para cumprimento da Lei n.\u00ba 83/2017 e procedimentos internos, de acordo com o RGPD (EU) 2016/679. Conservados por mínimo de 7 anos.<\/div>');
+  add('<div class="dce">Data collected will be used solely for Law 83/2017 compliance and internal procedures, per GDPR (EU) 2016/679. Retained for a minimum of 7 years.<\/div>');
+  add('<div class="cr" style="margin-top:6pt;">\u2611 Li e concordo expressamente com o processamento dos dados para as finalidades descritas.<\/div>');
+  add('<div class="dce">I have read and expressly agree to the processing of data for the purposes described.<\/div>');
+  add('<div style="margin-top:6pt;font-size:9pt;">Data / Date: '+dataAss+'<\/div>');
+  add('<table style="width:100%;margin-top:4pt;"><tr><td style="width:55%;padding-right:20pt;"><div class="sl"><\/div><div class="slb">Assinatura(s) / Signature(s)<\/div><\/td><td style="width:45%;"><div class="sl"><\/div><div class="slb">Rubrica / Initials<\/div><\/td><\/tr><\/table>');
+  add('<div class="ft">'+e(EMPRESA.nome)+' \u2014 AMI '+e(EMPRESA.ami)+'<\/div>');
+  add('<\/body><\/html>');
+  const html=parts.join('\n');
+  let iframe=document.getElementById('__pdf_frame');
+  if(!iframe){iframe=document.createElement('iframe');iframe.id='__pdf_frame';iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:0;height:0;border:none;';document.body.appendChild(iframe);}
+  iframe.srcdoc=html;
+  iframe.onload=function(){
+    try{iframe.contentWindow.focus();iframe.contentWindow.print();}
+    catch(err){
+      // fallback se srcdoc não funcionar: download do HTML
+      const a=document.createElement('a');
+      const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+      a.href=URL.createObjectURL(blob);
+      a.download='KYC_Empresa_'+gv('denominacao').split(' ')[0]+'_'+gv('data_ass')+'.html';
+      a.click();
+    }
+  };
+}
+
+// Init — add 1 titular by default
+addTitular();
+</script>
+</body>
+</html>

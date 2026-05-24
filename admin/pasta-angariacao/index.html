@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<script>
+  (function() {
+    if (sessionStorage.getItem('magna_admin_auth') !== 'ok') {
+      window.location.replace('/admin/');
+    }
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pasta de Angariação — Magna Properties</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1612; --ink-light:#5c5449; --paper:#faf8f4; --cream:#f2ede4;
+  --gold:#b8935a; --gold-light:#d4a96a; --gold-bg:#fdf6e8;
+  --border:#d8cfc0; --green:#2d6a4f; --green-bg:#f0f7f4; --green-border:#b8d8cc;
+  --red:#8b2c2c;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); }
+
+/* ── TOPBAR ── */
+.topbar { background:#0c0b09; padding:16px 24px; display:flex; align-items:center; justify-content:center; position:sticky; top:0; z-index:100; }
+.topbar-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:#c4a35a; letter-spacing:0.05em; }
+.topbar-sub { font-size:0.8rem; color:#6b6358; margin-top:3px; letter-spacing:0; text-transform:none; }
+.topbar-ref { position:absolute; right:24px; font-size:0.78rem; color:#6b6358; }
+.topbar-ref strong { color:#c4a35a; }
+.gold-bar { height:3px; background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent); }
+
+/* ── WRAP ── */
+.wrap { max-width:860px; margin:0 auto; padding:28px 24px 120px; }
+
+/* ── STEP SELECTORS ── */
+.step { margin-bottom:32px; }
+.step-label { font-size:0.88rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:500; margin-bottom:10px; }
+.sel-btns { display:flex; gap:8px; flex-wrap:wrap; }
+.sel-btn { font-family:'DM Sans',sans-serif; font-size:0.88rem; padding:10px 20px; border:1.5px solid var(--border); background:white; cursor:pointer; border-radius:24px; font-weight:500; transition:all 0.15s; display:flex; align-items:center; gap:7px; color:var(--ink-light); }
+.sel-btn:hover { border-color:var(--gold); background:var(--gold-bg); color:var(--ink); }
+.sel-btn.active { border-color:var(--gold); background:var(--gold-bg); color:var(--ink); font-weight:600; box-shadow:0 2px 8px rgba(184,147,90,0.2); }
+
+/* ── CARD ── */
+.card { background:var(--paper); border:1px solid var(--border); border-radius:2px; margin-bottom:16px; overflow:hidden; }
+.card-head { padding:14px 18px; background:#f2ede4; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; cursor:pointer; user-select:none; }
+.card-head:hover { background:#ede8df; }
+.card-icon { font-size:1.2rem; }
+.card-title { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:600; flex:1; }
+.card-chevron { color:var(--border); font-size:0.75rem; transition:transform 0.2s; }
+.card-chevron.open { transform:rotate(90deg); }
+.card-body { padding:20px; display:none; }
+.card-body.open { display:block; }
+
+/* ── FORM GRID ── */
+.fg { display:grid; gap:12px 16px; margin-bottom:14px; }
+.fg.c1 { grid-template-columns:1fr; }
+.fg.c2 { grid-template-columns:1fr 1fr; }
+.fg.c3 { grid-template-columns:1fr 1fr 1fr; }
+.fg.c4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.ff { display:flex; flex-direction:column; gap:4px; }
+.ff.span2 { grid-column:span 2; }
+.ff.span3 { grid-column:span 3; }
+.ff label { font-size:0.88rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:500; margin-bottom:2px; }
+.ff input, .ff select {
+  border:1px solid var(--border); background:white; padding:11px 14px;
+  font-family:'DM Sans',sans-serif; font-size:1rem; color:var(--ink);
+  border-radius:4px; width:100%; transition:border-color 0.15s;
+  -webkit-appearance:none; appearance:none;
+}
+.ff input:focus, .ff select:focus { outline:none; border-color:var(--gold); }
+.ff input.filled, .ff select.filled { border-color:var(--green); background:#f8fdf9; }
+.section-divider { font-size:0.88rem; letter-spacing:0; text-transform:none; color:var(--gold); font-weight:600; margin:18px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+
+/* ── PROPRIETÁRIO BLOCK ── */
+.prop-block { border:1px solid var(--border); border-radius:4px; padding:16px; margin-bottom:12px; background:white; position:relative; }
+.prop-block-title { font-size:0.88rem; letter-spacing:0; text-transform:none; color:var(--gold); font-weight:600; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; }
+.btn-remove-prop { font-family:'DM Sans',sans-serif; font-size:0.75rem; color:#c8bfb4; border:none; background:none; cursor:pointer; padding:2px 6px; }
+.btn-remove-prop:hover { color:var(--red); }
+.btn-add-prop { display:flex; align-items:center; gap:8px; font-family:'DM Sans',sans-serif; font-size:0.88rem; color:var(--gold); border:2px dashed var(--gold); background:transparent; cursor:pointer; padding:12px 20px; border-radius:24px; width:100%; justify-content:center; transition:all 0.15s; margin-top:4px; }
+.btn-add-prop:hover { background:var(--gold-bg); }
+
+/* ── CHECKLIST ── */
+.cl-section { margin-bottom:14px; background:var(--paper); border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+.cl-head { padding:14px 18px; background:#f2ede4; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; }
+.cl-head.gold { background:#f2ede4; border-left:3px solid var(--gold); }
+.cl-icon { font-size:1.2rem; }
+.cl-title { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:600; color:var(--ink); flex:1; letter-spacing:0.01em; }
+.cl-sub { font-size:0.75rem; color:var(--ink-light); white-space:nowrap; font-style:italic; }
+.cl-item { display:flex; align-items:flex-start; gap:12px; padding:14px 18px; border-bottom:1px solid var(--border); cursor:pointer; }
+.cl-item:last-child { border-bottom:none; }
+/* Manual dividers inside cl-body: absorb the border of the preceding cl-item to avoid double lines */
+.cl-divider { height:0; border-top:1px solid var(--border); margin:0; }
+.cl-body > .cl-item + .cl-divider,
+.cl-body > div[class^="tipo-"] + .cl-divider { margin-top:-1px; }
+.cl-item:hover { background:#f5f0e8; }
+.cl-check { width:20px; height:20px; border:1.5px solid var(--border); border-radius:4px; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; background:white; pointer-events:none; }
+.cl-item:hover .cl-check { border-color:var(--gold); }
+.cl-check.on { background:var(--green); border-color:var(--green); }
+.cl-check.on::after { content:'✓'; color:white; font-size:0.78rem; font-weight:700; }
+.cl-name { font-size:1rem; font-weight:400; color:var(--ink); display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-bottom:2px; }
+.cl-desc { font-size:0.85rem; color:var(--ink-light); line-height:1.5; margin-top:3px; }
+.tag { font-size:0.62rem; padding:2px 7px; border-radius:8px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; }
+.tag-ob   { background:#fdf0f0; color:var(--red); border:1px solid #f0c8c8; }
+.tag-cond { background:var(--gold-bg); color:#8a5c1a; border:1px solid #e8d4a8; }
+.tag-int  { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
+
+/* ── EXPORT BUTTON BAR ── */
+.export-bar { position:fixed; bottom:0; left:0; right:0; background:#0c0b09; padding:12px 20px; border-top:1px solid #2a2720; z-index:100; }
+.export-inner { max-width:860px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.export-status { font-size:0.82rem; color:#6b6358; }
+.export-status span { color:#c4a35a; font-weight:500; }
+.btn-export { font-family:'DM Sans',sans-serif; font-size:0.88rem; letter-spacing:0; text-transform:none; font-weight:500; padding:12px 28px; background:#3a3530; color:#666; border:none; cursor:not-allowed; border-radius:24px; transition:all 0.2s; white-space:nowrap; }
+.btn-export.ready { background:#c4a35a; color:#0c0b09; cursor:pointer; box-shadow:0 2px 8px rgba(184,147,90,0.35); }
+.btn-export.ready:hover { background:#d4b06a; box-shadow:0 4px 14px rgba(184,147,90,0.5); }
+
+/* ── DRIVE LINK FIELD ── */
+.drive-link-wrap { display:flex; gap:8px; align-items:center; margin-top:4px; }
+.drive-link-wrap input { flex:1; border:1px solid var(--border); background:white; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:0.95rem; color:var(--ink); border-radius:4px; transition:border-color 0.15s; }
+.drive-link-wrap input:focus { outline:none; border-color:#c4a35a; }
+.drive-link-wrap input::placeholder { color:#bbb; font-style:italic; }
+.btn-open-drive { font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:500; padding:11px 18px; background:#c4a35a; color:white; border:none; border-radius:24px; cursor:pointer; white-space:nowrap; transition:all 0.2s; box-shadow:0 2px 6px rgba(184,147,90,0.3); flex-shrink:0; }
+.btn-open-drive:hover { background:#d4b06a; }
+.btn-open-drive:disabled { background:#d8cfc0; color:#aaa; cursor:default; box-shadow:none; }
+
+/* ── INSTAGRAM LINKS FIELD ── */
+.cl-textarea { width:100%; border:1px solid var(--border); border-radius:4px; padding:10px 12px; font-family:'DM Sans',sans-serif; font-size:0.85rem; color:var(--ink); background:white; resize:none; min-height:80px; line-height:1.6; margin-top:8px; transition:border-color 0.15s; }
+.cl-textarea:focus { outline:none; border-color:var(--gold); }
+.cl-textarea::placeholder { color:#bbb; font-style:italic; }
+.ff input.error, .ff select.error { border-color:#e07070; background:#fff8f8; }
+
+@media(max-width:600px) {
+  .fg.c3 { grid-template-columns:1fr 1fr; }
+  .fg.c4 { grid-template-columns:1fr 1fr; }
+  .wrap { padding:16px 14px 120px; }
+}
+@media print {
+  * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body { background:white; }
+  .topbar,.step,.export-bar { display:none !important; }
+  .wrap { padding:0; max-width:none; }
+  .card-body { display:block !important; padding:10pt 14pt; }
+  .cl-head { padding:10pt 14pt; }
+  .cl-title { font-size:14pt; }
+  .card-title { font-size:14pt; }
+  .cl-sub { font-size:8pt; }
+  .prop-block-title { font-size:12pt; }
+  @page { size:A4; margin:10mm; }
+}
+
+  #f-concelho, #f-freguesia { border:1px solid var(--border); background:white; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:0.95rem; color:var(--ink); border-radius:4px; width:100%; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c5449' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; cursor:pointer; }
+  #f-concelho:focus, #f-freguesia:focus { outline:none; border-color:#c4a35a; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div style="text-align:center;">
+    <div class="topbar-title">Magna Properties</div>
+    <div class="topbar-sub">Pasta de Angariação</div>
+  </div>
+  <div class="topbar-ref">Ref: <strong id="tb-ref">—</strong></div>
+</div>
+<div class="gold-bar"></div>
+
+<div class="wrap">
+
+  <!-- ── PASSO 1 ── -->
+  <div class="step">
+    <div class="step-label">1 · Tipo de proprietário</div>
+    <div class="sel-btns">
+      <button class="sel-btn" id="sp-s" onclick="setProp('s')">👤 Pessoa Singular</button>
+      <button class="sel-btn" id="sp-c" onclick="setProp('c')">💑 Casal</button>
+      <button class="sel-btn" id="sp-e" onclick="setProp('e')">🏦 Pessoa Coletiva / Empresa</button>
+    </div>
+  </div>
+
+  <!-- ── PASSO 2 ── -->
+  <div class="step">
+    <div class="step-label">2 · Tipo de imóvel</div>
+    <div class="sel-btns">
+      <button class="sel-btn" id="ti-hab" onclick="setTipo('hab')">🏠 Habitação</button>
+      <button class="sel-btn" id="ti-loj" onclick="setTipo('loj')">🏢 Loja / Escritório</button>
+      <button class="sel-btn" id="ti-pre" onclick="setTipo('pre')">🏛️ Prédio</button>
+      <button class="sel-btn" id="ti-ter" onclick="setTipo('ter')">🌿 Terreno</button>
+    </div>
+  </div>
+
+  <!-- ══ IDENTIFICAÇÃO DA ANGARIAÇÃO ══ -->
+  <div class="card">
+    <div class="card-head" onclick="toggleCard('ang')">
+      <div class="card-icon">📁</div>
+      <div class="card-title">Identificação da Angariação</div>
+      <div class="card-chevron open" id="chev-ang">▶</div>
+    </div>
+    <div class="card-body open" id="body-ang">
+      <div class="fg c3">
+        <div class="ff"><label>Referência / Ref *</label><input id="f-ref" placeholder="Ex: ALP-2026-001" oninput="syncRef(this);validateForm()"></div>
+        <div class="ff"><label>Consultor Responsável *</label><input id="f-consultor" placeholder="Nome do consultor" oninput="validateForm()"></div>
+        <div class="ff"><label>Data de Abertura *</label><input type="date" id="f-data" onchange="validateForm()"></div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label>Tipologia</label>
+          <select id="f-tipologia" onchange="validateForm()">
+            <option value="">— Selecionar —</option>
+            <option>T0</option><option>T1</option><option>T2</option>
+            <option>T3</option><option>T4</option><option>T4+</option><option>N/A</option>
+          </select>
+        </div>
+        <div class="ff"><label>Asking Price *</label><input id="f-preco" placeholder="Ex: 600 000 €" oninput="fmtPreco(this);validateForm()"></div>
+      </div>
+      <div class="section-divider">Localização do Imóvel</div>
+      <div class="fg c1"><div class="ff"><label>Morada (Rua / Avenida, Número, Fracção) *</label><input id="f-rua" placeholder="Ex: Rua das Flores, 12, 2º Dto" oninput="validateForm()"></div></div>
+      <div class="fg c3">
+        <div class="ff"><label>Concelho *</label>
+          <select id="f-concelho" onchange="popFregPasta();validateForm()">
+            <option value="">— Selecionar —</option>
+            <option>Albufeira</option><option>Castro Marim</option><option>Faro</option>
+            <option>Lagoa</option><option>Lagos</option><option>Loulé</option>
+            <option>Olhão</option><option>Portimão</option><option>Silves</option>
+            <option>Tavira</option><option>Vila do Bispo</option><option>Vila Real de Santo António</option>
+          </select>
+        </div>
+        <div class="ff"><label>Freguesia *</label>
+          <select id="f-freguesia" onchange="validateForm()">
+            <option value="">— Selecione o Concelho primeiro —</option>
+          </select>
+        </div>
+        <div class="ff"><label>Código Postal *</label><input id="f-cp" placeholder="0000-000" oninput="validateForm()"></div>
+      </div>
+      <div class="section-divider">Link da Pasta Google Drive</div>
+      <div class="ff">
+        <label>Link da pasta da angariação na Drive</label>
+        <div class="drive-link-wrap">
+          <input id="f-drive" placeholder="Cola aqui o link de partilha da pasta Google Drive desta angariação..." oninput="updateDriveBtn()">
+          <button class="btn-open-drive" id="btn-drive" onclick="openDrive()" disabled>Abrir Drive</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROPRIETÁRIO SINGULAR ══ -->
+  <div class="card prop-s" id="card-prop-s" style="display:none">
+    <div class="card-head" onclick="toggleCard('ps')">
+      <div class="card-icon">👤</div>
+      <div class="card-title">Identificação do Proprietário — Pessoa Singular</div>
+      <div class="card-chevron open" id="chev-ps">▶</div>
+    </div>
+    <div class="card-body open" id="body-ps">
+      <div id="props-container"></div>
+      <button class="btn-add-prop" onclick="addProp()">＋ Adicionar proprietário</button>
+    </div>
+  </div>
+
+  <!-- ══ PROPRIETÁRIO CASAL ══ -->
+  <div class="card prop-c" id="card-prop-c" style="display:none">
+    <div class="card-head" onclick="toggleCard('pc')">
+      <div class="card-icon">💑</div>
+      <div class="card-title">Identificação do Casal</div>
+      <div class="card-chevron open" id="chev-pc">▶</div>
+    </div>
+    <div class="card-body open" id="body-pc">
+      <div id="casais-container"></div>
+      <button class="btn-add-prop" onclick="addCasal()">＋ Adicionar casal</button>
+    </div>
+  </div>
+
+  <!-- ══ PROPRIETÁRIO EMPRESA ══ -->
+  <div class="card prop-e" id="card-prop-e" style="display:none">
+    <div class="card-head" onclick="toggleCard('pe')">
+      <div class="card-icon">🏦</div>
+      <div class="card-title">Identificação do Proprietário — Pessoa Coletiva / Empresa</div>
+      <div class="card-chevron open" id="chev-pe">▶</div>
+    </div>
+    <div class="card-body open" id="body-pe">
+      <div class="fg c3">
+        <div class="ff span2"><label>Denominação Social *</label><input id="e-nome" placeholder="Nome completo da empresa" oninput="validateForm()"></div>
+        <div class="ff"><label>NIPC *</label><input id="e-nipc" placeholder="Número de pessoa coletiva" oninput="validateForm()"></div>
+      </div>
+      <div class="fg c3">
+        <div class="ff"><label>Forma Jurídica</label>
+          <select id="e-forma" onchange="validateForm()">
+            <option value="">— Selecionar —</option>
+            <option>Lda</option><option>Unipessoal Lda</option><option>SA</option>
+            <option>SQ</option><option>Fundo de Investimento</option><option>Outra</option>
+          </select>
+        </div>
+        <div class="ff"><label>Cód. Certidão Permanente</label><input id="e-certidao" placeholder="Código de acesso online" oninput="validateForm()"></div>
+        <div class="ff"><label>Cód. RCBE</label><input id="e-rcbe" placeholder="Código de acesso RCBE" oninput="validateForm()"></div>
+      </div>
+      <div class="fg c1"><div class="ff"><label>Representante(s) Legal(is) *</label><input id="e-rep" placeholder="Nome(s) do(s) gerente(s) / administrador(es)" oninput="validateForm()"></div></div>
+      <div class="section-divider">Sede Social</div>
+      <div class="fg c3">
+        <div class="ff span2"><label>Morada da Sede *</label><input id="e-rua" placeholder="Rua, número, fracção" oninput="validateForm()"></div>
+        <div class="ff"><label>Código Postal *</label><input id="e-cp" placeholder="0000-000" oninput="validateForm()"></div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label>Naturalidade — Freguesia</label><input id="e-freg" placeholder="Freguesia da sede"></div>
+        <div class="ff"><label>Naturalidade — Concelho</label><input id="e-conc" placeholder="Concelho da sede"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CHECKLIST ══ -->
+  <div id="checklist-area">
+
+    <!-- ── 1. PROPRIETÁRIO ── -->
+    <div class="cl-section">
+      <div class="cl-head"><div class="cl-icon">👤</div><div class="cl-title">Documentos do Proprietário</div><div class="cl-sub">CC, NIF, KYC</div></div>
+      <div class="cl-body">
+        <div class="prop-s" style="display:none">
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Cartão de Cidadão / Passaporte</div><div class="cl-desc">Cópia frente e verso de todos os proprietários</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Assento de Nascimento</div><div class="cl-desc">Quando existe alteração do estado civil entre a compra e a venda</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Assento de Casamento</div><div class="cl-desc">Quando existe alteração do regime de casamento entre a compra e a venda</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Declaração de Herdeiros / Habilitação de Herdeiros</div><div class="cl-desc">Quando o imóvel provém de herança — documento notarial que identifica todos os herdeiros legitimados a vender</div></div></div>
+        </div>
+        <div class="prop-c" style="display:none">
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Cartão de Cidadão / Passaporte — ambos os cônjuges</div><div class="cl-desc">Cópia frente e verso de cada elemento do casal</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Assento de Casamento</div><div class="cl-desc">Com indicação do regime de bens</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Declaração de Herdeiros / Habilitação de Herdeiros</div><div class="cl-desc">Quando o imóvel provém de herança</div></div></div>
+        </div>
+        <div class="prop-e" style="display:none">
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Certidão Permanente da Empresa</div><div class="cl-desc">Identifica a empresa, sócios e gerentes e confirma que está em actividade</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Cartão de Identificação Fiscal (NIPC)</div><div class="cl-desc">Consta na Certidão Permanente ou no Portal das Finanças</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Certidão de Registo Comercial Actualizada</div><div class="cl-desc">Poderes de representação e objecto social</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Código RCBE — Beneficiário Efectivo</div><div class="cl-desc">Obrigatório por lei em todas as transacções de pessoas colectivas</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">CC dos Representantes Legais</div><div class="cl-desc">Cópia frente e verso de todos os gerentes / administradores signatários</div></div></div>
+        </div>
+        <div class="cl-divider"></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">KYC — Ficha de Branqueamento de Capitais assinada</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Reunião de Qualificação CV preenchida</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Procurações</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Emails Enviados &amp; Recebidos</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Formulários de Recomendações &amp; Testemunhos</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── 2. IMÓVEL ── -->
+    <div class="cl-section">
+      <div class="cl-head"><div class="cl-icon">🏠</div><div class="cl-title">Imóvel</div><div class="cl-sub">Registo, caderneta, licenças</div></div>
+      <div class="cl-body">
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Certidão Permanente do Registo Predial</div><div class="cl-desc">Verificar ónus, hipotecas e titularidade — válida 6 meses</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Caderneta Predial Urbana</div><div class="cl-desc">Artigo matricial, VPT e titularidade fiscal</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Declaração de Não Exercício de Preferência</div><div class="cl-desc">Câmara Municipal, IHRU e arrendatário — confirmação de que nenhuma entidade com direito de preferência legal pretende exercê-lo sobre a venda</div></div></div>
+        <div class="tipo-hab" style="display:none">
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Licença de Utilização / Habitabilidade</div><div class="cl-desc">Câmara Municipal (isentos se anterior a 1951)</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Certificado Energético</div><div class="cl-desc">Classe A+ a F — validade 10 anos</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Ficha Técnica de Habitação (FTH)</div><div class="cl-desc">Apenas para imóveis construídos ou reconstruídos após Março 2004</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Plantas do Imóvel</div><div class="cl-desc">Câmara Municipal ou promotor original</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Título Constitutivo da Propriedade Horizontal</div><div class="cl-desc">Quando o imóvel faz parte de um edifício em propriedade horizontal</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Regulamento do Condomínio</div><div class="cl-desc">Se existir condomínio constituído</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Pedido de Informação Prévia (PIP)</div><div class="cl-desc">Quando existe intenção de obras, ampliação ou alteração de uso</div></div></div>
+        </div>
+        <div class="tipo-ter" style="display:none">
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Certidão de Teor / Descrição Predial</div><div class="cl-desc">Área, confrontações e delimitações</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Caderneta Predial Rústica</div><div class="cl-desc">Se inscrito como rústico nas Finanças</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Certidão de Localização / PDM</div><div class="cl-desc">Classificação no PDM — índices de construção permitidos</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Alvará de Loteamento ou Informação Prévia</div><div class="cl-desc">Se existir projecto aprovado ou informação prévia favorável</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Licença de Utilização / Habitabilidade</div><div class="cl-desc">Quando existe edificação no terreno</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Título Constitutivo da Propriedade Horizontal</div><div class="cl-desc">Se o terreno já tem projecto aprovado com constituição de PH</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Informação Prévia sobre Constituição de PH</div><div class="cl-desc">Quando ainda não há PH constituída mas está prevista no projecto</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Declaração de Propriedade Total</div><div class="cl-desc">Quando o terreno é detido na totalidade por um único proprietário sem PH</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Pedido de Informação Prévia (PIP)</div><div class="cl-desc">Confirma o que é possível construir — argumento de venda relevante quando existe</div></div></div>
+        </div>
+        <div class="tipo-loj" style="display:none">
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Licença de Utilização Comercial</div><div class="cl-desc">Câmara Municipal — confirma uso comercial ou de serviços</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Certificado Energético</div><div class="cl-desc">Validade 10 anos</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Título Constitutivo da Propriedade Horizontal</div><div class="cl-desc">Se a loja faz parte de um edifício em propriedade horizontal</div></div></div>
+        </div>
+        <div class="tipo-pre" style="display:none">
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Título Constitutivo da Propriedade Horizontal</div><div class="cl-desc">Fracções autónomas e permilagens</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Licenças de Utilização — todas as fracções</div><div class="cl-desc">Indicar quais existem e quais em falta</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Caderneta Predial de cada fracção</div><div class="cl-desc">Artigo matricial próprio de cada fracção autónoma</div></div></div>
+          <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Contratos de Arrendamento em vigor</div><div class="cl-desc">Se existirem fracções arrendadas — direito de preferência dos inquilinos</div></div></div>
+        </div>
+        <div class="cl-divider"></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Plantas Digitalizadas</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Requisições à Câmara Municipal</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Requisições às Finanças</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── 3. CONTRATOS ── -->
+    <div class="cl-section">
+      <div class="cl-head"><div class="cl-icon">📄</div><div class="cl-title">Contratos</div><div class="cl-sub">CMI, CPCV, escritura</div></div>
+      <div class="cl-body">
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">CMI original assinado</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Declaração de Não Dívida ao Condomínio</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Propostas de Compra</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Fichas de Visita</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Cópia do CPCV assinado por todas as partes</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Comprovativos de Transferências Bancárias / Pagamentos de Sinais no CPCV</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Cópias de Cheques Bancários entregues no CPCV</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Cópias de Cheques Bancários entregues na Escritura</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Comprovativos de Transferências Bancárias na Escritura</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Guias de Impostos (IMT / Imposto de Selo)</div><div class="cl-desc">Através de Solicitador / Advogado (custo de 30€ + IVA)</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Cópia da Escritura assinada por todas as partes</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Relatório de Acompanhamento</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Avaliações de Mercado</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Folha de Capa</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── 4. MARKETING ── -->
+    <div class="cl-section">
+      <div class="cl-head"><div class="cl-icon">📸</div><div class="cl-title">Marketing</div><div class="cl-sub">Fotos, vídeos, drone, publicações</div></div>
+      <div class="cl-body">
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Fotografias profissionais</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Vídeos &amp; Drone</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Descrição redigida — PT e EN</div></div></div>
+        <div class="cl-item" style="flex-direction:column;align-items:stretch;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+            <div class="cl-check" onclick="ck(this)"></div>
+            <div class="cl-name">Publicação no Portal Imobiliário Idealista</div>
+          </div>
+          <div class="drive-link-wrap" style="padding-left:32px;">
+            <input placeholder="Cola aqui o link directo ao anúncio no Idealista..." oninput="this.nextElementSibling.disabled=!this.value">
+            <button class="btn-open-drive" disabled onclick="if(this.previousElementSibling.value)window.open(this.previousElementSibling.value,'_blank')">Abrir anúncio</button>
+          </div>
+        </div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Publicações Instagram Magna Properties</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── 5. FINANCEIRO ── -->
+    <div class="cl-section">
+      <div class="cl-head gold"><div class="cl-icon">💰</div><div class="cl-title">Financeiro</div><div class="cl-sub">Faturas e comissões</div></div>
+      <div class="cl-body">
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Faturas de Investimentos em Marketing e Promoção</div><div class="cl-desc">Fotorreportagem, vídeo, drone, produção de conteúdo e outras despesas de promoção do imóvel</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Faturas de Obtenção de Documentos</div></div></div>
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Faturas de Comissão Imobiliária</div></div></div>
+      </div>
+    </div>
+
+    <!-- ── 6. MAGNA PROPERTIES ── -->
+    <div class="cl-section">
+      <div class="cl-head gold"><div class="cl-icon">🏛️</div><div class="cl-title">Dados da Empresa — Magna Properties, Lda.</div></div>
+      <div class="cl-body">
+        <div class="cl-item" onclick="ck(this.querySelector('.cl-check'))"><div class="cl-check"></div><div><div class="cl-name">Licença IMPIC / AMI</div><div class="cl-desc">Licença obrigatória de mediação imobiliária emitida pelo IMPIC</div></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EXPORT BAR -->
+<div class="export-bar">
+  <div class="export-inner">
+    <div class="export-status" id="export-status">Preencha os campos obrigatórios para exportar</div>
+    <button class="btn-export" id="btn-export" onclick="exportPDF()">🖨 Imprimir / Gerar PDF</button>
+  </div>
+</div>
+
+<script>
+
+const FREGUESIAS_P = {
+  'Albufeira':['Albufeira e Olhos de Água','Guia'],
+  'Castro Marim':['Altura','Castro Marim'],
+  'Faro':['Conceição e Estoi','Faro (Sé e São Pedro)','Montenegro','Santa Bárbara de Nexe'],
+  'Lagoa':['Estômbar e Parchal','Ferragudo','Lagoa e Carvoeiro','Porches'],
+  'Lagos':['Luz','Odiáxere','São Sebastião e Santa Maria'],
+  'Loulé':['Almancil','Boliqueime','Loulé (São Clemente)','Loulé (São Sebastião)','Quarteira'],
+  'Olhão':['Moncarapacho e Fuseta','Olhão','Pechão','Quelfes'],
+  'Portimão':['Alvor','Portimão'],
+  'Silves':['Alcantarilha e Pêra','Armação de Pêra'],
+  'Tavira':['Conceição e Cabanas de Tavira','Luz de Tavira e Santo Estêvão','Santa Lúzia','Tavira'],
+  'Vila do Bispo':['Budens','Sagres','Vila do Bispo e Raposeira'],
+  'Vila Real de Santo António':['Monte Gordo','Vila Nova de Cacela','Vila Real de Santo António']
+};
+function popFregPasta(){
+  const c = document.getElementById('f-concelho').value;
+  const s = document.getElementById('f-freguesia');
+  s.innerHTML = '<option value="">— Selecionar —</option>';
+  if(FREGUESIAS_P[c]) FREGUESIAS_P[c].forEach(f => { const o = document.createElement('option'); o.value=f; o.textContent=f; s.appendChild(o); });
+}
+
+let currentProp = null;
+let currentTipo = null;
+let propCount = 0;
+
+const ESTADO_CIVIL_OPTS = [
+  '— Selecionar —',
+  'Solteiro(a)',
+  'União de Facto',
+  'Divorciado(a)',
+  'Viúvo(a)',
+];
+
+const ESTADO_CIVIL_CASAL_OPTS = [
+  '— Selecionar —',
+  'Casado(a) — Comunhão de Adquiridos',
+  'Casado(a) — Comunhão Geral de Bens',
+  'Casado(a) — Separação de Bens',
+];
+
+const NAC_OPTS = [
+  '— Selecionar —',
+  'Portuguesa','Brasileira','Britânica','Alemã','Francesa',
+  'Holandesa','Irlandesa','Espanhola','Italiana','Sueca',
+  'Belga','Americana','Canadiana','Australiana','Outra',
+];
+
+/* ── PROP TYPE ── */
+function setProp(p) {
+  currentProp = p;
+  ['s','c','e'].forEach(x => document.getElementById('sp-'+x)?.classList.toggle('active', x===p));
+  // Clear other containers to avoid stale req-prop fields affecting validation
+  if (p !== 's') document.getElementById('props-container').innerHTML = '';
+  if (p !== 'c') document.getElementById('casais-container').innerHTML = '';
+  document.querySelectorAll('.prop-s').forEach(el => el.style.display = p==='s' ? '' : 'none');
+  document.querySelectorAll('.prop-c').forEach(el => el.style.display = p==='c' ? '' : 'none');
+  document.querySelectorAll('.prop-e').forEach(el => el.style.display = p==='e' ? '' : 'none');
+  if (p === 's' && document.getElementById('props-container').children.length === 0) addProp();
+  if (p === 'c' && document.getElementById('casais-container').children.length === 0) addCasal();
+  validateForm();
+}
+
+let casalCount = 0;
+function addCasal() {
+  casalCount++;
+  const idx = casalCount;
+  const container = document.getElementById('casais-container');
+  const nacOptions = NAC_OPTS.map(o => `<option>${o}</option>`).join('');
+  const ecOptions  = ESTADO_CIVIL_CASAL_OPTS.map(o => `<option>${o}</option>`).join('');
+
+  const block = document.createElement('div');
+  block.className = 'prop-block';
+  block.id = 'casal-block-' + idx;
+  block.innerHTML = `
+    <div class="prop-block-title">
+      Casal ${idx}
+      ${idx > 1 ? `<button class="btn-remove-prop" onclick="removeCasal(${idx})">✕ Remover</button>` : ''}
+    </div>
+    <div style="font-size:0.78rem;font-weight:600;color:var(--gold);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px;">1.º Cônjuge</div>
+    <div class="fg c3">
+      <div class="ff span2"><label>Nome Completo *</label><input class="req-prop" placeholder="Nome como consta no CC" oninput="validateForm()"></div>
+      <div class="ff"><label>NIF *</label><input class="req-prop" placeholder="Ex: 123 456 789" oninput="validateForm()"></div>
+    </div>
+    <div class="fg c4">
+      <div class="ff"><label>Nº CC / Passaporte *</label><input class="req-prop" placeholder="Número do documento" oninput="validateForm()"></div>
+      <div class="ff"><label>Validade *</label><input class="req-prop" placeholder="DD/MM/AAAA" oninput="validateForm()"></div>
+      <div class="ff"><label>Nacionalidade *</label><select class="req-prop-sel" onchange="validateForm()">${nacOptions}</select></div>
+      <div class="ff"><label>Estado Civil *</label><select class="req-prop-sel" onchange="validateForm()">${ecOptions}</select></div>
+    </div>
+    <div class="fg c3">
+      <div class="ff span2"><label>Morada *</label><input class="req-prop" placeholder="Rua, número, fracção" oninput="validateForm()"></div>
+      <div class="ff"><label>Código Postal *</label><input class="req-prop" placeholder="0000-000" oninput="validateForm()"></div>
+    </div>
+    <div class="fg c2">
+      <div class="ff"><label>Naturalidade — Freguesia *</label><input class="req-prop" placeholder="Freguesia de nascimento" oninput="validateForm()"></div>
+      <div class="ff"><label>Naturalidade — Concelho *</label><input class="req-prop" placeholder="Concelho de nascimento" oninput="validateForm()"></div>
+    </div>
+    <div style="height:1px;background:var(--border);margin:16px 0;"></div>
+    <div style="font-size:0.78rem;font-weight:600;color:var(--gold);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px;">2.º Cônjuge</div>
+    <div class="fg c3">
+      <div class="ff span2"><label>Nome Completo *</label><input class="req-prop" placeholder="Nome como consta no CC" oninput="validateForm()"></div>
+      <div class="ff"><label>NIF *</label><input class="req-prop" placeholder="Ex: 123 456 789" oninput="validateForm()"></div>
+    </div>
+    <div class="fg c4">
+      <div class="ff"><label>Nº CC / Passaporte *</label><input class="req-prop" placeholder="Número do documento" oninput="validateForm()"></div>
+      <div class="ff"><label>Validade *</label><input class="req-prop" placeholder="DD/MM/AAAA" oninput="validateForm()"></div>
+      <div class="ff"><label>Nacionalidade *</label><select class="req-prop-sel" onchange="validateForm()">${nacOptions}</select></div>
+      <div class="ff"><label>Estado Civil *</label><select class="req-prop-sel" onchange="validateForm()">${ecOptions}</select></div>
+    </div>
+    <div class="fg c3">
+      <div class="ff span2"><label>Morada *</label><input class="req-prop" placeholder="Rua, número, fracção" oninput="validateForm()"></div>
+      <div class="ff"><label>Código Postal *</label><input class="req-prop" placeholder="0000-000" oninput="validateForm()"></div>
+    </div>
+    <div class="fg c2">
+      <div class="ff"><label>Naturalidade — Freguesia *</label><input class="req-prop" placeholder="Freguesia de nascimento" oninput="validateForm()"></div>
+      <div class="ff"><label>Naturalidade — Concelho *</label><input class="req-prop" placeholder="Concelho de nascimento" oninput="validateForm()"></div>
+    </div>`;
+  container.appendChild(block);
+  validateForm();
+}
+
+function removeCasal(idx) {
+  document.getElementById('casal-block-' + idx)?.remove();
+  validateForm();
+}
+
+/* ── TIPO IMOVEL ── */
+function setTipo(t) {
+  currentTipo = t;
+  ['hab','ter','loj','pre'].forEach(x => {
+    document.getElementById('ti-'+x).classList.toggle('active', x===t);
+    document.querySelectorAll('.tipo-'+x).forEach(el => el.style.display = x===t ? '' : 'none');
+  });
+  validateForm();
+}
+
+/* ── ADD PROPRIETÁRIO ── */
+function addProp() {
+  propCount++;
+  const idx = propCount;
+  const container = document.getElementById('props-container');
+
+  const nacOptions = NAC_OPTS.map(o => `<option>${o}</option>`).join('');
+  const ecOptions  = ESTADO_CIVIL_OPTS.map(o => `<option>${o}</option>`).join('');
+
+  const block = document.createElement('div');
+  block.className = 'prop-block';
+  block.id = 'prop-block-' + idx;
+  block.innerHTML = `
+    <div class="prop-block-title">
+      Proprietário ${idx}
+      ${idx > 1 ? `<button class="btn-remove-prop" onclick="removeProp(${idx})">✕ Remover</button>` : ''}
+    </div>
+    <div class="fg c3">
+      <div class="ff span2"><label>Nome Completo *</label><input class="req-prop" placeholder="Nome como consta no CC" oninput="validateForm()"></div>
+      <div class="ff"><label>NIF *</label><input class="req-prop" placeholder="Ex: 123 456 789" oninput="validateForm()"></div>
+    </div>
+    <div class="fg c4">
+      <div class="ff"><label>Nº CC / Passaporte *</label><input class="req-prop" placeholder="Número do documento" oninput="validateForm()"></div>
+      <div class="ff"><label>Validade *</label><input class="req-prop" placeholder="DD/MM/AAAA" oninput="validateForm()"></div>
+      <div class="ff"><label>Nacionalidade *</label><select class="req-prop-sel" onchange="validateForm()">${nacOptions}</select></div>
+      <div class="ff"><label>Estado Civil *</label><select class="req-prop-sel" onchange="validateForm()">${ecOptions}</select></div>
+    </div>
+    <div class="fg c3">
+      <div class="ff span2"><label>Morada *</label><input class="req-prop" placeholder="Rua, número, fracção" oninput="validateForm()"></div>
+      <div class="ff"><label>Código Postal *</label><input class="req-prop" placeholder="0000-000" oninput="validateForm()"></div>
+    </div>
+    <div class="fg c2">
+      <div class="ff"><label>Naturalidade — Freguesia *</label><input class="req-prop" placeholder="Freguesia de nascimento" oninput="validateForm()"></div>
+      <div class="ff"><label>Naturalidade — Concelho *</label><input class="req-prop" placeholder="Concelho de nascimento" oninput="validateForm()"></div>
+    </div>`;
+  container.appendChild(block);
+  validateForm();
+}
+
+function removeProp(idx) {
+  document.getElementById('prop-block-' + idx)?.remove();
+  validateForm();
+}
+
+/* ── CARD TOGGLE ── */
+function toggleCard(id) {
+  const body = document.getElementById('body-'+id);
+  const chev = document.getElementById('chev-'+id);
+  body.classList.toggle('open', !body.classList.contains('open'));
+  chev.classList.toggle('open', body.classList.contains('open'));
+}
+
+/* ── CHECKBOX ── */
+function ck(el) {
+  el.classList.toggle('on');
+}
+
+/* ── FORMAT ASKING PRICE ── */
+function fmtPreco(inp) {
+  let raw = inp.value.replace(/[^\d]/g, '');
+  if (!raw) { inp.value = ''; return; }
+  const num = parseInt(raw, 10);
+  inp.value = num.toLocaleString('pt-PT').replace(/\u00a0/g, ' ') + ' €';
+  // Place cursor before €
+  setTimeout(() => { try { inp.setSelectionRange(inp.value.length - 2, inp.value.length - 2); } catch(e){} }, 0);
+}
+
+function syncRef(inp) {
+  document.getElementById('tb-ref').textContent = inp.value || '—';
+}
+
+/* ── VALIDATE & UNLOCK EXPORT ── */
+function validateForm() {
+  const missing = [];
+
+  // Step 1 & 2
+  if (!currentProp) missing.push('Tipo de proprietário');
+  if (!currentTipo) missing.push('Tipo de imóvel');
+
+  // Angariação required fields
+  const reqIds = ['f-ref','f-consultor','f-data','f-preco','f-rua','f-cp','f-freguesia','f-concelho'];
+  reqIds.forEach(id => { if (!gv(id)) missing.push(document.querySelector(`[id="${id}"]`)?.previousElementSibling?.textContent?.replace('*','').trim() || id); });
+
+  // Proprietário
+  if (currentProp === 's') {
+    const container = document.getElementById('props-container');
+    const reqPropInputs = container.querySelectorAll('.req-prop');
+    reqPropInputs.forEach(inp => { if (!inp.value.trim()) missing.push('Dados do proprietário'); });
+    const reqPropSels = container.querySelectorAll('.req-prop-sel');
+    reqPropSels.forEach(sel => { if (!sel.value || sel.value.startsWith('—')) missing.push('Dados do proprietário'); });
+    if (container.children.length === 0) missing.push('Proprietário');
+  } else if (currentProp === 'c') {
+    const container = document.getElementById('casais-container');
+    const reqPropInputs = container.querySelectorAll('.req-prop');
+    reqPropInputs.forEach(inp => { if (!inp.value.trim()) missing.push('Dados do casal'); });
+    const reqPropSels = container.querySelectorAll('.req-prop-sel');
+    reqPropSels.forEach(sel => { if (!sel.value || sel.value.startsWith('—')) missing.push('Dados do casal'); });
+    if (container.children.length === 0) missing.push('Casal');
+  } else if (currentProp === 'e') {
+    ['e-nome','e-nipc','e-rep','e-rua','e-cp'].forEach(id => { if (!gv(id)) missing.push('Dados da empresa'); });
+  }
+
+  const btn = document.getElementById('btn-export');
+  const status = document.getElementById('export-status');
+  const ok = missing.length === 0;
+
+  btn.classList.toggle('ready', ok);
+  if (ok) {
+    status.innerHTML = '<span>✓ Pronto para exportar</span>';
+  } else {
+    // Deduplicate
+    const uniq = [...new Set(missing)];
+    status.textContent = 'Em falta: ' + uniq.slice(0,3).join(', ') + (uniq.length > 3 ? ` +${uniq.length-3}` : '');
+  }
+}
+
+function gv(id) { const e = document.getElementById(id); return e ? e.value.trim() : ''; }
+
+function updateDriveBtn() {
+  const btn = document.getElementById('btn-drive');
+  const val = gv('f-drive');
+  btn.disabled = !val;
+}
+
+function openDrive() {
+  const url = gv('f-drive');
+  if (url) window.open(url, '_blank');
+}
+
+/* ── EXPORT PDF ── */
+function exportPDF() {
+  if (!document.getElementById('btn-export').classList.contains('ready')) return;
+  window.print();
+}
+
+/* ── INIT ── */
+document.getElementById('f-data').valueAsDate = new Date();
+validateForm();
+</script>
+</body>
+</html>

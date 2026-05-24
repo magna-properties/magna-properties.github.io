@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Magna Properties — Quero Investir / I Want to Invest</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a2d4a; --gold:#b8935a; --gold2:#d4a96a; --gold-bg:#fdf6e8;
+  --ink:#1a1612; --ink2:#5c5449;
+  --paper:#faf8f4; --cream:#f2ede4; --border:#d8cfc0;
+  --amber:#8a5c1a;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:17px;display:flex;flex-direction:column}
+
+/* ── HERO ── */
+.hero{background:#0c0b09;padding:48px 28px 44px;text-align:center;position:relative}
+.hero-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;letter-spacing:.28em;color:#c4a35a;margin-bottom:24px;display:block}
+.hero-div{width:40px;height:1px;background:#c4a35a;margin:0 auto 22px}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;color:#e8e0d0;margin-bottom:12px;line-height:1.2}
+.gold-bar{height:3px;background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent)}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{position:absolute;top:18px;right:20px;display:flex;gap:6px;align-items:center}
+.lang-btn{font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.1em;padding:5px 11px;border-radius:20px;border:1px solid #3a3528;color:#6b6358;background:transparent;cursor:pointer;transition:all .2s}
+.lang-btn.active{background:#c4a35a;color:#0c0b09;border-color:#c4a35a}
+
+/* ── FORM ── */
+.flow{max-width:860px;margin:0 auto;padding:28px 24px 120px}
+.step{background:var(--paper);border:1px solid var(--border);border-radius:2px;margin-bottom:16px;overflow:hidden}
+.step-head{padding:14px 18px;background:#f2ede4;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.step-num{width:28px;height:28px;background:#0c0b09;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#c4a35a;flex-shrink:0}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--ink);flex:1}
+.step-body{padding:20px}
+
+.fg{display:grid;gap:12px 16px;margin-bottom:14px}
+.fg:last-child{margin-bottom:0}
+.fg.c1{grid-template-columns:1fr}
+.fg.c2{grid-template-columns:1fr 1fr}
+.ff{display:flex;flex-direction:column;gap:4px}
+.ff label{font-size:.88rem;color:var(--ink2);font-weight:500;margin-bottom:2px;line-height:1.3}
+.req{color:#c4a35a;margin-left:2px}
+.opt{font-size:.78rem;font-weight:400;color:#bbb;margin-left:6px}
+.ff input,.ff select,.ff textarea{border:1px solid var(--border);background:white;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--ink);border-radius:4px;width:100%;transition:border-color .15s;-webkit-appearance:none;appearance:none;line-height:1.4}
+.ff input:focus,.ff select:focus,.ff textarea:focus{outline:none;border-color:#c4a35a;box-shadow:0 0 0 3px rgba(196,163,90,.08)}
+.ff textarea{resize:vertical;min-height:110px;line-height:1.6}
+.ff select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c5449' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+.ff input::placeholder,.ff textarea::placeholder{color:#b0a898}
+.sublabel{font-size:.88rem;color:var(--amber);font-weight:700;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.sublabel:first-child{margin-top:0}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.pill{font-family:'DM Sans',sans-serif;font-size:.9rem;padding:10px 18px;border:1.5px solid var(--border);background:white;border-radius:24px;cursor:pointer;transition:all .15s;color:var(--ink2);user-select:none;line-height:1.3}
+.pill.on{border-color:#c4a35a;background:var(--gold-bg);color:var(--ink);font-weight:500}
+.photo-note{font-size:.8rem;color:var(--ink2);margin-top:8px;line-height:1.5}
+
+.ff.field-error input,.ff.field-error select,.ff.field-error textarea{border-color:#c4a35a!important;box-shadow:0 0 0 3px rgba(139,44,44,.08)!important}
+.field-error-msg{font-size:.75rem;color:#8b2c2c;margin-top:5px}
+
+/* ── SUBMIT ── */
+.submit-area{text-align:center;padding:16px 0 8px}
+.btn-submit{font-family:'DM Sans',sans-serif;font-size:1.05rem;font-weight:500;padding:16px 52px;background:#0c0b09;color:#c4a35a;border:none;cursor:pointer;border-radius:32px;transition:all .2s;letter-spacing:.03em}
+.btn-submit:hover{background:#1a1812}
+.submit-note{font-size:.85rem;color:var(--ink2);margin-top:12px}
+
+/* ── SUCCESS ── */
+.success-screen{display:none;max-width:860px;margin:0 auto;padding:60px 28px;text-align:center}
+.success-screen.show{display:block}
+.success-icon{font-size:3.5rem;margin-bottom:18px}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:var(--ink);margin-bottom:12px}
+.success-div{width:40px;height:2px;background:#c4a35a;margin:20px auto}
+.success-txt{font-size:.95rem;color:var(--ink2);line-height:1.8;max-width:460px;margin:0 auto}
+
+/* ── LOADING ── */
+.loading-overlay{display:none;position:fixed;inset:0;background:rgba(26,22,18,.85);z-index:200;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.loading-overlay.show{display:flex}
+.spinner{width:38px;height:38px;border:3px solid #3a3530;border-top-color:#c4a35a;border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{color:white;font-size:.95rem}
+
+/* ── FOOTER ── */
+.footer{background:#0c0b09;text-align:center;padding:36px 24px;margin-top:auto;border-top:1px solid #2a2720}
+.footer-brand{display:inline-block;font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:#c4a35a;letter-spacing:.08em;margin-bottom:6px}
+.footer-sub{font-size:.82rem;color:#6b6358;letter-spacing:.05em}
+
+@media(max-width:680px){
+  .hero-title{font-size:2rem}
+  .flow{padding-left:20px;padding-right:20px}
+  .lang-toggle{top:14px;right:14px}
+}
+@media(max-width:480px){
+  .hero-title{font-size:1.75rem}
+  .flow{padding-left:16px;padding-right:16px}
+}
+@media(max-width:380px){
+  .fg.c2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-txt" id="txt-loading">A enviar informação...</div>
+</div>
+
+<div class="hero">
+  <span class="hero-logo">MAGNA · PROPERTIES</span>
+  <div class="hero-div"></div>
+  <h1 class="hero-title" id="hero-title">Quero Investir</h1>
+  <div style="display:flex;justify-content:center;gap:8px;margin-top:20px;">
+    <button class="lang-btn active" id="btn-pt" onclick="setLang('pt')" style="font-size:.88rem;padding:8px 20px;">PT</button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')" style="font-size:.88rem;padding:8px 20px;">EN</button>
+  </div>
+</div>
+<div class="gold-bar"></div>
+
+
+<div class="flow" id="flow-main">
+
+  <!-- 1 -->
+  <div class="step">
+    <div class="step-head"><div class="step-num">1</div><div class="step-title" id="t1">Como o podemos contactar</div></div>
+    <div class="step-body">
+      <div class="fg c1">
+        <div class="ff"><label id="lbl-nome">Nome <span class="req">*</span></label><input id="b-nome" type="text" oninput="upd()"></div>
+      </div>
+      <div class="fg c2">
+        <div class="ff"><label id="lbl-tel">Contacto Telefónico <span class="req">*</span></label><input id="b-tel" type="tel" oninput="upd()"></div>
+        <div class="ff"><label id="lbl-email">Email <span class="req">*</span></label><input id="b-email" type="email" oninput="upd()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="step">
+    <div class="step-head"><div class="step-num">2</div><div class="step-title" id="t2">O que procura</div></div>
+    <div class="step-body">
+      <div class="fg c2">
+        <div class="ff">
+          <label id="lbl-tipo">Tipo de imóvel <span class="req">*</span></label>
+          <select id="b-tipo" onchange="toggleOutroTipo()"></select>
+          <div id="tipo-outro-wrap" style="display:none;margin-top:8px">
+            <input id="b-tipo-outro" placeholder="Especifique o tipo de imóvel que procura...">
+          </div>
+        </div>
+        <div class="ff">
+          <label id="lbl-tipologia">Tipologia mínima desejada <span class="req">*</span></label>
+          <select id="b-tipologia"></select>
+        </div>
+      </div>
+      <div class="fg c1">
+        <div class="ff"><label id="lbl-orc">Orçamento <span class="req">*</span></label><input id="b-orcamento" oninput="fmtPreco(this);upd()"></div>
+      </div>
+      <div class="fg c1" style="margin-top:4px">
+        <div class="ff">
+          <label id="lbl-finalidade">Finalidade da compra <span class="req">*</span></label>
+          <select id="b-finalidade" onchange="toggleOutroFinalidade()"></select>
+          <div id="finalidade-outro-wrap" style="display:none;margin-top:8px">
+            <input id="b-finalidade-outro" placeholder="Especifique a finalidade de compra...">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="step">
+    <div class="step-head"><div class="step-num">3</div><div class="step-title" id="t3">Onde procura</div></div>
+    <div class="step-body">
+      <div class="fg c2">
+        <div class="ff">
+          <label id="lbl-conc">Concelho <span class="req">*</span></label>
+          <select id="b-concelho" onchange="popFregInvestir()">
+            <option value="">— Selecionar —</option>
+            <option>Albufeira</option><option>Alcoutim</option><option>Aljezur</option>
+            <option>Castro Marim</option><option>Faro</option>
+            <option>Lagoa</option><option>Lagos</option><option>Loulé</option>
+            <option>Monchique</option><option>Olhão</option><option>Portimão</option>
+            <option>São Brás de Alportel</option><option>Silves</option>
+            <option>Tavira</option><option>Vila do Bispo</option><option>Vila Real de Santo António</option>
+          </select>
+        </div>
+        <div class="ff">
+          <label id="lbl-freg">Freguesia <span class="req">*</span></label>
+          <select id="b-freg"><option value="">— Selecione primeiro o Concelho —</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="step">
+    <div class="step-head"><div class="step-num">4</div><div class="step-title" id="t4">Características pretendidas</div></div>
+    <div class="step-body">
+      <div class="sublabel" id="lbl-carac-sub">Selecione todas as que se aplicam</div>
+      <div class="pills" id="pills-carac">
+        <div class="pill" onclick="togglePill(this)" data-pt="Piscina" data-en="Swimming Pool">Piscina</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Garagem" data-en="Garage">Garagem</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Jardim" data-en="Garden">Jardim</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Terraço" data-en="Terrace">Terraço</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Varanda" data-en="Balcony">Varanda</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Vista Mar" data-en="Sea View">Vista Mar</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Perto do Mar" data-en="Near the Sea">Perto do Mar</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Lugar de Estacionamento" data-en="Parking Space">Lugar de Estacionamento</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Condomínio Fechado" data-en="Gated Community">Condomínio Fechado</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Cozinha Open-Space" data-en="Open-Plan Kitchen">Cozinha Open-Space</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Novo Empreendimento" data-en="New Development">Novo Empreendimento</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Pronto a Habitar" data-en="Move-in Ready">Pronto a Habitar</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Para Remodelar" data-en="To Renovate">Para Remodelar</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Piso Alto" data-en="High Floor">Piso Alto</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Rés-do-Chão" data-en="Ground Floor">Rés-do-Chão</div>
+        <div class="pill" onclick="togglePill(this)" data-pt="Licença AL" data-en="AL Licence">Licença AL</div>
+      </div>
+      <div class="fg c1" style="margin-top:18px">
+        <div class="ff">
+          <label id="lbl-obs">Outras características importantes para si <span class="opt" id="lbl-opt">(opcional)</span></label>
+          <textarea id="b-obs"></textarea>
+        </div>
+      </div>
+      <div class="photo-note" style="margin-top:14px" id="txt-privacy"><strong>Privacidade:</strong> A informação submetida é tratada de forma confidencial pela Magna Properties e não é partilhada com terceiros.</div>
+    </div>
+  </div>
+
+  <div class="submit-area">
+    <button class="btn-submit" id="btn-submit" onclick="validateAndSubmit()">Submeter Pedido</button>
+    <div class="submit-note" id="txt-submit-note">Entraremos em contacto em menos de 24h</div>
+  </div>
+
+</div>
+
+<div class="success-screen" id="success-screen">
+  <div class="success-icon" style="display:none"></div>
+  <h2 class="success-title" id="txt-success-title">Recebemos o seu pedido.</h2>
+  <div class="success-div"></div>
+  <p class="success-txt" id="txt-success-body">Obrigado por confiar na Magna Properties.<br><br>Iremos analisar o que é importante para si e entraremos em contacto em menos de 24 horas.</p>
+</div>
+
+<div class="footer">
+  <div class="footer-brand">Magna · Properties</div>
+  <div class="footer-sub" id="txt-footer">Mediação Imobiliária &nbsp;·&nbsp; Algarve &nbsp;·&nbsp; Portugal</div>
+</div>
+
+<script>
+const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbylvvea3cwWIyqWk8XO7Wyk05NcSKbTFgXLLZazeaChyHp76ofzdmn3AOo6oeWWQe50/exec';
+
+// ── TRANSLATIONS ──
+const T = {
+  pt: {
+    'hero-title':'Quero Investir',
+    't1':'Como o podemos contactar','t2':'O que procura','t3':'Onde procura','t4':'Características pretendidas',
+    'lbl-nome':'Nome', 'lbl-tel':'Contacto Telefónico', 'lbl-email':'Email',
+    'lbl-tipo':'Tipo de imóvel','lbl-tipologia':'Tipologia mínima desejada',
+    'lbl-orc':'Orçamento','lbl-finalidade':'Finalidade da compra',
+    'lbl-conc':'Concelho','lbl-freg':'Freguesia',
+    'lbl-carac-sub':'Selecione todas as que se aplicam',
+    'lbl-obs':'Outras características importantes para si','lbl-opt':'(opcional)',
+    'txt-privacy':'<strong>Privacidade:</strong> A informação submetida é tratada de forma confidencial pela Magna Properties e não é partilhada com terceiros.',
+    'btn-submit':'Submeter Pedido','txt-submit-note':'Entraremos em contacto em menos de 24h',
+    'txt-success-title':'Recebemos o seu pedido.',
+    'txt-success-body':'Obrigado por confiar na Magna Properties.<br><br>Iremos analisar o que é importante para si e entraremos em contacto em menos de 24 horas.',
+    'txt-footer':'Mediação Imobiliária &nbsp;·&nbsp; Algarve &nbsp;·&nbsp; Portugal',
+    'txt-loading':'A enviar informação...',
+    'ph-nome':'Ex: João Silva','ph-tel':'Ex: +351 912 345 678','ph-email':'Ex: nome@email.com',
+    'ph-orc':'Ex: 500 000 €','ph-obs':'Estilo de vida pretendido, particularidades importantes, etc.',
+    'ph-tipo-outro':'Especifique o tipo de imóvel que procura...',
+    'ph-finalidade-outro':'Especifique a finalidade de compra...',
+    'sel-default':'— Selecionar —','freg-default':'— Selecione primeiro o Concelho —',
+    'tipo':['— Selecionar —','Apartamento','Moradia','Terreno Urbanizável','Loja / Escritório','Prédio','Outro'],
+    'tipologia':['— Selecionar —','T0','T1','T2','T3','T4','T4+','N/A'],
+    'finalidade':['— Selecionar —','Habitação Própria','Habitação Secundária','Investimento','Outro'],
+  },
+  en: {
+    'hero-title':'I Want to Invest',
+    't1':'How can we reach you','t2':'What are you looking for','t3':'Where are you looking','t4':'Desired features',
+    'lbl-nome':'Name','lbl-tel':'Phone Number','lbl-email':'Email',
+    'lbl-tipo':'Property type <span class="req">*</span>','lbl-tipologia':'Minimum typology <span class="req">*</span>',
+    'lbl-orc':'Budget','lbl-finalidade':'Purpose of purchase <span class="req">*</span>',
+    'lbl-conc':'Municipality <span class="req">*</span>','lbl-freg':'Parish <span class="req">*</span>',
+    'lbl-carac-sub':'Select all that apply',
+    'lbl-obs':'Other important features for you','lbl-opt':'(optional)',
+    'txt-privacy':'<strong>Privacy:</strong> All submitted information is treated confidentially by Magna Properties and is not shared with third parties.',
+    'btn-submit':'Submit Request','txt-submit-note':'We will be in touch within 24 hours',
+    'txt-success-title':'We have received your request.',
+    'txt-success-body':'Thank you for trusting Magna Properties.<br><br>We will analyse what matters to you and be in touch within 24 hours.',
+    'txt-footer':'Real Estate &nbsp;·&nbsp; Algarve &nbsp;·&nbsp; Portugal',
+    'txt-loading':'Sending your information...',
+    'ph-nome':'Ex: John Smith','ph-tel':'Ex: +351 912 345 678','ph-email':'Ex: name@email.com',
+    'ph-orc':'Ex: 500 000 €','ph-obs':'Desired lifestyle, important features, additional information, etc.',
+    'ph-tipo-outro':'Please specify the type of property you are looking for...',
+    'ph-finalidade-outro':'Please specify the purpose of purchase...',
+    'sel-default':'— Select —','freg-default':'— Select Municipality first —',
+    'tipo':['— Select —','Apartment','House / Villa','Development Land','Shop / Office','Building','Other'],
+    'tipologia':['— Select —','Studio','1 Bed','2 Bed','3 Bed','4 Bed','4+ Bed','N/A'],
+    'finalidade':['— Select —','Primary Residence','Holiday Home','Investment','Other'],
+  }
+};
+
+let lang = 'pt';
+
+function setLang(l){
+  lang = l;
+  document.getElementById('btn-pt').classList.toggle('active', l==='pt');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.documentElement.lang = l;
+  const t = T[l];
+
+  // Text elements
+  ['hero-title','t1','t2','t3','t4',
+   'lbl-nome','lbl-tel','lbl-email','lbl-tipo','lbl-tipologia',
+   'lbl-orc','lbl-finalidade','lbl-conc','lbl-freg',
+   'lbl-carac-sub','lbl-obs','lbl-opt',
+   'txt-privacy','txt-submit-note','txt-success-title','txt-success-body',
+   'txt-footer','txt-loading'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = t[id];
+  });
+
+  document.getElementById('btn-submit').textContent = t['btn-submit'];
+
+  // Placeholders
+  document.getElementById('b-nome').placeholder = t['ph-nome'];
+  document.getElementById('b-tel').placeholder = t['ph-tel'];
+  document.getElementById('b-email').placeholder = t['ph-email'];
+  document.getElementById('b-orcamento').placeholder = t['ph-orc'];
+  document.getElementById('b-obs').placeholder = t['ph-obs'];
+  document.getElementById('b-tipo-outro').placeholder = t['ph-tipo-outro'];
+  document.getElementById('b-finalidade-outro').placeholder = t['ph-finalidade-outro'];
+
+  // Dropdowns
+  buildSelect('b-tipo', t['tipo']);
+  buildSelect('b-tipologia', t['tipologia']);
+  buildSelect('b-finalidade', t['finalidade']);
+
+  // Concelho first option
+  document.getElementById('b-concelho').options[0].text = t['sel-default'];
+
+  // Freg default (only if no concelho selected)
+  if(!document.getElementById('b-concelho').value){
+    document.getElementById('b-freg').innerHTML = `<option value="">${t['freg-default']}</option>`;
+  }
+
+  // Pills
+  document.querySelectorAll('#pills-carac .pill').forEach(p => {
+    p.textContent = p.dataset[l] || p.textContent;
+  });
+
+}
+
+function buildSelect(id, options){
+  const sel = document.getElementById(id);
+  const currentIndex = sel.selectedIndex; // guardar índice em vez de valor
+  sel.innerHTML = '';
+  options.forEach((o,i) => {
+    const opt = document.createElement('option');
+    opt.value = i===0 ? '' : o;
+    opt.textContent = o;
+    sel.appendChild(opt);
+  });
+  // Restaurar por índice (robusto a mudança de língua)
+  if(currentIndex > 0 && currentIndex < sel.options.length) sel.selectedIndex = currentIndex;
+}
+
+// ── TOGGLE OUTRO ──
+function toggleOutroTipo(){
+  const val = document.getElementById('b-tipo').value;
+  const isOutro = val === 'Outro' || val === 'Other';
+  document.getElementById('tipo-outro-wrap').style.display = isOutro ? 'block' : 'none';
+}
+function toggleOutroFinalidade(){
+  const val = document.getElementById('b-finalidade').value;
+  const isOutro = val === 'Outro' || val === 'Other';
+  document.getElementById('finalidade-outro-wrap').style.display = isOutro ? 'block' : 'none';
+}
+
+// ── VALIDAÇÃO ──
+function upd(){} // stub — mantido para compatibilidade com oninput
+
+function validateAndSubmit(){
+  const isEN = lang === 'en';
+  const reqMsg  = isEN ? 'Required field'                    : 'Campo obrigatório';
+
+  // Limpar erros anteriores
+  document.querySelectorAll('.ff.field-error').forEach(f=>f.classList.remove('field-error'));
+  document.querySelectorAll('.field-error-msg').forEach(m=>m.remove());
+
+  let errors=[], firstErr=null;
+
+  function markField(id){
+    const el=document.getElementById(id); if(!el) return;
+    const val=el.tagName==='SELECT'?el.value:el.value.trim();
+    if(!val){
+      errors.push(id);
+      const ff=el.closest('.ff');
+      if(ff&&!ff.classList.contains('field-error')){
+        ff.classList.add('field-error');
+        const m=document.createElement('div'); m.className='field-error-msg'; m.textContent='⚠ '+reqMsg;
+        ff.appendChild(m);
+        if(!firstErr) firstErr=ff;
+        const clear=()=>{ if(el.tagName==='SELECT'?el.value:el.value.trim()){ ff.classList.remove('field-error'); ff.querySelector('.field-error-msg')?.remove(); } };
+        el.addEventListener('input',clear,{once:true});
+        el.addEventListener('change',clear,{once:true});
+      }
+    }
+  }
+
+  markField('b-nome'); markField('b-tel'); markField('b-email');
+  markField('b-tipo'); markField('b-tipologia'); markField('b-orcamento'); markField('b-finalidade');
+  markField('b-concelho'); markField('b-freg');
+
+  // Se "Outro" seleccionado, o campo de texto também é obrigatório
+  const tipoVal = gv('b-tipo');
+  if(tipoVal === 'Outro' || tipoVal === 'Other') markField('b-tipo-outro');
+  const finalidadeVal = gv('b-finalidade');
+  if(finalidadeVal === 'Outro' || finalidadeVal === 'Other') markField('b-finalidade-outro');
+
+  if(errors.length>0){
+    firstErr?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  submeter();
+}
+
+// ── FREGUESIAS ──
+const FREGUESIAS = {
+  'Albufeira':['Albufeira e Olhos de Água','Ferreiras','Guia','Paderne'],
+  'Alcoutim':['Alcoutim e Pereiro','Giões','Martim Longo','Vaqueiros'],
+  'Aljezur':['Aljezur','Bordeira','Odeceixe','Rogil'],
+  'Castro Marim':['Altura','Castro Marim','Odeleite'],
+  'Faro':['Conceição e Estoi','Faro (Sé e São Pedro)','Montenegro','Santa Bárbara de Nexe'],
+  'Lagoa':['Estômbar e Parchal','Ferragudo','Lagoa e Carvoeiro','Porches'],
+  'Lagos':['Bensafrim e Barão de São João','Luz','Odiáxere','São Sebastião e Santa Maria'],
+  'Loulé':['Almancil','Alte','Ameixial','Boliqueime','Loulé (São Clemente)','Loulé (São Sebastião)','Querença, Tôr e Benafim','Quarteira','Salir'],
+  'Monchique':['Alferce','Marmelete','Monchique'],
+  'Olhão':['Moncarapacho e Fuseta','Olhão','Pechão','Quelfes'],
+  'Portimão':['Alvor','Portimão'],
+  'São Brás de Alportel':['São Brás de Alportel'],
+  'Silves':['Alcantarilha e Pêra','Armação de Pêra','Mexilhoeira Grande','São Bartolomeu de Messines','São Marcos da Serra','Silves'],
+  'Tavira':['Cachopo','Conceição e Cabanas de Tavira','Luz de Tavira e Santo Estêvão','Santa Lúzia','Tavira (Santa Maria e Santiago)'],
+  'Vila do Bispo':['Budens','Sagres','Vila do Bispo e Raposeira'],
+  'Vila Real de Santo António':['Monte Gordo','Vila Nova de Cacela','Vila Real de Santo António']
+};
+function popFregInvestir(){
+  const c = document.getElementById('b-concelho').value;
+  const s = document.getElementById('b-freg');
+  const def = T[lang]['freg-default'];
+  s.innerHTML = `<option value="">${def}</option>`;
+  if(FREGUESIAS[c]) FREGUESIAS[c].forEach(f => { const o=document.createElement('option'); o.value=f; o.textContent=f; s.appendChild(o); });
+}
+
+// ── PILLS ──
+function togglePill(el){ el.classList.toggle('on'); }
+function pills(id){ return [...document.querySelectorAll('#'+id+' .pill.on')].map(p=>p.dataset.pt||p.textContent).join(', '); }
+
+// ── FORMAT PRICE ──
+function fmtPreco(el){
+  let v = el.value.replace(/[^\d]/g,'');
+  if(v) el.value = parseInt(v).toLocaleString('pt-PT')+' €';
+  upd();
+}
+
+// ── HELPERS ──
+function gv(id){ return (document.getElementById(id)?.value||'').trim(); }
+
+// ── SUBMIT ──
+async function submeter(){
+  const tipoVal = gv('b-tipo');
+  const finalidadeVal = gv('b-finalidade');
+  const dados = {
+    lang,
+    contacto:{ nome:gv('b-nome'), telefone:gv('b-tel'), email:gv('b-email') },
+    criterios:{
+      tipo: tipoVal === 'Outro' || tipoVal === 'Other' ? gv('b-tipo-outro') : tipoVal,
+      tipologia:gv('b-tipologia'), orcamento:gv('b-orcamento'),
+      finalidade: finalidadeVal === 'Outro' || finalidadeVal === 'Other' ? gv('b-finalidade-outro') : finalidadeVal
+    },
+    localizacao:{ concelho:gv('b-concelho'), freguesia:gv('b-freg') },
+    caracteristicas:pills('pills-carac'),
+    outros:gv('b-obs')
+  };
+  document.getElementById('loading').classList.add('show');
+  try{ await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados),mode:'no-cors'}); }catch(e){}
+  document.getElementById('loading').classList.remove('show');
+  document.getElementById('flow-main').style.display='none';
+  document.getElementById('success-screen').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', function(){
+  setLang('pt');
+});
+</script>
+</body>
+</html>

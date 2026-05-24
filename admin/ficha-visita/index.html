@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<script>
+  (function() {
+    if (sessionStorage.getItem('magna_admin_auth') !== 'ok') {
+      window.location.replace('/admin/');
+    }
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Ficha de Visita — Magna Properties</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#1a1612; --ink-light:#5c5449; --paper:#faf8f4; --cream:#f2ede4;
+    --gold:#b8935a; --gold-light:#d4a96a; --gold-bg:#fdf6e8;
+    --red:#8b2c2c; --border:#d8cfc0; --success:#2d6a4f;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; }
+
+  .topbar { background:#0c0b09; color:var(--paper); padding:14px 40px; display:flex; align-items:center; justify-content:center; position:sticky; top:0; z-index:100; }
+  .topbar-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:#c4a35a; letter-spacing:0.05em; }
+  .topbar-sub { font-size:0.8rem; color:#6b6358; margin-top:3px; letter-spacing:0; text-transform:none; }
+  .topbar-badge { font-size:0.7rem; padding:3px 10px; border-radius:10px; border:1px solid #c4a35a; color:#c4a35a; letter-spacing:0.06em; text-transform:uppercase; }
+  .progress-bar { background:#1a1812; height:3px; }
+  .progress-fill { background:linear-gradient(90deg,#c4a35a,#d4b06a); height:100%; }
+
+  .main { max-width:860px; margin:40px auto; padding:0 20px 80px; }
+  .section-card { background:var(--paper); border:1px solid var(--border); border-radius:2px; padding:36px 40px; display:block; margin-bottom:24px; }
+  .section-header { margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+  .section-number { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+  .section-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:600; }
+  .section-title-en { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400; color:var(--ink-light); font-style:italic; margin-top:2px; }
+  .section-desc { font-size:0.8rem; color:var(--ink-light); margin-top:6px; }
+
+  .sub-title { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; padding:8px 0; border-top:1px solid var(--border); margin:22px 0 14px; color:var(--ink); }
+  .sub-title.first { border-top:none; margin-top:0; }
+  .sub-title span { font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:400; color:var(--ink-light); font-style:italic; }
+
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px 20px; }
+  .form-grid.c1 { grid-template-columns:1fr; }
+  .form-grid.c3 { grid-template-columns:1fr 1fr 1fr; }
+  .form-grid.c4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field label { font-size:0.88rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:500; margin-bottom:2px; }
+  .field label .en { font-style:italic; text-transform:none; letter-spacing:0; font-weight:400; color:#9a8e82; font-size:0.8rem; }
+  .field input,.field select,.field textarea { border:1px solid var(--border); background:white; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:1rem; color:var(--ink); border-radius:4px; transition:border-color 0.15s; width:100%; }
+  .field input:focus,.field select:focus,.field textarea:focus { outline:none; border-color:var(--gold); }
+  .field textarea { resize:vertical; min-height:80px; }
+  .req { color:var(--red); }
+  .sp { height:16px; }
+
+  /* Rating Table */
+  .rating-wrap { overflow-x:auto; }
+  .rating-table { width:100%; border-collapse:collapse; min-width:440px; }
+  .rating-table th { font-family:'Cormorant Garamond',serif; font-size:1rem; letter-spacing:0; text-transform:none; color:var(--ink); font-weight:600; padding:10px; text-align:center; background:var(--cream); border:1px solid var(--border); }
+  .rating-table th:first-child { text-align:left; min-width:130px; }
+  .rating-table td { padding:10px 8px; border:1px solid var(--border); text-align:center; background:white; }
+  .rating-table td:first-child { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; text-align:left; background:var(--cream); padding-left:14px; color:var(--ink); min-width:160px; }
+  .rb { width:100%; padding:12px 6px; border:1px solid var(--border); border-radius:4px; background:white; cursor:pointer; font-family:'Cormorant Garamond',serif; font-size:1rem; font-weight:600; color:var(--ink-light); transition:all 0.15s; }
+  .rb.sel { background:var(--gold); border-color:var(--gold); color:white; font-weight:500; }
+
+  /* Check Options */
+  .check-group { display:flex; flex-wrap:wrap; gap:10px; }
+  .check-option { display:flex; align-items:center; gap:10px; padding:10px 14px; border:1px solid var(--border); border-radius:1px; cursor:pointer; transition:all 0.15s; background:white; flex:1; min-width:140px; user-select:none; }
+  .check-option:hover { border-color:var(--gold); background:var(--gold-bg); }
+  .check-option.selected { border-color:var(--gold); background:var(--gold-bg); }
+  .check-option input { width:15px; height:15px; min-width:15px; accent-color:var(--gold); pointer-events:none; flex-shrink:0; }
+  .check-label strong { font-size:0.88rem; font-weight:500; display:block; }
+  .check-label .en { color:#9a8e82; font-size:0.73rem; font-style:italic; }
+
+  /* Negócio */
+  .neg-group { display:flex; flex-wrap:wrap; gap:10px; }
+  .neg-btn { padding:10px 14px; border:1px solid var(--border); border-radius:1px; cursor:pointer; background:white; transition:all 0.2s; user-select:none; flex:1; min-width:140px; display:flex; align-items:center; gap:10px; }
+  .neg-btn:hover { border-color:var(--gold); background:var(--gold-bg); }
+  .neg-btn.selected { border-color:var(--gold); background:var(--gold-bg); }
+  .neg-btn strong { display:block; font-size:0.88rem; font-weight:500; margin-bottom:2px; }
+  .neg-btn span { font-size:0.73rem; color:var(--ink-light); line-height:1.4; display:block; font-style:italic; }
+
+  /* Signature */
+  .sig-container { border:1px solid var(--border); border-radius:1px; background:white; overflow:hidden; }
+  .sig-header { background:var(--cream); padding:8px 14px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .sig-lbl { font-size:0.82rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:500; }
+  .sig-clear { font-size:0.7rem; padding:3px 10px; border:1px solid var(--border); background:white; border-radius:1px; cursor:pointer; color:var(--ink-light); font-family:'DM Sans',sans-serif; }
+  .sig-clear:hover { border-color:var(--red); color:var(--red); }
+  canvas.sig-pad { display:block; width:100%; height:160px; cursor:crosshair; touch-action:none; background:white; }
+  .sig-hint { font-size:0.7rem; color:#bbb; text-align:center; padding:5px; font-style:italic; }
+  .sig-grid { display:grid; gap:16px; }
+  .sig-grid.g2 { grid-template-columns:1fr 1fr; }
+
+  /* Boxes */
+  .info-box { background:#f0f7f4; border-left:3px solid var(--success); padding:14px 18px; border-radius:0 2px 2px 0; font-size:0.95rem; font-family:'DM Sans',sans-serif; color:#1e4a37; line-height:1.6; margin-bottom:16px; }
+  .info-box strong { display:block; font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:#163525; margin-bottom:4px; }
+  .warn-box { background:#fff8f0; border-left:3px solid var(--gold); padding:14px 18px; border-radius:0 2px 2px 0; font-size:0.95rem; font-family:'DM Sans',sans-serif; color:#5c4420; line-height:1.6; margin-bottom:16px; }
+  .warn-box strong { display:block; font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; color:#3a2a10; margin-bottom:4px; }
+
+  /* Errors */
+  .step-error-banner { background:#fdf0f0; border:1px solid #e8b4b4; border-left:3px solid var(--red); padding:12px 16px; font-size:0.83rem; color:#7a2222; margin-bottom:20px; display:none; }
+  .step-error-banner.show { display:block; }
+  .step-error-banner strong { display:block; margin-bottom:2px; }
+  .field-error input,.field-error select,.field-error textarea { border-color:var(--red)!important; box-shadow:0 0 0 3px rgba(139,44,44,.12)!important; }
+  .field-error-msg { font-size:0.72rem; color:var(--red); margin-top:4px; }
+  .inline-error { font-size:0.72rem; color:var(--red); margin-top:6px; display:none; }
+
+  .divider { border:none; border-top:1px solid var(--border); margin:24px 0; }
+  .btn-gold { font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:500; background:var(--gold); color:white; padding:14px 36px; border-radius:24px; border:none; cursor:pointer; box-shadow:0 2px 8px rgba(184,147,90,0.3); transition:all 0.2s; }
+  .btn-gold:hover { background:var(--gold-light); box-shadow:0 4px 14px rgba(184,147,90,0.4); }
+
+  @media(max-width:600px){
+    .form-grid,.form-grid.c3,.form-grid.c4 { grid-template-columns:1fr; }
+    .section-card { padding:20px 16px; }
+    .topbar,.steps-nav { padding-left:16px; padding-right:16px; }
+    .neg-group,.sig-grid.g2 { grid-template-columns:1fr; }
+    canvas.sig-pad { height:150px; }
+    .main { padding:0 12px 80px; }
+    .section-title { font-size:1.5rem; }
+  }
+
+  .lang-toggle{position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;gap:6px}
+  .lang-btn{font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.1em;padding:5px 11px;border-radius:20px;border:1px solid #3a3528;color:#6b6358;background:transparent;cursor:pointer;transition:all .2s}
+  .lang-btn.active{background:#c4a35a;color:#0c0b09;border-color:#c4a35a}
+  .lang-pt .en-only{display:none!important}
+  .lang-en .pt-only{display:none!important}
+  .lang-en .en{color:var(--ink);font-style:normal;font-size:inherit;font-weight:500}
+  .lang-pt .en{font-size:0.78rem;color:#9a8e82;font-style:italic}
+</style>
+</head>
+<body class="lang-pt">
+
+<div class="topbar" style="position:relative">
+  <div style="flex:1;text-align:center;">
+    <div class="topbar-title">Magna Properties</div>
+    <div class="topbar-sub"><span class="pt-only">Ficha de Visita</span><span class="en-only">Property Visit Report</span></div>
+  </div>
+  <div class="topbar-badge" id="badge-ref" style="position:absolute;right:130px;">— Ref. —</div>
+  <div class="lang-toggle"><button class="lang-btn active" id="btn-pt" onclick="setLang('pt')">PT</button><button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button></div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progress" style="width:100%"></div></div>
+<div style="height:3px;background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent)"></div>
+
+<div class="main">
+
+<!-- ══ PASSO 1 ══ -->
+<div class="section-card active" id="step-1">
+  <div class="section-header">
+    <div class="section-number"><span class="pt-only">Passo 01 / 02</span><span class="en-only">Step 01 / 02</span></div>
+    <div class="section-title" data-trans="s1-title">Dados da Visita e Imóvel</div>
+    
+    <div class="section-desc"><span data-trans="s1-sub">Informação base sobre a visita realizada</span></div>
+  </div>
+  <div class="step-error-banner" id="err-1">
+    <strong><span class="pt-only">⚠️ Campos obrigatórios em falta</span><span class="en-only">⚠️ Required fields missing</span></strong>
+    <span class="pt-only">Preencha todos os campos assinalados com * antes de avançar.</span>
+    <span class="en-only">Please fill in all required fields before proceeding.</span>
+  </div>
+
+  <div class="sub-title first" data-trans="st-visita">Dados da Visita</div>
+  <div class="form-grid">
+    <div class="field"><label><span data-trans="lbl-data">Data</span> <span class="req">*</span></label><input type="date" id="data_visita"></div>
+    <div class="field"><label><span data-trans="lbl-consultor">Consultor Angariador</span> <span class="req">*</span></label><input type="text" id="consultor" data-ph-pt="Nome do consultor" data-ph-en="Agent name" placeholder="Nome do consultor"></div>
+  </div>
+
+  <div class="sp"></div>
+
+  <div class="sub-title" data-trans="st-imovel">Identificação do Imóvel</div>
+  <div class="form-grid c4">
+    <div class="field"><label><span data-trans="lbl-ref">Referência</span> <span class="req">*</span></label><input type="text" id="ref_imovel" placeholder="Ex: ALP-001" oninput="document.getElementById('badge-ref').textContent=this.value||'— Ref. —'"></div>
+    <div class="field"><label data-trans="lbl-tipologia">Tipologia</label>
+      <select id="tipologia">
+        <option value="">— —</option>
+        <option value="T0"       data-pt="T0"       data-en="Studio">T0</option>
+        <option value="T1"       data-pt="T1"       data-en="1 Bedroom">T1</option>
+        <option value="T2"       data-pt="T2"       data-en="2 Bedrooms">T2</option>
+        <option value="T3"       data-pt="T3"       data-en="3 Bedrooms">T3</option>
+        <option value="T4"       data-pt="T4"       data-en="4 Bedrooms">T4</option>
+        <option value="T4+"      data-pt="T4+"      data-en="4+ Bedrooms">T4+</option>
+        <option value="Moradia"  data-pt="Moradia"  data-en="Villa / House">Moradia</option>
+        <option value="Terreno"  data-pt="Terreno"  data-en="Land">Terreno</option>
+        <option value="Comercial" data-pt="Comercial" data-en="Commercial">Comercial</option>
+        <option value="Outro"    data-pt="Outro"    data-en="Other">Outro</option>
+      </select>
+    </div>
+    <div class="field"><label data-trans="lbl-area">Área Bruta Privativa (m²)</label><input type="number" id="area_m2" placeholder="Ex: 120"></div>
+    <div class="field"><label data-trans="lbl-preco">Asking Price</label><input type="text" id="preco" placeholder="Ex: 450 000 €" oninput="fmtEuro(this)"></div>
+  </div>
+  <div class="sp"></div>
+  <div class="form-grid c1">
+    <div class="field"><label><span data-trans="lbl-morada">Morada</span> <span class="req">*</span></label><input type="text" id="morada" data-ph-pt="Rua, número, andar..." data-ph-en="Street, number, floor..." placeholder="Rua, número, andar..."></div>
+  </div>
+  <div class="sp"></div>
+  <div class="form-grid c3">
+    <div class="field">
+      <label data-trans="lbl-concelho">Concelho</label>
+      <select id="concelho" onchange="popFregVisita()">
+        <option value="" data-pt="— Selecionar —" data-en="— Select —">— Selecionar —</option>
+        <option>Albufeira</option><option>Alcoutim</option><option>Aljezur</option>
+        <option>Castro Marim</option><option>Faro</option>
+        <option>Lagoa</option><option>Lagos</option><option>Loulé</option>
+        <option>Monchique</option><option>Olhão</option><option>Portimão</option>
+        <option>São Brás de Alportel</option><option>Silves</option>
+        <option>Tavira</option><option>Vila do Bispo</option><option>Vila Real de Santo António</option>
+      </select>
+    </div>
+    <div class="field">
+      <label data-trans="lbl-freguesia">Freguesia</label>
+      <select id="freguesia">
+        <option value="" data-pt="— Select Municipality first —" data-en="— Select Municipality first —">— Selecione o Concelho primeiro —</option>
+      </select>
+    </div>
+    <div class="field"><label data-trans="lbl-cp">Código Postal</label><input type="text" id="cod_postal" placeholder="Ex: 8100-000"></div>
+  </div>
+
+  <div class="sp"></div>
+
+  <div class="sub-title" data-trans="st-cliente">Cliente Comprador</div>
+  <div class="form-grid c1">
+    <div class="field"><label><span data-trans="lbl-nome">Nome</span> <span class="req">*</span></label><input type="text" id="cliente_nome" data-ph-pt="Nome do cliente comprador" data-ph-en="Buyer name" placeholder="Nome do cliente comprador"></div>
+  </div>
+
+
+</div>
+
+<!-- ══ PASSO 2 ══ -->
+<div class="section-card" id="step-2">
+  <div class="section-header">
+    <div class="section-number"><span class="pt-only">Passo 02 / 02</span><span class="en-only">Step 02 / 02</span></div>
+    <div class="section-title" data-trans="s2-title">Apreciação e Assinatura</div>
+    
+    <div class="section-desc"><span data-trans="s2-sub">Avaliação do imóvel e fecho da visita</span></div>
+  </div>
+  <div class="step-error-banner" id="err-2">
+    <strong><span class="pt-only">⚠️ Campos obrigatórios em falta</span><span class="en-only">⚠️ Required fields missing</span></strong>
+    <span class="pt-only">Preencha todos os campos assinalados com * antes de avançar.</span>
+    <span class="en-only">Please fill in all required fields before proceeding.</span>
+  </div>
+
+  <!-- Apreciação -->
+  <div class="sub-title first" data-trans="st-aprec">Apreciação do Imóvel</div>
+
+  <div style="margin-bottom:18px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:26px;height:26px;background:#2d6a4f;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="color:white;font-size:0.85rem;font-weight:600">+</span>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#2d6a4f;" data-trans="top3-pos">Top 3 aspectos positivos</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid #c8e6c9;border-radius:1px;padding:10px 14px">
+        <span style="font-size:0.72rem;font-weight:700;color:#2d6a4f;min-width:14px">1</span>
+        <input type="text" id="pos1" data-ph-pt="Ex: Luz natural excelente em todos os quartos" data-ph-en="e.g. Excellent natural light throughout" placeholder="Ex: Luz natural excelente em todos os quartos" style="border:none;background:transparent;flex:1;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--ink);outline:none">
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid #c8e6c9;border-radius:1px;padding:10px 14px">
+        <span style="font-size:0.72rem;font-weight:700;color:#2d6a4f;min-width:14px">2</span>
+        <input type="text" id="pos2" data-ph-pt="Ex: Acabamentos de alta qualidade" data-ph-en="e.g. High-quality finishings" placeholder="Ex: Acabamentos de alta qualidade" style="border:none;background:transparent;flex:1;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--ink);outline:none">
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid #c8e6c9;border-radius:1px;padding:10px 14px">
+        <span style="font-size:0.72rem;font-weight:700;color:#2d6a4f;min-width:14px">3</span>
+        <input type="text" id="pos3" data-ph-pt="Ex: Localização privilegiada, próximo do mar" data-ph-en="e.g. Prime location, close to the sea" placeholder="Ex: Localização privilegiada, próximo do mar" style="border:none;background:transparent;flex:1;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--ink);outline:none">
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:6px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="width:26px;height:26px;background:#8b2c2c;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="color:white;font-size:0.85rem;font-weight:600">−</span>
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#8b2c2c;" data-trans="top3-neg">Top 3 aspectos negativos</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid #f5c6c6;border-radius:1px;padding:10px 14px">
+        <span style="font-size:0.72rem;font-weight:700;color:#8b2c2c;min-width:14px">1</span>
+        <input type="text" id="neg1" data-ph-pt="Ex: Sem garagem / sem estacionamento" data-ph-en="e.g. No garage / no parking" placeholder="Ex: Sem garagem / sem estacionamento" style="border:none;background:transparent;flex:1;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--ink);outline:none">
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid #f5c6c6;border-radius:1px;padding:10px 14px">
+        <span style="font-size:0.72rem;font-weight:700;color:#8b2c2c;min-width:14px">2</span>
+        <input type="text" id="neg2" data-ph-pt="Ex: Preço acima do orçamento" data-ph-en="e.g. Price above budget" placeholder="Ex: Preço acima do orçamento" style="border:none;background:transparent;flex:1;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--ink);outline:none">
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid #f5c6c6;border-radius:1px;padding:10px 14px">
+        <span style="font-size:0.72rem;font-weight:700;color:#8b2c2c;min-width:14px">3</span>
+        <input type="text" id="neg3" data-ph-pt="Ex: Necessita de obras de renovação" data-ph-en="e.g. Needs renovation works" placeholder="Ex: Necessita de obras de renovação" style="border:none;background:transparent;flex:1;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--ink);outline:none">
+      </div>
+    </div>
+  </div>
+
+  <!-- Classificação -->
+  <div class="sub-title" data-trans="st-class">Classificação do Imóvel</div>
+  <div class="rating-wrap">
+    <table class="rating-table">
+
+      <tbody>
+        <tr><td><span data-trans="rat-areas">Áreas</span></td><td><button class="rb" onclick="setRating('areas','Mau',this)">Mau</button></td><td><button class="rb" onclick="setRating('areas','Médio',this)">Médio</button></td><td><button class="rb" onclick="setRating('areas','Bom',this)">Bom</button></td><td><button class="rb" onclick="setRating('areas','Muito Bom',this)">Muito Bom</button></td></tr>
+        <tr><td><span data-trans="rat-acab">Acabamentos</span></td><td><button class="rb" onclick="setRating('acabamentos','Mau',this)">Mau</button></td><td><button class="rb" onclick="setRating('acabamentos','Médio',this)">Médio</button></td><td><button class="rb" onclick="setRating('acabamentos','Bom',this)">Bom</button></td><td><button class="rb" onclick="setRating('acabamentos','Muito Bom',this)">Muito Bom</button></td></tr>
+        <tr><td><span data-trans="rat-loc">Localização</span></td><td><button class="rb" onclick="setRating('localizacao_r','Mau',this)">Mau</button></td><td><button class="rb" onclick="setRating('localizacao_r','Médio',this)">Médio</button></td><td><button class="rb" onclick="setRating('localizacao_r','Bom',this)">Bom</button></td><td><button class="rb" onclick="setRating('localizacao_r','Muito Bom',this)">Muito Bom</button></td></tr>
+        <tr><td><span data-trans="rat-preco">Preço</span></td><td><button class="rb" onclick="setRating('preco_r','Mau',this)">Mau</button></td><td><button class="rb" onclick="setRating('preco_r','Médio',this)">Médio</button></td><td><button class="rb" onclick="setRating('preco_r','Bom',this)">Bom</button></td><td><button class="rb" onclick="setRating('preco_r','Muito Bom',this)">Muito Bom</button></td></tr>
+        <tr><td><span data-trans="rat-geral">Apreciação Geral</span></td><td><button class="rb" onclick="setRating('geral','Mau',this)">Mau</button></td><td><button class="rb" onclick="setRating('geral','Médio',this)">Médio</button></td><td><button class="rb" onclick="setRating('geral','Bom',this)">Bom</button></td><td><button class="rb" onclick="setRating('geral','Muito Bom',this)">Muito Bom</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Como conheceu -->
+  <div class="sub-title" data-trans="st-conhec">Como Tomou Conhecimento</div>
+  <div class="check-group">
+    <div class="check-option" onclick="toggleCB(this)"><input type="checkbox" value="Através do Consultor" data-en="Via Agent"><div class="check-label"><strong data-trans="conhec-consultor">Através do Consultor</strong></div></div>
+    <div class="check-option" onclick="toggleCB(this)"><input type="checkbox" value="Placa de Venda" data-en="For Sale Sign"><div class="check-label"><strong data-trans="conhec-placa">Placa de Venda</strong></div></div>
+    <div class="check-option" onclick="toggleCB(this)"><input type="checkbox" value="Portal Idealista" data-en="Idealista Portal"><div class="check-label"><strong data-trans="conhec-idealista">Portal Idealista</strong></div></div>
+    <div class="check-option" onclick="toggleCB(this)"><input type="checkbox" value="Post Instagram Magna Properties" data-en="Magna Properties Instagram Post"><div class="check-label"><strong data-trans="conhec-instagram">Post Instagram Magna Properties</strong></div></div>
+    <div class="check-option" onclick="toggleCBOutros(this)"><input type="checkbox" value="Outro" data-en="Other"><div class="check-label"><strong data-trans="conhec-outro">Outro</strong></div></div>
+  </div>
+  <div id="outros_wrap" style="display:none;margin-top:10px">
+    <div class="field"><label>Especifique / Specify</label><input type="text" id="conhec_outros" data-ph-pt="Como conheceu o imóvel..." data-ph-en="How they found the property..." placeholder="Como conheceu o imóvel..."></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Tipo de Negócio -->
+  <div class="sub-title" style="border-top:none;margin-top:0" data-trans="st-negocio">Tipo de Negócio</div>
+  <div class="neg-group">
+    <div class="neg-btn" id="neg_proprio" onclick="setNegocio('proprio')">
+      <input type="radio" name="neg_type" style="width:15px;height:15px;min-width:15px;accent-color:var(--gold);pointer-events:none;flex-shrink:0;" id="r_proprio">
+      <div class="check-label"><strong data-trans="deal-proprio">Negócio Próprio</strong></div>
+    </div>
+    <div class="neg-btn" id="neg_partilha" onclick="setNegocio('partilha')">
+      <input type="radio" name="neg_type" style="width:15px;height:15px;min-width:15px;accent-color:var(--gold);pointer-events:none;flex-shrink:0;" id="r_partilha">
+      <div class="check-label"><strong data-trans="deal-partilha">Negócio em Partilha</strong></div>
+    </div>
+  </div>
+  <div class="inline-error" id="err-negocio"><span class="pt-only">⚠ Selecione o tipo de negócio</span><span class="en-only">⚠ Please select a deal type</span></div>
+
+
+  <!-- Observações — só para Negócio Próprio -->
+  <div id="observacoes_proprio" style="display:none;margin-top:18px">
+    <div class="warn-box" style="margin-bottom:12px">
+      <strong><span class="pt-only">Observações do Consultor Angariador</span><span class="en-only">Agent's Notes</span></strong>
+      <span class="pt-only">Perfil do cliente, motivação de compra, capacidade financeira, prazos e outras notas relevantes para o processo. Este campo é apenas para uso interno e não aparece ao cliente.</span>
+      <span class="en-only">Client profile, purchase motivation, financial capacity, timelines and other relevant notes. This field is for internal use only and is not shown to the client.</span>
+    </div>
+    <div class="field">
+      <label data-trans="lbl-notas">Notas</label>
+      <textarea id="obs_consultor" data-ph-pt="Ex: casal português a reformar, procura imóvel de lazer no Algarve. Pré-aprovação bancária até 450k€, pretende fechar até Setembro 2026..." data-ph-en="e.g. British couple relocating, looking for a 3-bed villa with pool. Pre-approved up to €500k, aiming to close by summer 2026..." placeholder="Ex: casal português a reformar, procura imóvel de lazer no Algarve. Pré-aprovação bancária até 450k€, pretende fechar até Setembro 2026..." style="min-height:140px"></textarea>
+    </div>
+  </div>
+
+    <div id="partilha_fields" style="display:none;margin-top:16px">
+    <div class="warn-box"><strong data-trans="warn-partilha">Negócio em Partilha</strong>
+      <span class="pt-only">Preencha os dados do consultor que representa o comprador.</span>
+      <span class="en-only">Please enter the details of the consultant representing the buyer.</span>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label><span data-trans="lbl-consultor2">Consultor do Comprador</span> <span class="req">*</span></label><input type="text" id="consultor_comprador" data-ph-pt="Nome do consultor" data-ph-en="Agent name" placeholder="Nome do consultor" oninput="document.getElementById('sig_cc_name').textContent=this.value"></div>
+      <div class="field"><label data-trans="lbl-agencia">Agência</label><input type="text" id="agencia_comprador" data-ph-pt="Nome da agência" data-ph-en="Agency name" placeholder="Nome da agência"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Assinaturas -->
+  <div class="sub-title" style="border-top:none;margin-top:0" data-trans="st-assin">Assinaturas Digitais</div>
+  <div class="info-box">
+    <strong data-trans="sig-instrucao">ℹ️ Assinar com o dedo ou stylus</strong>
+    <span data-trans="sig-desc">As assinaturas são incluídas no PDF. Peça ao cliente que assine no campo correspondente.</span>
+  </div>
+
+  <!-- Assinatura: Comprador + Angariador (sempre) -->
+  <div class="sig-grid g2" id="sig_grid_main">
+    <div>
+      <div style="font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--gold);font-weight:500;margin-bottom:4px" data-trans="sig-comprador">Cliente comprador</div>
+      <div id="sig_comprador_name" style="font-size:0.76rem;color:var(--ink-light);font-style:italic;margin-bottom:6px"></div>
+      <div class="sig-container">
+        <div class="sig-header">
+          <span class="sig-lbl"><span class="pt-only">Assinatura</span><span class="en-only">Signature</span></span>
+          <button class="sig-clear" onclick="clearSig('sig_comprador')"><span class="pt-only">✕ Limpar</span><span class="en-only">✕ Clear</span></button>
+        </div>
+        <canvas class="sig-pad" id="sig_comprador" onmousedown="ensureSig('sig_comprador',event)" ontouchstart="ensureSig('sig_comprador',event)"></canvas>
+        <div class="sig-hint" data-trans="sig-hint">Assine aqui</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--gold);font-weight:500;margin-bottom:4px" data-trans="sig-consultor">Consultor angariador</div>
+      <div id="sig_angariador_name" style="font-size:0.76rem;color:var(--ink-light);font-style:italic;margin-bottom:6px"></div>
+      <div class="sig-container">
+        <div class="sig-header">
+          <span class="sig-lbl"><span class="pt-only">Assinatura</span><span class="en-only">Signature</span></span>
+          <button class="sig-clear" onclick="clearSig('sig_angariador')"><span class="pt-only">✕ Limpar</span><span class="en-only">✕ Clear</span></button>
+        </div>
+        <canvas class="sig-pad" id="sig_angariador" onmousedown="ensureSig('sig_angariador',event)" ontouchstart="ensureSig('sig_angariador',event)"></canvas>
+        <div class="sig-hint" data-trans="sig-hint">Assine aqui</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assinatura: Consultor Comprador (só partilha) -->
+  <div id="sig_cc_block" style="display:none;margin-top:16px">
+    <div style="font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--gold);font-weight:500;margin-bottom:4px"><span class="pt-only">Consultor do comprador</span><span class="en-only">Buyer's Agent</span></div>
+    <div id="sig_cc_name" style="font-size:0.76rem;color:var(--ink-light);font-style:italic;margin-bottom:6px"></div>
+    <div class="sig-container">
+      <div class="sig-header">
+        <span class="sig-lbl"><span class="pt-only">Assinatura</span><span class="en-only">Signature</span></span>
+        <button class="sig-clear" onclick="clearSig('sig_cc')"><span class="pt-only">✕ Limpar</span><span class="en-only">✕ Clear</span></button>
+      </div>
+      <canvas class="sig-pad" id="sig_cc" onmousedown="ensureSig('sig_cc',event)" ontouchstart="ensureSig('sig_cc',event)"></canvas>
+      <div class="sig-hint" data-trans="sig-hint">Assine aqui</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="form-grid c1">
+    <div class="field"><label><span data-trans="lbl-preenche">Preenchido por</span> <span class="req">*</span></label><input type="text" id="preenchido_por" data-ph-pt="Nome do consultor" data-ph-en="Agent name" placeholder="Nome do consultor"></div>
+  </div>
+
+  <div style="text-align:center; margin-top:36px; padding-top:24px; border-top:1px solid var(--border);">
+    <button class="btn btn-gold" onclick="gerarPDF()" data-trans="btn-pdf">🖨 Imprimir / Gerar PDF</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ── PT/EN TRANSLATIONS ──
+const TRANS = {
+  's1-title': ['Dados da Visita e Imóvel', 'Visit & Property Details'],
+  's1-sub': ['Informação base sobre a visita realizada', 'Basic visit information'],
+  's2-title': ['Apreciação e Assinatura', 'Assessment & Signature'],
+  's2-sub': ['Avaliação do imóvel e fecho da visita', 'Property evaluation and visit closing'],
+  'st-visita': ['Dados da Visita', 'Visit Details'],
+  'st-imovel': ['Identificação do Imóvel', 'Property Identification'],
+  'st-cliente': ['Cliente Comprador', 'Buyer Details'],
+  'st-aprec': ['Apreciação do Imóvel', 'Property Assessment'],
+  'st-class': ['Classificação do Imóvel', 'Property Rating'],
+  'st-conhec': ['Como Tomou Conhecimento', 'How They Found It'],
+  'st-negocio': ['Tipo de Negócio', 'Deal Type'],
+  'st-assin': ['Assinaturas Digitais', 'Digital Signatures'],
+  'lbl-data': ['Data', 'Date'],
+  'lbl-consultor': ['Consultor Angariador', 'Listing Agent'],
+  'lbl-ref': ['Referência', 'Reference'],
+  'lbl-tipologia': ['Tipologia', 'Property Type'],
+  'lbl-area': ['Área Bruta Privativa (m²)', 'Gross Private Area (m²)'],
+  'lbl-preco': ['Asking Price', 'Asking Price'],
+  'lbl-morada': ['Morada', 'Address'],
+  'lbl-concelho': ['Concelho', 'Municipality'],
+  'lbl-freguesia': ['Freguesia', 'Parish'],
+  'lbl-cp': ['Código Postal', 'Post Code'],
+  'lbl-nome': ['Nome', 'Name'],
+  'lbl-preenche': ['Preenchido por', 'Filled by'],
+  'lbl-notas': ['Notas', 'Notes'],
+  'lbl-consultor2': ['Consultor do Comprador', "Buyer's Agent"],
+  'lbl-agencia': ['Agência', 'Agency'],
+  'rat-areas': ['Áreas', 'Space'],
+  'rat-acab': ['Acabamentos', 'Finishings'],
+  'rat-loc': ['Localização', 'Location'],
+  'rat-preco': ['Preço', 'Price'],
+  'rat-geral': ['Apreciação Geral', 'Overall'],
+  'deal-proprio': ['Negócio Próprio', 'Own Deal'],
+  'deal-partilha': ['Negócio em Partilha', 'Shared Deal'],
+  'conhec-consultor': ['Através do Consultor', 'Via Agent'],
+  'conhec-placa': ['Placa de Venda', 'For Sale Sign'],
+  'conhec-idealista': ['Portal Idealista', 'Idealista Portal'],
+  'conhec-instagram': ['Post Instagram Magna Properties', 'Magna Properties Instagram Post'],
+  'conhec-outro': ['Outro', 'Other'],
+  'sig-instrucao': ['ℹ️ Assinar com o dedo ou stylus', 'ℹ️ Sign with finger or stylus'],
+  'sig-desc': ['As assinaturas são incluídas no PDF. Peça ao cliente que assine no campo correspondente.', 'Signatures are embedded in the PDF. Ask the client to sign in their field.'],
+  'sig-comprador': ['Cliente comprador', 'Buyer'],
+  'sig-consultor': ['Consultor angariador', 'Listing Agent'],
+  'sig-hint': ['Assine aqui', 'Sign here'],
+  'btn-pdf': ['🖨 Imprimir / Gerar PDF', '🖨 Print / Generate PDF'],
+  'warn-partilha': ['Negócio em Partilha', 'Shared Deal'],
+  'top3-pos': ['Top 3 aspectos positivos', 'Top 3 Positive Points'],
+  'top3-neg': ['Top 3 aspectos negativos', 'Top 3 Negative Points'],
+};
+
+function setLang(l){
+  document.body.classList.toggle('lang-pt',l==='pt');
+  document.body.classList.toggle('lang-en',l==='en');
+  document.getElementById('btn-pt').classList.toggle('active',l==='pt');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  const idx = l==='pt' ? 0 : 1;
+  // Swap text on all elements with data-trans attribute
+  document.querySelectorAll('[data-trans]').forEach(el => {
+    const key = el.dataset.trans;
+    if(TRANS[key]) el.textContent = TRANS[key][idx];
+  });
+  // Swap placeholders
+  document.querySelectorAll('[data-ph-en]').forEach(el => {
+    el.placeholder = l==='en' ? el.dataset.phEn : el.dataset.phPt;
+  });
+  // Swap select option texts (data-pt / data-en)
+  document.querySelectorAll('option[data-pt]').forEach(opt => {
+    opt.textContent = l==='en' ? opt.getAttribute('data-en') : opt.getAttribute('data-pt');
+  });
+  // Swap freguesia default option if visible
+  const freg = document.getElementById('freguesia');
+  if(freg && freg.options[0]) {
+    freg.options[0].textContent = l==='en' ? '— Select Parish —' : '— Selecionar Freguesia —';
+  }
+  // Swap rating buttons
+  const ratPT = {Poor:'Mau',Average:'Médio',Good:'Bom',Excellent:'Muito Bom'};
+  document.querySelectorAll('.rb').forEach(btn => {
+    const txt = btn.textContent.trim();
+    if(l==='en' && ratEN[txt]) btn.textContent = ratEN[txt];
+    if(l==='pt' && ratPT[txt]) btn.textContent = ratPT[txt];
+  });
+}
+
+const FREGUESIAS_V = {
+  'Albufeira':['Albufeira e Olhos de Água','Ferreiras','Guia','Paderne'],
+  'Alcoutim':['Alcoutim e Pereiro','Giões','Martim Longo','Vaqueiros'],
+  'Aljezur':['Aljezur','Bordeira','Odeceixe','Rogil'],
+  'Castro Marim':['Altura','Castro Marim','Odeleite'],
+  'Faro':['Conceição e Estoi','Faro (Sé e São Pedro)','Montenegro','Santa Bárbara de Nexe'],
+  'Lagoa':['Estômbar e Parchal','Ferragudo','Lagoa e Carvoeiro','Porches'],
+  'Lagos':['Bensafrim e Barão de São João','Luz','Odiáxere','São Sebastião e Santa Maria'],
+  'Loulé':['Almancil','Alte','Ameixial','Boliqueime','Loulé (São Clemente)','Loulé (São Sebastião)','Querença, Tôr e Benafim','Quarteira','Salir'],
+  'Monchique':['Alferce','Marmelete','Monchique'],
+  'Olhão':['Moncarapacho e Fuseta','Olhão','Pechão','Quelfes'],
+  'Portimão':['Alvor','Portimão'],
+  'São Brás de Alportel':['São Brás de Alportel'],
+  'Silves':['Alcantarilha e Pêra','Armação de Pêra','Mexilhoeira Grande','São Bartolomeu de Messines','São Marcos da Serra','Silves'],
+  'Tavira':['Cachopo','Conceição e Cabanas de Tavira','Luz de Tavira e Santo Estêvão','Santa Lúzia','Tavira (Santa Maria e Santiago)'],
+  'Vila do Bispo':['Budens','Sagres','Vila do Bispo e Raposeira'],
+  'Vila Real de Santo António':['Monte Gordo','Vila Nova de Cacela','Vila Real de Santo António']
+};
+function popFregVisita(){
+  const c = document.getElementById('concelho').value;
+  const s = document.getElementById('freguesia');
+  const isEN = document.body.classList.contains('lang-en');
+  s.innerHTML = '<option value="">' + (isEN ? '— Select Parish —' : '— Selecionar Freguesia —') + '</option>';
+  if(FREGUESIAS_V[c]) FREGUESIAS_V[c].forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;s.appendChild(o);});
+}
+
+
+const EMPRESA = { nome:"MAGNA PROPERTIES", ami:"27435" };
+let negocio='';
+const ratings={};
+
+function setRating(k,v,btn){
+  ratings[k]=v;
+  btn.closest('tr').querySelectorAll('.rb').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  // Limpar erro de rating desta linha quando seleccionado
+  btn.closest('tr').querySelectorAll('td').forEach(td=>td.style.removeProperty('border-color'));
+}
+function toggleCB(el){el.classList.toggle('selected');const cb=el.querySelector('input');if(cb)cb.checked=el.classList.contains('selected');}
+function toggleCBOutros(el){el.classList.toggle('selected');const cb=el.querySelector('input');if(cb)cb.checked=el.classList.contains('selected');document.getElementById('outros_wrap').style.display=el.classList.contains('selected')?'block':'none';}
+function setNegocio(v){
+  negocio=v; document.getElementById('err-negocio').style.display='none';
+  document.getElementById('neg_proprio').classList.toggle('selected',v==='proprio');
+  document.getElementById('neg_partilha').classList.toggle('selected',v==='partilha');
+  document.getElementById('r_proprio').checked = (v==='proprio');
+  document.getElementById('r_partilha').checked = (v==='partilha');
+  const obsDiv = document.getElementById('observacoes_proprio');
+  if (obsDiv) obsDiv.style.display = (v==='proprio') ? 'block' : 'none';
+  const show=v==='partilha';
+  document.getElementById('partilha_fields').style.display=show?'block':'none';
+  document.getElementById('sig_cc_block').style.display=show?'block':'none';
+  if(show) setTimeout(()=>initWhenVisible('sig_cc'),80);
+}
+
+// Sig pads — clean implementation
+const sigPads = {};
+
+function initSigPad(id) {
+  const old = document.getElementById(id);
+  if (!old) return;
+
+  const parent = old.parentNode;
+  const newCanvas = document.createElement('canvas');
+  newCanvas.id = id;
+  newCanvas.className = old.className;
+  parent.replaceChild(newCanvas, old);
+
+  const dpr = window.devicePixelRatio || 1;
+  // Force reflow so the browser recalculates layout
+  void newCanvas.offsetWidth;
+  const rect = newCanvas.getBoundingClientRect();
+  const w = rect.width || newCanvas.offsetWidth || newCanvas.parentNode.offsetWidth || 300;
+  const h = rect.height || newCanvas.offsetHeight || 160;
+  newCanvas.width = w * dpr;
+  newCanvas.height = h * dpr;
+
+  const ctx = newCanvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#1a1612';
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  let drawing = false;
+
+  function getPos(e) {
+    const r = newCanvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return [src.clientX - r.left, src.clientY - r.top];
+  }
+
+  newCanvas.addEventListener('mousedown', e => { e.preventDefault(); drawing = true; const [x,y] = getPos(e); ctx.beginPath(); ctx.moveTo(x,y); });
+  newCanvas.addEventListener('mousemove', e => { if (!drawing) return; const [x,y] = getPos(e); ctx.lineTo(x,y); ctx.stroke(); });
+  newCanvas.addEventListener('mouseup', () => drawing = false);
+  newCanvas.addEventListener('mouseleave', () => drawing = false);
+  newCanvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const [x,y] = getPos(e); ctx.beginPath(); ctx.moveTo(x,y); }, { passive: false });
+  newCanvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const [x,y] = getPos(e); ctx.lineTo(x,y); ctx.stroke(); }, { passive: false });
+  newCanvas.addEventListener('touchend', e => { e.preventDefault(); drawing = false; }, { passive: false });
+
+  sigPads[id] = { canvas: newCanvas, ctx, dpr };
+}
+
+function clearSig(id) {
+  const p = sigPads[id];
+  if (p) p.ctx.clearRect(0, 0, p.canvas.width, p.canvas.height);
+}
+
+function getSig(id) {
+  const p = sigPads[id];
+  if (!p) return null;
+  const d = p.ctx.getImageData(0, 0, p.canvas.width, p.canvas.height).data;
+  return d.some(v => v !== 0) ? p.canvas.toDataURL('image/png') : null;
+}
+
+function ensureSig(id, e) {
+  if (!sigPads[id]) {
+    initSigPad(id);
+  }
+  // Now replay the event on the freshly initialised canvas
+  const p = sigPads[id];
+  if (!p) return;
+  const r = p.canvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  const x = src.clientX - r.left;
+  const y = src.clientY - r.top;
+  p.ctx.beginPath();
+  p.ctx.moveTo(x, y);
+  // drawing flag lives inside initSigPad closure, so just trigger mousedown/touchstart on the new canvas
+  p.canvas.dispatchEvent(new MouseEvent('mousedown', { clientX: src.clientX, clientY: src.clientY, bubbles: true }));
+}
+
+function initMainSigs() {
+  const cn = gv('cliente_nome'), ag = gv('consultor');
+  document.getElementById('sig_comprador_name').textContent = cn;
+  document.getElementById('sig_angariador_name').textContent = ag;
+}
+// Actualizar nomes em tempo real quando os campos mudam
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('cliente_nome')?.addEventListener('input', initMainSigs);
+  document.getElementById('consultor')?.addEventListener('input', initMainSigs);
+});
+
+function initWhenVisible(id) {
+  initSigPad(id);
+}
+
+// Helpers
+function gv(id){const e=document.getElementById(id);return e?(e.value||''):''}
+function fmtData(d){if(!d)return'—';const[y,m,day]=d.split('-');return day+'/'+m+'/'+y;}
+function fmtEuro(inp){const raw=inp.value.replace(/[^\d]/g,'');if(!raw){inp.value='';return;}const n=parseInt(raw,10);inp.value=n.toLocaleString('pt-PT').replace(/\u00a0/g,' ')+' €';}
+function getChecked(){
+  const isEN = document.body.classList.contains('lang-en');
+  const vals = Array.from(document.querySelectorAll('.check-group input[type="checkbox"]:checked'))
+    .map(el => {
+      const ptVal = el.value;
+      if (ptVal === 'Outro' || ptVal === 'Other') return null;
+      return isEN ? (el.getAttribute('data-en') || ptVal) : ptVal;
+    }).filter(Boolean);
+  const o = document.getElementById('outros_wrap').style.display !== 'none' ? gv('conhec_outros') : '';
+  if(o) vals.push((isEN ? 'Other: ' : 'Outro: ') + o);
+  return vals;
+}
+const ratEN={Mau:'Poor',Médio:'Average',Bom:'Good','Muito Bom':'Excellent'};
+
+// Validation
+function req(id, msg, errors) {
+  const el = document.getElementById(id); if (!el) return;
+  const val = el.tagName === 'SELECT' ? el.value : el.value.trim();
+  if (!val) {
+    errors.push(msg);
+    const f = el.closest('.field');
+    const errMsg = document.body.classList.contains('lang-en') ? 'Required field' : 'Campo obrigatório';
+    if (f && !f.querySelector('.field-error-msg')) {
+      f.classList.add('field-error');
+      const s = document.createElement('div');
+      s.className = 'field-error-msg'; s.innerHTML = '⚠ ' + errMsg;
+      f.appendChild(s);
+    }
+    const clear = () => {
+      const v = el.tagName === 'SELECT' ? el.value : el.value.trim();
+      if (v) { f?.classList.remove('field-error'); f?.querySelector('.field-error-msg')?.remove(); }
+    };
+    el.addEventListener('input', clear, { once: true });
+    el.addEventListener('change', clear, { once: true });
+  }
+}
+
+function clearAllErrors() {
+  document.querySelectorAll('.field-error').forEach(f => f.classList.remove('field-error'));
+  document.querySelectorAll('.field-error-msg').forEach(m => m.remove());
+  document.querySelectorAll('.rating-table tbody tr td').forEach(td => td.style.removeProperty('border-color'));
+  document.getElementById('err-1').classList.remove('show');
+  document.getElementById('err-2').classList.remove('show');
+  document.getElementById('err-negocio').style.display = 'none';
+  document.querySelectorAll('.sig-error-msg').forEach(m => m.remove());
+  const cbErr = document.getElementById('err-conheceu');
+  if (cbErr) cbErr.remove();
+}
+
+function validateAll() {
+  clearAllErrors();
+  const errors = [];
+
+  // ── Passo 1 ──
+  req('data_visita',  'Data da visita', errors);
+  req('consultor',    'Consultor angariador', errors);
+  req('ref_imovel',   'Referência do imóvel', errors);
+  req('tipologia',    'Tipologia', errors);
+  req('area_m2',      'Área bruta', errors);
+  req('preco',        'Asking Price', errors);
+  req('morada',       'Morada', errors);
+  req('concelho',     'Concelho', errors);
+  req('freguesia',    'Freguesia', errors);
+  req('cod_postal',   'Código Postal', errors);
+  req('cliente_nome', 'Nome do cliente', errors);
+
+  // ── Ratings ──
+  const ratKeys = ['areas','acabamentos','localizacao_r','preco_r','geral'];
+  const ratLabels = ['Áreas','Acabamentos','Localização','Preço','Apreciação Geral'];
+  const allRows = document.querySelectorAll('.rating-table tbody tr');
+  ratKeys.forEach((k, i) => {
+    if (!ratings[k]) {
+      errors.push('Classificação: ' + ratLabels[i]);
+      if (allRows[i]) allRows[i].querySelectorAll('td').forEach(td => td.style.setProperty('border-color','var(--red)','important'));
+    }
+  });
+
+  // ── Como conheceu ──
+  const checked = document.querySelectorAll('.check-group input[type="checkbox"]:checked');
+  if (checked.length === 0) {
+    errors.push('Como tomou conhecimento');
+    const cg = document.querySelector('.check-group');
+    if (cg && !document.getElementById('err-conheceu')) {
+      const isEN = document.body.classList.contains('lang-en');
+      const d = document.createElement('div');
+      d.id = 'err-conheceu'; d.className = 'field-error-msg';
+      d.style.marginTop = '6px';
+      d.textContent = isEN ? '⚠ Please select at least one option' : '⚠ Selecione pelo menos uma opção';
+      cg.parentNode.insertBefore(d, cg.nextSibling);
+    }
+  }
+
+  // ── Tipo de negócio ──
+  if (!negocio) {
+    errors.push('Tipo de negócio');
+    document.getElementById('err-negocio').style.display = 'block';
+  }
+  if (negocio === 'partilha') req('consultor_comprador', 'Consultor do comprador', errors);
+
+  // ── Assinaturas ──
+  const isENsig = document.body.classList.contains('lang-en');
+  ['sig_comprador','sig_angariador'].forEach(id => {
+    if (!getSig(id)) {
+      errors.push('Assinatura em falta');
+      const container = document.getElementById(id)?.closest('.sig-container');
+      if (container && !container.querySelector('.sig-error-msg')) {
+        const d = document.createElement('div');
+        d.className = 'sig-error-msg field-error-msg';
+        d.style.marginTop = '4px';
+        d.textContent = isENsig ? '⚠ Signature required' : '⚠ Assinatura obrigatória';
+        container.after(d);
+      }
+    }
+  });
+
+  // ── Preenchido por ──
+  req('preenchido_por', 'Preenchido por', errors);
+
+  if (errors.length > 0) {
+    document.getElementById('err-1').classList.add('show');
+    const firstErr = document.querySelector('.field-error, #err-negocio[style*="block"], .sig-error-msg, #err-conheceu');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return false;
+  }
+  return true;
+}
+
+function validateStep() { return true; } // Mantido por compatibilidade
+
+// PDF
+function gerarPDF(){
+  if(!validateAll())return;
+  const isEN = document.body.classList.contains('lang-en');
+  const t = (pt, en) => isEN ? en : pt;
+  function e(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+  const dataV=fmtData(gv('data_visita')),consultor=gv('consultor');
+  const refImovel=gv('ref_imovel'),tipologia=gv('tipologia'),areaM2=gv('area_m2'),preco=gv('preco');
+  const morada=gv('morada'),codPostal=gv('cod_postal'),freguesia=gv('freguesia'),concelho=gv('concelho');
+  const cliNome=gv('cliente_nome');
+  const pos1=gv('pos1'),pos2=gv('pos2'),pos3=gv('pos3');
+  const neg1=gv('neg1'),neg2=gv('neg2'),neg3=gv('neg3');
+  const prefBy=gv('preenchido_por');
+  const consCC=gv('consultor_comprador'),agCC=gv('agencia_comprador');
+  const conhecimento=getChecked();
+  const sigComp=getSig('sig_comprador'),sigAng=getSig('sig_angariador');
+  const sigCC=negocio==='partilha'?getSig('sig_cc'):null;
+
+  // Traduzir valores dos ratings para EN se necessário
+  const ratLabel = v => isEN ? (ratEN[v]||v) : v;
+  // Traduzir tipologia para EN se necessário
+  const TIPO_EN = {'T0':'Studio','T1':'1 Bedroom','T2':'2 Bedrooms','T3':'3 Bedrooms','T4':'4 Bedrooms','T4+':'4+ Bedrooms','Moradia':'Villa / House','Terreno':'Land','Comercial':'Commercial','Outro':'Other'};
+  const tipoDisplay = isEN ? (TIPO_EN[tipologia] || tipologia) : tipologia;
+
+  const parts=[];const add=h=>parts.push(h);
+
+  add('<!DOCTYPE html><html lang="'+(isEN?'en':'pt')+'"><head><meta charset="UTF-8"><title>'+t('Ficha de Visita','Property Visit Report')+' \u2014 '+e(refImovel)+'<\/title><style>');
+  add('@page{size:A4;margin:14mm}@media print{html{-webkit-print-color-adjust:exact;print-color-adjust:exact}}');
+  add('*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;font-size:9pt;color:#1a1612;line-height:1.5}');
+
+  // Header
+  add('.hdr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5pt solid #1a1612;padding-bottom:8pt;margin-bottom:10pt}');
+  add('.h-title{font-size:15pt;font-weight:bold;letter-spacing:0.01em}.h-sub{font-size:7.5pt;color:#5c5449;margin-top:3pt}');
+  add('.h-right{text-align:right}.h-ref{font-size:13pt;color:#b8935a;font-weight:bold}.h-meta{font-size:7.5pt;color:#5c5449;margin-top:3pt}');
+
+  // Section headers
+  add('.sh{background:#f2ede4;padding:5pt 10pt;margin:10pt 0 6pt;border-left:3.5pt solid #b8935a;font-size:8pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.07em;color:#1a1612}');
+
+  // Grids
+  add('.g2{display:grid;grid-template-columns:1fr 1fr;gap:10pt;margin-bottom:6pt}');
+  add('.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10pt;margin-bottom:6pt}');
+  add('.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10pt;margin-bottom:6pt}');
+
+  // Fields
+  add('.fr{border-bottom:1pt solid #e0d8cc;padding-bottom:5pt;margin-bottom:5pt}');
+  add('.fl{font-size:7pt;font-weight:bold;color:#5c5449;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2pt}');
+  add('.fv{font-size:9.5pt;color:#1a1612}');
+
+  // Pos/Neg
+  add('.pn-wrap{display:grid;grid-template-columns:1fr 1fr;gap:12pt;margin-bottom:4pt}');
+  add('.pn-lbl{font-size:7pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:5pt;padding:3pt 8pt;border-radius:2pt}');
+  add('.pn-pos{color:#2d6a4f;background:#f0f7f4}.pn-neg{color:#8b2c2c;background:#fdf0f0}');
+  add('.pn-item{font-size:9pt;padding:4pt 0;border-bottom:0.5pt solid #e8e0d8;display:flex;gap:6pt}');
+  add('.pn-num{font-weight:bold;color:#b8935a;min-width:10pt}');
+
+  // Ratings
+  add('.rat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8pt;margin-bottom:6pt}');
+  add('.rat-cell{text-align:center;border:0.5pt solid #d8cfc0;padding:6pt 4pt;border-radius:2pt;background:#faf8f4}');
+  add('.rat-lbl{font-size:7pt;color:#5c5449;font-weight:bold;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:5pt}');
+  add('.rat-v{font-size:8.5pt;padding:3pt 8pt;background:#b8935a;color:white;border-radius:2pt;display:inline-block;font-weight:bold}');
+  add('.rat-e{font-size:8pt;color:#bbb;font-style:italic}');
+
+  // Como conheceu
+  add('.cb-row{display:flex;flex-wrap:wrap;gap:6pt;margin-bottom:6pt}');
+  add('.cb{font-size:8pt;background:#f2ede4;padding:3pt 9pt;border-radius:10pt;color:#5c5449}');
+  add('.neg-line{font-size:8pt;color:#5c5449;padding:5pt 0;border-top:0.5pt solid #e0d8cc}');
+
+  // Signatures
+  add('.sig-grid{display:grid;gap:12pt;margin-top:6pt}');
+  add('.sig-box{border:0.5pt solid #d8cfc0;border-radius:2pt;overflow:hidden}');
+  add('.sig-lbl-bar{background:#f2ede4;padding:4pt 8pt;font-size:7pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.05em;color:#5c5449;border-bottom:0.5pt solid #d8cfc0}');
+  add('.sig-img{width:100%;height:70pt;object-fit:contain;object-position:left center;display:block;background:white;padding:4pt 8pt}');
+  add('.sig-empty{height:70pt;background:white}');
+  add('.sig-name{font-size:8pt;font-style:italic;color:#1a1612;padding:4pt 8pt;border-top:0.5pt solid #e0d8cc;background:#faf8f4}');
+
+  add('.footer{border-top:0.5pt solid #d8cfc0;margin-top:10pt;padding-top:5pt;text-align:center;font-size:7.5pt;color:#7a6e5e}');
+  add('<\/style><\/head><body>');
+
+  // ── HEADER ──
+  add('<div class="hdr">');
+  add('<div><div class="h-title">'+t('FICHA DE VISITA','PROPERTY VISIT REPORT')+'<\/div><div class="h-sub">'+e(EMPRESA.nome)+(EMPRESA.ami?' \u2014 AMI '+e(EMPRESA.ami):'')+'<\/div><\/div>');
+  add('<div class="h-right"><div class="h-ref">'+e(refImovel||'\u2014')+'<\/div><div class="h-meta">'+e(dataV)+' \u2014 '+e(consultor)+'<\/div><\/div>');
+  add('<\/div>');
+
+  // ── IMÓVEL ──
+  add('<div class="sh">'+t('Im\u00f3vel','Property Details')+'<\/div>');
+  add('<div class="g4">');
+  add('<div class="fr"><div class="fl">'+t('Tipologia','Property Type')+'<\/div><div class="fv">'+e(tipoDisplay||'\u2014')+'<\/div><\/div>');
+  add('<div class="fr"><div class="fl">'+t('\u00c1rea Bruta (m\u00b2)','Gross Private Area (m\u00b2)')+'<\/div><div class="fv">'+e(areaM2?areaM2+' m\u00b2':'\u2014')+'<\/div><\/div>');
+  add('<div class="fr"><div class="fl">Asking Price<\/div><div class="fv">'+e(preco||'\u2014')+'<\/div><\/div>');
+  add('<div class="fr"><div class="fl">'+t('Cliente','Buyer')+'<\/div><div class="fv">'+e(cliNome)+'<\/div><\/div>');
+  add('<\/div>');
+  add('<div class="fr"><div class="fl">'+t('Morada','Address')+'<\/div><div class="fv">'+e(morada)+(codPostal?' \u2014 '+e(codPostal):'')+(freguesia?' \u2014 '+e(freguesia):'')+(concelho?', '+e(concelho):'')+'<\/div><\/div>');
+
+  // ── APRECIAÇÃO ──
+  const posArr=[pos1,pos2,pos3].filter(v=>v);
+  const negArr=[neg1,neg2,neg3].filter(v=>v);
+  if(posArr.length||negArr.length){
+    add('<div class="sh">'+t('Aprecia\u00e7\u00e3o','Assessment')+'<\/div>');
+    add('<div class="pn-wrap">');
+    add('<div><div class="pn-lbl pn-pos">+ '+t('aspectos positivos','positive points')+'<\/div>'+posArr.map((v,i)=>'<div class="pn-item"><span class="pn-num">'+(i+1)+'.<\/span>'+e(v)+'<\/div>').join('')+'<\/div>');
+    add('<div><div class="pn-lbl pn-neg">\u2212 '+t('aspectos negativos','negative points')+'<\/div>'+negArr.map((v,i)=>'<div class="pn-item"><span class="pn-num">'+(i+1)+'.<\/span>'+e(v)+'<\/div>').join('')+'<\/div>');
+    add('<\/div>');
+  }
+
+  // ── RATINGS ──
+  add('<div class="sh">'+t('Classifica\u00e7\u00e3o','Rating')+'<\/div>');
+  add('<div class="rat-grid">');
+  [['areas',t('Áreas','Space')],['acabamentos',t('Acabamentos','Finishings')],['localizacao_r',t('Localização','Location')],['preco_r',t('Preço','Price')],['geral',t('Geral','Overall')]].forEach(([k,lbl])=>{
+    const v=ratings[k];
+    add('<div class="rat-cell"><div class="rat-lbl">'+lbl+'<\/div>'+(v?'<div class="rat-v">'+ratLabel(v)+'<\/div>':'<div class="rat-e">\u2014<\/div>')+'<\/div>');
+  });
+  add('<\/div>');
+
+  // ── COMO CONHECEU + NEGÓCIO ──
+  if(conhecimento.length>0){
+    add('<div class="sh">'+t('Como Tomou Conhecimento','How They Found It')+'<\/div>');
+    add('<div class="cb-row">'+conhecimento.map(k=>'<span class="cb">\u2713 '+e(k)+'<\/span>').join('')+'<\/div>');
+  }
+  add('<div class="neg-line">'+t('Neg\u00f3cio','Deal')+': <strong>'+(negocio==='proprio'?t('Pr\u00f3prio','Own Deal'):t('Partilha','Shared Deal'))+'<\/strong>'+(negocio==='partilha'&&consCC?' \u2014 '+t('Consultor do Comprador',"Buyer's Agent")+': <strong>'+e(consCC)+(agCC?' ('+e(agCC)+')':'')+'<\/strong>':'')+'<\/div>');
+
+  const obsConsultor = document.getElementById('obs_consultor')?.value.trim();
+  if (negocio === 'proprio' && obsConsultor) {
+    add('<div class="sh">'+t('Observa\u00e7\u00f5es do Consultor Angariador',"Agent's Notes")+'<\/div>');
+    add('<div style="font-size:9pt;color:#1a1612;line-height:1.6;padding:8pt 10pt;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word;word-break:break-word;background:#fdf6e8;border-left:2.5pt solid #b8935a;border-radius:0 2pt 2pt 0;">'+e(obsConsultor)+'<\/div>');
+  }
+
+  // ── ASSINATURAS ──
+  add('<div class="sh">'+t('Assinaturas','Signatures')+' \u2014 '+e(dataV)+'<\/div>');
+  const sigs=[];
+  sigs.push([sigComp, t('Cliente Comprador','Buyer'), cliNome]);
+  if(negocio==='partilha') sigs.push([sigCC, t('Consultor do Comprador',"Buyer's Agent"), consCC+(agCC?' \u2014 '+agCC:'')]);
+  sigs.push([sigAng, t('Consultor Angariador','Listing Agent'), consultor]);
+  add('<div class="sig-grid" style="grid-template-columns:repeat('+sigs.length+',1fr)">');
+  sigs.forEach(([img,lbl,name])=>{
+    add('<div class="sig-box">');
+    add('<div class="sig-lbl-bar">'+lbl+'<\/div>');
+    if(img)add('<img class="sig-img" src="'+img+'" alt="'+t('Assinatura','Signature')+'">');
+    else add('<div class="sig-empty"><\/div>');
+    add('<div class="sig-name">'+e(name)+'<\/div>');
+    add('<\/div>');
+  });
+  add('<\/div>');
+
+  add('<div class="footer">'+e(EMPRESA.nome)+(EMPRESA.ami?' \u2014 AMI '+e(EMPRESA.ami):'')+' \u2014 '+t('Preenchido por','Filled by')+': '+e(prefBy)+'<\/div>');
+  add('<\/body><\/html>');
+
+  const html=parts.join('\n');
+  let iframe=document.getElementById('__pdf_frame');
+  if(!iframe){iframe=document.createElement('iframe');iframe.id='__pdf_frame';iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;';document.body.appendChild(iframe);}
+  iframe.srcdoc=html;
+  iframe.onload=function(){try{iframe.contentWindow.focus();iframe.contentWindow.print();}catch(err){const a=document.createElement('a');const blob=new Blob([html],{type:'text/html;charset=utf-8'});a.href=URL.createObjectURL(blob);a.download='FichaVisita_'+gv('ref_imovel')+'_'+gv('data_visita')+'.html';a.click();}};
+}
+document.getElementById('data_visita').valueAsDate = new Date();
+document.addEventListener('DOMContentLoaded', () => {
+  initMainSigs();
+  initSigPad('sig_comprador');
+  initSigPad('sig_angariador');
+});
+</script>
+</body>
+</html>

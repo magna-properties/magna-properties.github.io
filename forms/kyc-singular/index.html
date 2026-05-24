@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC — Pessoa Singular</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root { --ink:#1a1612; --ink-light:#5c5449; --paper:#faf8f4; --cream:#f2ede4; --gold:#b8935a; --gold-light:#d4a96a; --red:#8b2c2c; --border:#d8cfc0; --success:#2d6a4f; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; }
+  .topbar { background:#0c0b09; color:var(--paper); padding:16px 24px; display:flex; align-items:center; justify-content:center; position:sticky; top:0; z-index:100; }
+  .topbar-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:#c4a35a; letter-spacing:0.05em; }
+  .topbar-badge { display:none; }
+  .topbar-sub { font-size:0.78rem; color:#6b6358; margin-top:3px; letter-spacing:0; text-transform:none; }
+  .progress-bar { background:#1a1812; height:3px; }
+  .progress-fill { background:linear-gradient(90deg,#c4a35a,#d4b06a); height:100%; transition:width 0.5s ease; }
+  .steps-nav { display:none !important; padding:0 40px 16px; display:flex; gap:6px; flex-wrap:wrap; }
+  .step-pill { font-size:0.78rem; letter-spacing:0; text-transform:none; padding:4px 12px; border-radius:20px; cursor:pointer; transition:all 0.2s; border:1px solid #3a3530; color:#888; background:transparent; }
+  .step-pill.active { background:#c4a35a; color:#0c0b09; border-color:#c4a35a; font-weight:500; }
+  .step-pill.done { background:#1a1812; color:#c4a35a; border-color:#2a2720; }
+  .main { max-width:860px; margin:40px auto; padding:0 20px 80px; }
+  .section-card { background:var(--paper); border:1px solid var(--border); border-radius:2px; padding:36px 40px; display:block; margin-bottom:20px; }
+  
+  .section-header { margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+  .section-number { font-size:0.78rem; letter-spacing:0; text-transform:none; color:var(--gold); margin-bottom:6px; }
+  .section-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; line-height:1.2; }
+  .section-title-en { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:400; color:var(--ink-light); font-style:italic; margin-top:2px; }
+  .section-desc { font-size:0.88rem; color:var(--ink-light); margin-top:6px; }
+  .sub-title { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; padding:8px 0; border-top:1px solid var(--border); margin:20px 0 14px; color:var(--ink); }
+  .sub-title:first-of-type { border-top:none; margin-top:0; }
+  .sub-title span { font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:400; color:var(--ink-light); font-style:italic; }
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px 20px; }
+  .form-grid.cols-1 { grid-template-columns:1fr; }
+  .form-grid.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field label { font-size:0.88rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:500; }
+  .field label .en { font-style:italic; text-transform:none; letter-spacing:0; font-weight:400; color:#9a8e82; font-size:0.8rem; }
+  .field input,.field select,.field textarea { border:1px solid var(--border); background:white; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:1rem; color:var(--ink); border-radius:4px; transition:border-color 0.15s; width:100%; }
+  .field input:focus,.field select:focus,.field textarea:focus { outline:none; border-color:var(--gold); }
+  .field textarea { resize:vertical; min-height:70px; }
+  .req { color:var(--red); }
+  .check-group { display:flex; flex-wrap:wrap; gap:10px; }
+  .check-option { display:flex; align-items:flex-start; gap:10px; padding:12px 16px; border:1.5px solid var(--border); border-radius:24px; cursor:pointer; transition:all 0.15s; background:white; flex:1; min-width:180px; color:var(--ink-light); }
+  .check-option:hover { border-color:#c4a35a; background:#fdf9f3; color:var(--ink); }
+  .check-option.selected { border-color:#c4a35a; background:#fdf6e8; color:var(--ink); box-shadow:0 2px 8px rgba(184,147,90,0.2); }
+  .check-option.checked-done { border-color:var(--success); background:#f0f7f4; }
+  .check-option input[type='radio'], .check-option input[type='checkbox'] { width:16px; height:16px; min-width:16px; margin-top:2px; accent-color:var(--gold); cursor:pointer; flex-shrink:0; pointer-events:none; }
+  .check-label strong { display:block; font-size:0.95rem; font-weight:500; margin-bottom:1px; }
+  .check-label span { color:var(--ink-light); font-size:0.82rem; }
+  .check-label .en { color:#9a8e82; font-size:0.78rem; font-style:italic; display:block; }
+  .divider { border:none; border-top:1px solid var(--border); margin:24px 0; }
+  .info-box { background:#f0f7f4; border-left:3px solid var(--success); padding:14px 18px; border-radius:0 2px 2px 0; font-size:1rem; color:#2d5a47; line-height:1.5; margin-bottom:16px; }
+  .info-box strong { display:block; margin-bottom:2px; font-weight:400; }
+  .warn-box { background:#fff8f0; border-left:3px solid var(--gold); padding:14px 18px; border-radius:0 2px 2px 0; font-size:1rem; color:#7a5c2a; line-height:1.5; margin-bottom:16px; }
+  .warn-box strong { display:block; margin-bottom:2px; font-weight:400; }
+  .nav-buttons { display:flex; justify-content:space-between; align-items:center; margin-top:36px; padding-top:24px; border-top:1px solid var(--border); }
+  .btn { font-family:'DM Sans',sans-serif; font-size:0.88rem; letter-spacing:0; text-transform:none; font-weight:500; padding:12px 28px; border-radius:24px; cursor:pointer; border:none; transition:all 0.2s; }
+  .btn-ghost { background:transparent; color:var(--ink-light); border:1px solid var(--border); border-radius:24px; }
+  .btn-ghost:hover { border-color:var(--ink-light); }
+  .btn-primary { background:var(--ink); color:var(--paper); border-radius:24px; }
+  .btn-primary:hover { background:#2e2a25; }
+  .btn-gold { background:var(--gold); color:white; font-size:0.88rem; padding:14px 36px; border-radius:24px; box-shadow:0 2px 8px rgba(184,147,90,0.3); }
+  .btn-gold:hover { background:#d4b06a; box-shadow:0 4px 14px rgba(184,147,90,0.4); }
+  /* checklist interna */
+  .checklist-item { display:flex; align-items:center; gap:12px; padding:12px 16px; border:1px solid var(--border); border-radius:1px; background:white; cursor:pointer; transition:all 0.15s; margin-bottom:8px; }
+  .checklist-item:hover { border-color:var(--gold); }
+  .checklist-item.done { border-color:var(--success); background:#f0f7f4; }
+  .checklist-item.na { opacity:0.5; background:#f5f3ef; }
+  .cb-box { width:22px; height:22px; min-width:22px; border:2px solid var(--border); border-radius:2px; display:flex; align-items:center; justify-content:center; font-size:13px; transition:all 0.15s; background:white; }
+  .checklist-item.done .cb-box { background:var(--success); border-color:var(--success); color:white; }
+  .checklist-item.na .cb-box { background:#ccc; border-color:#ccc; color:white; }
+  .cb-label { flex:1; }
+  .cb-label strong { font-size:0.88rem; display:block; font-weight:400; }
+  .cb-label .cb-sub { font-size:0.76rem; color:var(--ink-light); }
+  .cb-label .cb-en { font-size:0.71rem; color:#9a8e82; font-style:italic; }
+  .btn-na-sm { font-size:0.62rem; letter-spacing:0.05em; text-transform:uppercase; padding:2px 8px; border-radius:10px; border:1px solid var(--border); background:transparent; color:var(--ink-light); cursor:pointer; font-family:'DM Sans',sans-serif; }
+  /* validação */
+  .field-error input,.field-error select,.field-error textarea { border-color:var(--red)!important; box-shadow:0 0 0 3px rgba(139,44,44,.12)!important; }
+  .radio-error .check-option { border-color:var(--red)!important; }
+  .radio-error { outline: 2px solid var(--red); outline-offset: 4px; border-radius: 2px; }
+  .field-error-msg { font-size:0.72rem; color:var(--red); margin-top:4px; }
+  .step-error-banner { background:#fdf0f0; border:1px solid #e8b4b4; border-left:3px solid var(--red); padding:12px 16px; font-size:0.83rem; color:#7a2222; margin-bottom:20px; display:none; }
+  .step-error-banner.show { display:block; }
+  .step-error-banner strong { display:block; margin-bottom:2px; }
+  @media(max-width:600px){ .form-grid,.form-grid.cols-3{ grid-template-columns:1fr; } .section-card{ padding:20px 16px; } .topbar,.steps-nav{ padding-left:16px; padding-right:16px; } }
+
+  .lang-toggle-wrap{position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;gap:6px}
+  .lang-btn{font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.1em;padding:5px 11px;border-radius:20px;border:1px solid #3a3528;color:#6b6358;background:transparent;cursor:pointer;transition:all .2s}
+  .lang-btn.active{background:#c4a35a;color:#0c0b09;border-color:#c4a35a}
+</style>
+</head>
+<body class="lang-pt">
+
+<div class="topbar" style="position:relative">
+  <div style="text-align:center;">
+    <div class="topbar-title">Magna Properties</div>
+    <div class="topbar-sub" data-trans="topbar-sub">Ficha de Branqueamento de Capitais — Pessoa Singular</div>
+  <div class="lang-toggle-wrap"><button class="lang-btn active" id="btn-pt" onclick="setLang('pt')">PT</button><button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button></div>
+  </div>
+  
+</div>
+<div style="height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-light),transparent)"></div>
+</div>
+
+<div class="main">
+
+<!-- PASSO 1 -->
+<div class="section-card active" id="step-1">
+  <div class="section-header">
+    <div class="section-number" data-trans="step1">Passo 01 / 03</div>
+    <div class="section-title" data-trans="title1">Identificação Completa</div>
+    
+    <div class="section-desc" data-trans="desc1">Dados pessoais do cliente</div>
+  </div>
+  <div class="step-error-banner" id="err-1"><strong>⚠️ Campos obrigatórios em falta</strong>Preencha todos os campos assinalados com * antes de avançar.</div>
+
+  <!-- Tipo de interveniente -->
+  <div class="sub-title" data-trans="sub-residencia">Residência Fiscal</div>
+  <div class="check-group" id="residente_group">
+    <div class="check-option" onclick="selectRadio(this,'residente')">
+      <input type="radio" name="residente" value="residente">
+      <div class="check-label"><strong data-trans="chk-residente">Residente</strong></div>
+    </div>
+    <div class="check-option" onclick="selectRadio(this,'nao_residente')">
+      <input type="radio" name="residente" value="nao_residente">
+      <div class="check-label"><strong data-trans="chk-nao-residente">Não Residente</strong></div>
+    </div>
+  </div>
+
+  <div style="height:20px"></div>
+  <div class="form-grid cols-1">
+    <div class="field">
+      <label data-trans="lbl-nome">Nome Completo <span class="req">*</span></label>
+      <input type="text" id="nome" placeholder="Nome completo conforme documento de identificação" data-ph-pt="Nome completo conforme documento de identificação" data-ph-en="Full name as per identification document">
+    </div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-3">
+    <div class="field">
+      <label data-trans="lbl-nasc">Data de Nascimento <span class="req">*</span></label>
+      <input type="date" id="data_nasc">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-natur">Naturalidade <span class="req">*</span></label>
+      <input type="text" id="naturalidade" placeholder="Ex: Faro" data-ph-pt="Ex: Faro" data-ph-en="Ex: Faro">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-nac">Nacionalidade <span class="req">*</span></label>
+      <input type="text" id="nacionalidade" placeholder="Ex: Portuguesa" data-ph-pt="Ex: Portuguesa" data-ph-en="Ex: Portuguese">
+    </div>
+  </div>
+  <div style="height:6px"></div>
+  <div class="warn-box" style="margin-bottom:0"><span data-trans="warn-nac">Se dupla nacionalidade, indique ambas separadas por vírgula.</span></div>
+
+  <div class="sub-title" data-trans="sub-morada">Morada</div>
+  <div class="form-grid cols-1">
+    <div class="field">
+      <label data-trans="lbl-rua">Rua / Av. / Número<span class="req">*</span></label>
+      <input type="text" id="morada_rua" placeholder="Ex: Rua das Flores, n.º 12, 2.º Esq." data-ph-pt="Ex: Rua das Flores, n.º 12, 2.º Esq." data-ph-en="Ex: Flower Street, No. 12, 2nd Floor">
+    </div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-3">
+    <div class="field">
+      <label data-trans="lbl-cp">Código Postal <span class="req">*</span></label>
+      <input type="text" id="morada_cp" placeholder="0000-000" data-ph-pt="0000-000" data-ph-en="0000-000">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-freg">Freguesia <span class="req">*</span></label>
+      <input type="text" id="morada_freg" placeholder="Ex: Sé" data-ph-pt="Ex: Sé" data-ph-en="Ex: Sé">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-conc">Concelho / País <span class="req">*</span></label>
+      <input type="text" id="morada_conc" placeholder="Ex: Faro / Portugal" data-ph-pt="Ex: Faro / Portugal" data-ph-en="Ex: Faro / Portugal">
+    </div>
+  </div>
+
+  <div class="sub-title" data-trans="sub-profissao">Profissão e Contactos</div>
+  <div class="form-grid">
+    <div class="field">
+      <label data-trans="lbl-prof">Profissão <span class="req">*</span></label>
+      <input type="text" id="profissao" placeholder="Ex: Engenheiro" data-ph-pt="Ex: Engenheiro" data-ph-en="Ex: Engineer">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-entidade">Entidade Patronal</label>
+      <input type="text" id="entidade" placeholder="Ex: Empresa ABC, Lda." data-ph-pt="Ex: Empresa ABC, Lda." data-ph-en="Ex: ABC Company, Ltd.">
+    </div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid">
+    <div class="field">
+      <label data-trans="lbl-tel">Telefone <span class="req">*</span></label>
+      <input type="tel" id="telefone" placeholder="+351 912 345 678" data-ph-pt="+351 912 345 678" data-ph-en="+351 912 345 678">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-email">Email <span class="req">*</span></label>
+      <input type="email" id="email" placeholder="exemplo@email.com" data-ph-pt="exemplo@email.com" data-ph-en="example@email.com">
+    </div>
+  </div>
+
+  <div class="sub-title" data-trans="sub-doc">Documento de Identificação</div>
+  <div class="form-grid cols-3">
+    <div class="field">
+      <label data-trans="lbl-doc-num">Nº do Documento <span class="req">*</span></label>
+      <input type="text" id="doc_num" placeholder="Ex: 12345678 9 ZZ4" data-ph-pt="Ex: 12345678 9 ZZ4" data-ph-en="Ex: 12345678 9 ZZ4">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-val">Válido até <span class="req">*</span></label>
+      <input type="date" id="doc_val">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-emit">Emitido em <span class="req">*</span></label>
+      <input type="text" id="doc_emit" placeholder="Ex: Portugal" data-ph-pt="Ex: Portugal" data-ph-en="Ex: Portugal">
+    </div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-1" style="max-width:260px">
+    <div class="field">
+      <label data-trans="lbl-nif">NIF <span class="req">*</span></label>
+      <input type="text" id="nif" placeholder="000 000 000" data-ph-pt="000 000 000" data-ph-en="000 000 000">
+    </div>
+  </div>
+
+  <div class="sub-title" data-trans="sub-estado-civil">Estado Civil</div>
+  <div class="form-grid">
+    <div class="field">
+      <label data-trans="lbl-estado">Estado Civil <span class="req">*</span></label>
+      <select id="estado_civil" data-trans-select="estado_civil" onchange="toggleConjuge()">
+        <option value="">— Selecionar</option>
+        <option>Solteiro(a)</option>
+        <option>Casado(a)</option>
+        <option>União de Facto</option>
+        <option>Divorciado(a)</option>
+        <option>Viúvo(a)</option>
+      </select>
+    </div>
+    <div class="field" id="regime_field" style="display:none">
+      <label data-trans="lbl-regime">Regime de Casamento <span class="req">*</span></label>
+      <select id="regime">
+        <option value="">— Selecionar —</option>
+        <option>Comunhão de Adquiridos</option>
+        <option>Comunhão Geral</option>
+        <option>Separação de Bens</option>
+      </select>
+    </div>
+  </div>
+  <div id="conjuge_field" style="display:none;margin-top:16px">
+    <div class="form-grid cols-1">
+      <div class="field">
+        <label data-trans="lbl-conjuge">Nome do Cônjuge <span class="req">*</span></label>
+        <input type="text" id="conjuge" placeholder="Nome completo" data-ph-pt="Nome completo" data-ph-en="Full name">
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-buttons">
+    <div></div>
+  </div>
+</div>
+
+<!-- PASSO 2 -->
+<div class="section-card" id="step-2">
+  <div class="section-header">
+    <div class="section-number" data-trans="step2">Passo 02 / 03</div>
+    <div class="section-title" data-trans="title2">Fundos e Exposição Política</div>
+    
+    <div class="section-desc" data-trans="desc2">Exposição política, representação legal, proveniência dos fundos e meios de pagamento</div>
+  </div>
+  <div class="step-error-banner" id="err-2"><strong>⚠️ Campos obrigatórios em falta</strong>Preencha todos os campos assinalados com * antes de avançar.</div>
+
+  <div class="sub-title" style="border-top:none;margin-top:0" data-trans="sub-ppe">B. Pessoa Politicamente Exposta</div>
+  <div class="warn-box"><strong data-trans="wb-ppe">O que é uma PPE?</strong><span data-trans="wb-ppe-desc"> Pessoa que desempenha ou desempenhou nos últimos 12 meses cargo público ou político, em Portugal ou no estrangeiro. Inclui familiares diretos, cônjuges e pessoas com relações comerciais com a PPE.</span></div>
+  <div class="check-group" id="ppe_group">
+    <div class="check-option" onclick="selectPPE(this,'sim')"><input type="radio" name="ppe" value="sim"><div class="check-label"><strong data-trans="chk-sim">✅ Sim</strong></div></div>
+    <div class="check-option" onclick="selectPPE(this,'nao')"><input type="radio" name="ppe" value="nao"><div class="check-label"><strong data-trans="chk-nao">❌ Não</strong></div></div>
+  </div>
+  <div id="ppe_detail" style="display:none;margin-top:12px">
+    <div class="form-grid cols-1">
+      <div class="field"><label data-trans="lbl-ppe-id">Identificação e cargo <span class="req">*</span></label><input type="text" id="ppe_cargo" placeholder="Descreva o cargo" data-ph-pt="Descreva o cargo" data-ph-en="Describe the office"></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sub-title" data-trans="sub-rep-legal">C. Representação Legal <span style="font-size:0.72rem;font-family:'DM Sans',sans-serif;font-style:normal;font-weight:400;color:var(--ink-light)" data-trans="sub-rep-opt">(opcional)</span></div>
+  <div class="warn-box" style=""><strong data-trans="wb-rep">Só preencher se o cliente estiver representado por terceiro</strong></div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-rep-nome">Nome do Representante</label><input type="text" id="representante_nome" placeholder="Nome completo do representante" data-ph-pt="Nome completo do representante" data-ph-en="Full name of representative"></div>
+  </div>
+  <div style="height:12px"></div>
+  <div class="form-grid">
+    <div class="field"><label data-trans="lbl-rep-cc">CC</label><input type="text" id="representante_cc" placeholder="Nº do documento de identificação" data-ph-pt="Nº do documento de identificação" data-ph-en="ID document number"></div>
+    <div class="field"><label data-trans="lbl-nif">NIF</label><input type="text" id="representante_nif" placeholder="000 000 000"></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sub-title" data-trans="sub-fundos">D. Proveniência dos Fundos</div>
+  <div class="info-box"><strong>Selecione todas as fontes aplicáveis</strong></div>
+  <div class="check-group" id="fundos_group" style="flex-direction:column">
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Financiamento"><div class="check-label"><strong data-trans="cb-financiamento">Financiamento</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Herança"><div class="check-label"><strong data-trans="cb-heranca">Herança</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Poupanças Pessoais"><div class="check-label"><strong data-trans="cb-poupancas">Poupanças Pessoais</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Rendimentos Profissionais"><div class="check-label"><strong data-trans="cb-rend-prof">Rendimentos Profissionais</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCBOutros(this)"><input type="checkbox" value="outros"><div class="check-label"><strong data-trans="cb-outros">Outros</strong></div></div>
+  </div>
+  <div id="fundos_outros_wrap" style="display:none;margin-top:10px">
+    <div class="field"><label>Especifique<span class="req">*</span></label><input type="text" id="fundos_outros" placeholder="Descreva / Describe"></div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="sub-title" data-trans="sub-e-info">E. Informações da Transação</div>
+  <div class="form-grid cols-1">
+    <div class="field">
+      <label data-trans="lbl-finalidade">Finalidade da Aquisição <span class="req">*</span></label>
+      <select id="finalidade" data-trans-select="finalidade" onchange="">
+        <option value="">— Selecionar</option>
+        <option data-pt="Habitação Própria" data-en="Primary Residence">Habitação Própria</option>
+        <option data-pt="Arrendamento" data-en="Rental">Arrendamento</option>
+        <option data-pt="Investimento" data-en="Investment">Investimento</option>
+        <option data-pt="Outro" data-en="Other">Outro</option>
+      </select>
+    </div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="sub-title" data-trans="sub-f-pag">F. Meios de Pagamento</div>
+  <div class="check-group" id="pagamento_group" style="flex-direction:column">
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Transferência Bancária / Bank Transfer"><div class="check-label"><strong data-trans="cb-transf">Transferência Bancária</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Cheque Bancário / Bank Cheque"><div class="check-label"><strong data-trans="cb-cheque">Cheque Bancário</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCB(this)"><input type="checkbox" value="Financiamento Bancário / Bank Financing"><div class="check-label"><strong data-trans="cb-financ">Financiamento Bancário</strong></div></div>
+    <div class="check-option" style="min-width:unset" onclick="toggleCBPagOutros(this)"><input type="checkbox" value="outros_pag"><div class="check-label"><strong data-trans="cb-outro">Outro</strong></div></div>
+  </div>
+  <div id="pagamento_outros_wrap" style="display:none;margin-top:10px">
+    <div class="field"><label>Especifique</label><input type="text" id="pagamento_outros" placeholder="Descreva / Describe"></div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="form-grid cols-1">
+    <div class="field"><label data-trans="lbl-obs">Observações</label><textarea id="observacoes" placeholder="Notas adicionais" data-ph-pt="Notas adicionais" data-ph-en="Additional notes"></textarea></div>
+  </div>
+
+  <div class="nav-buttons">
+  </div>
+</div>
+
+<!-- PASSO 3 -->
+<div class="section-card" id="step-3">
+  <div class="section-header">
+    <div class="section-number" data-trans="step3">Passo 03 / 03</div>
+    <div class="section-title">RGPD, Documentos e Fecho</div>
+    
+    <div class="section-desc" data-trans="desc3">Autorização RGPD, local e data de assinatura</div>
+  </div>
+  <div class="step-error-banner" id="err-3"><strong>⚠️ Campos obrigatórios em falta</strong>Preencha todos os campos assinalados com * antes de avançar.</div>
+
+  <!-- RGPD -->
+  <div class="sub-title" style="border-top:none;margin-top:0" data-trans="sub-g">G. Proteção de Dados</div>
+  <div class="info-box"><strong data-trans="ib-rgpd">Informação ao cliente</strong><span data-trans="rgpd-desc2"> Os dados recolhidos serão usados exclusivamente para cumprimento da Lei 83/2017 (Prevenção de Branqueamento de Capitais) e procedimentos internos, de acordo com o RGPD (EU) 2016/679. Conservados por mínimo de 7 anos.</span></div>
+  <div class="check-group" id="rgpd_group">
+    <div class="check-option" onclick="selectRadio(this,'rgpd')"><input type="radio" name="rgpd" value="sim"><div class="check-label"><strong data-trans="chk-li">✅ Li e concordo</strong><span data-trans="chk-li-desc">Autorizo o tratamento dos meus dados para as finalidades descritas.</span></div></div>
+  </div>
+  <div style="height:8px"></div>
+  <div class="warn-box" style=""><span data-trans="wb-auth">Autorização obrigatória por lei para qualquer negócio imobiliário.</span></div>
+
+  <hr class="divider">
+
+  <!-- LOCAL E DATA -->
+  <div class="sub-title" data-trans="sub-local">Local e Data</div>
+  <div class="info-box" style=""><strong data-trans="sig-title">ℹ️ Assinatura</strong><span data-trans="sig-info"> Após imprimir, o cliente rubrica todas as folhas e assina na última folha. Deverá enviar-nos o documento digitalizado por email e levar o original para a assinatura do Contrato Promessa Compra e Venda (CPCV).</span></div>
+  <div class="form-grid cols-2">
+    <div class="field"><label data-trans="lbl-local">Local <span class="req">*</span></label><input type="text" id="local" placeholder="Ex: Faro" data-ph-pt="Ex: Faro" data-ph-en="Ex: Faro"></div>
+    <div class="field"><label data-trans="lbl-data">Data <span class="req">*</span></label><input type="date" id="data_ass"></div>
+  </div>
+
+  <!-- Signature line -->
+  <div style="margin-top:32px;padding-top:24px;border-top:1px solid var(--border);text-align:center">
+    <div style="display:inline-block;width:340px;margin:0 auto">
+      <div style="border-bottom:1px solid var(--ink);height:48px;margin-bottom:8px"></div>
+      <div style="font-size:0.78rem;color:var(--ink-light);text-align:center" data-trans="sig-line">Assinatura do Cliente</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:28px">
+    <button class="btn btn-gold" onclick="gerarPDF()" data-trans="btn-pdf">🖨 Imprimir / Gerar PDF</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+function setLang(l){
+  document.body.classList.toggle('lang-pt',l==='pt');
+  document.body.classList.toggle('lang-en',l==='en');
+  document.getElementById('btn-pt').classList.toggle('active',l==='pt');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  const i=l==='pt'?0:1;
+  document.querySelectorAll('[data-ph-en]').forEach(el=>{el.placeholder=l==='en'?el.dataset.phEn:el.dataset.phPt;});
+  document.querySelectorAll('[data-trans-select]').forEach(sel=>{
+    const cur=sel.value;
+    if(sel.options[0]) sel.options[0].text=l==='en'?'— Select':'— Selecionar';
+    Array.from(sel.options).slice(1).forEach(opt=>{if(opt.dataset.pt&&opt.dataset.en) opt.text=l==='en'?opt.dataset.en:opt.dataset.pt;});
+    sel.value=cur;
+  });
+  document.querySelectorAll('[data-trans]').forEach(el=>{
+    const k=el.dataset.trans;if(TRANS_S[k]){
+      const req=el.querySelector('.req');
+      el.textContent=TRANS_S[k][i];
+      if(req)el.appendChild(req);
+    }
+  });
+}
+
+const TRANS_S={
+  'topbar-sub':['Ficha de Branqueamento de Capitais — Pessoa Singular','Anti-Money Laundering Form — Individual'],
+  'step1':['Passo 01 / 03','Step 01 / 03'],
+  'step2':['Passo 02 / 03','Step 02 / 03'],
+  'step3':['Passo 03 / 03','Step 03 / 03'],
+  'title1':['Identificação Completa','Full Identification'],
+  'title3':['RGPD e Fecho','GDPR & Closing'],
+  'desc1':['Dados pessoais do cliente','Personal details of the client'],
+  'desc-obrig':['Obrigatório por lei','Required by law'],
+  'sub-residencia':['Residência Fiscal','Tax Residency'],
+  'sub-a':['A. Dados Pessoais','A. Personal Details'],
+  'sub-morada':['Morada','Address'],
+  'sub-profissao':['Profissão e Contactos','Profession & Contacts'],
+  'sub-doc':['Documento de Identificação','Identification Document'],
+  'sub-estado-civil':['Estado Civil','Marital Status'],
+  'sub-b':['B. Origem dos Fundos','B. Source of Funds'],
+  'sub-c':['C. Pessoa Politicamente Exposta (PPE)','C. Politically Exposed Person (PEP)'],
+  'sub-d':['D. Finalidade da Operação','D. Purpose of Transaction'],
+  'sub-g':['G. Proteção de Dados','G. Data Protection'],
+  'sub-local':['Local e Data','Place and Date'],
+  'lbl-nome':['Nome Completo','Full Name'],
+  'lbl-nasc':['Data de Nascimento','Date of Birth'],
+  'lbl-natur':['Naturalidade','Place of Birth'],
+  'lbl-nac':['Nacionalidade','Citizenship'],
+  'lbl-rua':['Rua / Av. / Número / Andar','Street / Ave. / No. / Floor'],
+  'lbl-cp':['Código Postal','Postal Code'],
+  'lbl-freg':['Freguesia','Parish'],
+  'lbl-conc':['Concelho / País','County / Country'],
+  'lbl-prof':['Profissão','Profession'],
+  'lbl-entidade':['Entidade Patronal','Employer'],
+  'lbl-tel':['Telefone','Phone'],
+  'lbl-email':['Email','Email'],
+  'lbl-doc-num':['Nº do Documento','Document No.'],
+  'lbl-val':['Válido até','Valid Until'],
+  'lbl-emit':['Emitido em','Issued In'],
+  'lbl-nif':['NIF','Taxpayer No.'],
+  'lbl-estado':['Estado Civil','Marital Status'],
+  'lbl-regime':['Regime de Casamento','Marriage Regime'],
+  'lbl-conjuge':['Nome do Cônjuge','Spouse Name'],
+  'lbl-origem':['Origem dos Fundos','Source of Funds'],
+  'lbl-vol':['Volume Estimado da Operação','Estimated Transaction Volume'],
+  'lbl-finalidade':['Finalidade da Aquisição','Purpose of Acquisition'],
+  'lbl-valor':['Valor da Operação','Transaction Value'],
+  'lbl-obs':['Observações','Observations'],
+  'lbl-ppe-id':['Identificação e cargo','Name and office'],
+  'lbl-data-ass':['Data e Local de Assinatura','Date and Place of Signature'],
+  'lbl-local':['Local','Place'],
+  'lbl-data':['Data','Date'],
+  'chk-residente':['Residente','Resident'],
+  'chk-nao-residente':['Não Residente','Non-Resident'],
+  'chk-nao-res':['Não Residente','Non-Resident'],
+  'chk-res-desc':['Em Portugal há mais de 183 dias por ano','Resident in Portugal for more than 183 days per year'],
+  'chk-nao-res-desc':['Fiscalmente residente noutro país','Fiscally resident in another country'],
+  'chk-sim':['✅ Sim','✅ Yes'],
+  'chk-nao':['❌ Não','❌ No'],
+  'chk-li':['✅ Li e concordo','✅ I have read and agree'],
+  'chk-li-btn':['Li e concordo','I have read and agree'],
+  'cb-fundos':['Fundos Próprios','Own Funds'],
+  'cb-financ':['Financiamento Bancário','Bank Financing'],
+  'cb-venda':['Venda de Ativo','Sale of Asset'],
+  'cb-outro':['Outro','Other'],
+  'cb-transf':['Transferência Bancária','Bank Transfer'],
+  'cb-cheque':['Cheque Bancário','Bank Cheque'],
+  'info-select':['Selecione todas as aplicáveis','Select all applicable'],
+  'sig-title':['ℹ️ Assinatura','ℹ️ Signature'],
+  'sig-line':['Assinatura do Cliente','Client Signature'],
+  'ib-rgpd':['Informação ao cliente','Client information'],
+  'rgpd-desc':['Os dados recolhidos serão usados exclusivamente para cumprimento das obrigações legais de prevenção do branqueamento de capitais e financiamento do terrorismo, nos termos da Lei n.º 83/2017.','Data collected will be used solely for compliance with anti-money laundering and counter-terrorism financing obligations under Law No. 83/2017.'],
+  'wb-auth':['Autorização obrigatória por lei para qualquer negócio imobiliário.','Authorisation required by law for any real estate transaction.'],
+  'btn-pdf':['🖨 Imprimir / Gerar PDF','🖨 Print / Generate PDF'],
+  'btn-ant':['← Anterior','← Back'],
+  'warn-nac':['Se dupla nacionalidade, indique ambas separadas por vírgula.','If dual nationality, indicate both separated by a comma.'],
+  'desc2':['Exposição política, representação legal, proveniência dos fundos e meios de pagamento','Political exposure, legal representation, source of funds and means of payment'],
+  'desc3':['Autorização RGPD, local e data de assinatura','GDPR authorisation, place and date of signature'],
+  'cb-poupancas':['Poupanças Pessoais','Personal Savings'],
+  'cb-rendimentos':['Rendimentos do Trabalho','Employment Income'],
+  'cb-heranca':['Herança','Inheritance'],
+  'cb-venda-im':['Venda de Imóvel','Property Sale'],
+  'cb-venda-emp':['Venda de Empresa','Business Sale'],
+  'cb-invest':['Investimentos','Investments'],
+  'cb-outro-f':['Outro','Other'],
+  'cb-cash':['Numerário','Cash'],
+  'cb-outro-p':['Outro','Other'],
+  'rgpd-desc2':['Os dados recolhidos serão usados exclusivamente para cumprimento da Lei 83/2017 (Prevenção de Branqueamento de Capitais) e procedimentos internos, de acordo com o RGPD (EU) 2016/679. Conservados por mínimo de 7 anos.','Data collected will be used solely for Law 83/2017 (Anti-Money Laundering) compliance and internal procedures, per GDPR (EU) 2016/679. Retained for a minimum of 7 years.'],
+  'chk-li-desc':['Autorizo o tratamento dos meus dados para as finalidades descritas.','I authorise the processing of my personal data for the purposes described.'],
+  'sub-ppe':['B. Pessoa Politicamente Exposta','B. Politically Exposed Person'],
+  'wb-ppe':['O que é uma PPE?','What is a PEP?'],
+  'wb-ppe-desc':[' Pessoa que desempenha ou desempenhou nos últimos 12 meses cargo público ou político, em Portugal ou no estrangeiro. Inclui familiares diretos, cônjuges e pessoas com relações comerciais com a PPE.',' Person who holds or held in the last 12 months a public or political office, in Portugal or abroad. Includes close family, spouses and persons with business relationships with the PEP.'],
+  'sub-rep-legal':['C. Representação Legal','C. Legal Representation'],
+  'sub-rep-opt':['(opcional)','(optional)'],
+  'sig-info':[' Após imprimir, o cliente rubrica todas as folhas e assina na última folha. Deverá enviar-nos o documento digitalizado por email e levar o original para a assinatura do Contrato Promessa Compra e Venda (CPCV).', ' After printing, the client initials all pages and signs the last page. Please send us the scanned document by email and bring the original to the signing of the Promissory Purchase and Sale Agreement (CPCV).'],
+  'title2':['Fundos e Exposição Política','Funds & Political Exposure'],
+  'wb-rep':['Só preencher se o cliente estiver representado por terceiro','Only fill in if the client is represented by a third party'],
+  'lbl-rep-nome':['Nome do Representante','Representative Name'],
+  'lbl-rep-doc':['CC / Passaporte','ID Card / Passport'],
+  'sub-fundos':['D. Proveniência dos Fundos','D. Source of Funds'],
+  'info-fontes':['Selecione todas as fontes aplicáveis','Select all applicable sources'],
+  'cb-financiamento':['Financiamento','Financing'],
+  'cb-rend-prof':['Rendimentos Profissionais','Professional Income'],
+  'sub-e-info':['E. Informações da Transação','E. Transaction Information'],
+  'sub-f-pag':['F. Meios de Pagamento','F. Means of Payment'],
+  'lbl-rep-cc':['CC','ID Card'],
+  'cb-outros':['Outros','Other'],
+};
+
+const EMPRESA = { nome:"MAGNA PROPERTIES", ami:"" };
+let currentStep = 1;
+const totalSteps = 3;
+const ciEstados = { cc:null, res:null, prof:null, proc:null };
+
+function goToStep(n) {
+  if(n>currentStep) return;
+  document.getElementById('step-'+currentStep).classList.remove('active');
+  document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');
+  document.querySelectorAll('.step-pill')[currentStep-1].classList.add('done');
+  currentStep=n;
+  document.getElementById('step-'+n).classList.add('active');
+  document.querySelectorAll('.step-pill')[n-1].classList.remove('done');
+  document.querySelectorAll('.step-pill')[n-1].classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function nextStep() {
+  if(!validateStep(currentStep)) return;
+  document.getElementById('step-'+currentStep).classList.remove('active');
+  document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');
+  document.querySelectorAll('.step-pill')[currentStep-1].classList.add('done');
+  currentStep++;
+  document.getElementById('step-'+currentStep).classList.add('active');
+  document.querySelectorAll('.step-pill')[currentStep-1].classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function prevStep() {
+  if(currentStep<=1) return;
+  document.getElementById('step-'+currentStep).classList.remove('active');
+  document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('active');
+  currentStep--;
+  document.getElementById('step-'+currentStep).classList.add('active');
+  document.querySelectorAll('.step-pill')[currentStep-1].classList.remove('done');
+  document.querySelectorAll('.step-pill')[currentStep-1].classList.add('active');
+  updateProgress();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+function updateProgress() {
+  document.getElementById('progress').style.width=(currentStep/totalSteps*100)+'%';
+  
+}
+function selectTipo(el,val) {
+  document.querySelectorAll('[name="tipo_interv"]').forEach(r=>{
+    r.checked=false;
+    r.closest('.check-option').classList.remove('selected');
+  });
+  el.classList.add('selected');
+  const inp=el.querySelector('input[type="radio"]'); if(inp) inp.checked=true;
+  document.getElementById('badge-tipo').textContent=val;
+  document.getElementById('badge-tipo').style.borderColor=val==='VENDEDOR'?'#b8935a':'#2d6a4f';
+  document.getElementById('badge-tipo').style.color=val==='VENDEDOR'?'#d4a96a':'#2d6a4f';
+}
+function selectRadio(el,val) {
+  const inp=el.querySelector('input[type="radio"]');
+  if(!inp) return;
+  const n=inp.name;
+  document.querySelectorAll('[name="'+n+'"]').forEach(r=>{
+    r.checked=false;
+    r.closest('.check-option').classList.remove('selected');
+  });
+  el.classList.add('selected');
+  inp.checked=true;
+}
+function selectPPE(el,val) {
+  document.querySelectorAll('[name="ppe"]').forEach(r=>{
+    r.checked=false;
+    r.closest('.check-option').classList.remove('selected');
+  });
+  el.classList.add('selected');
+  const inp=el.querySelector('input[type="radio"]'); if(inp) inp.checked=true;
+  document.getElementById('ppe_detail').style.display=val==='sim'?'block':'none';
+}
+function toggleConjuge() {
+  const v=document.getElementById('estado_civil').value;
+  const s=v.includes('Casado')||v.includes('União');
+  document.getElementById('conjuge_field').style.display=s?'block':'none';
+  document.getElementById('regime_field').style.display=s?'flex':'none';
+}
+function toggleCB(el) {
+  el.classList.toggle('selected');
+  const cb = el.querySelector('input[type="checkbox"]');
+  if(cb) cb.checked = el.classList.contains('selected');
+}
+function toggleCBOutros(el) {
+  el.classList.toggle('selected');
+  const cb = el.querySelector('input[type="checkbox"]');
+  if(cb) cb.checked = el.classList.contains('selected');
+  document.getElementById('fundos_outros_wrap').style.display = el.classList.contains('selected') ? 'block' : 'none';
+}
+function toggleCBPagOutros(el) {
+  el.classList.toggle('selected');
+  const cb = el.querySelector('input[type="checkbox"]');
+  if(cb) cb.checked = el.classList.contains('selected');
+  document.getElementById('pagamento_outros_wrap').style.display = el.classList.contains('selected') ? 'block' : 'none';
+}
+function getChecked(groupId) {
+  return Array.from(document.querySelectorAll('#'+groupId+' input[type="checkbox"]:checked'))
+    .map(e => e.value)
+    .filter(v => v !== 'outros' && v !== 'outros_pag');
+}
+function getRadio(name) { const e=document.querySelector('[name="'+name+'"]:checked'); return e?e.value:''; }
+function gv(id) { const e=document.getElementById(id); return e?(e.value||''):''; }
+function fmtData(d) { if(!d) return '____'; const[y,m,day]=d.split('-'); return day+'/'+m+'/'+y; }
+
+function toggleCI(id,event) {
+  if(event.target.classList.contains('btn-na-sm')) return;
+  if(ciEstados[id]==='na') return;
+  ciEstados[id]=ciEstados[id]==='done'?null:'done';
+  renderCI(id);
+}
+function toggleNA(id,event) {
+  event.stopPropagation();
+  ciEstados[id]=ciEstados[id]==='na'?null:'na';
+  renderCI(id);
+}
+function renderCI(id) {
+  const item=document.getElementById('ci-'+id);
+  const box=document.getElementById('cb-'+id);
+  item.classList.remove('done','na');
+  if(ciEstados[id]==='done'){item.classList.add('done');box.textContent='✓';}
+  else if(ciEstados[id]==='na'){item.classList.add('na');box.textContent='—';}
+  else box.textContent='☐';
+}
+
+function reqRadio(name, msg, errors, groupSelector) {
+  if(!getRadio(name)) {
+    errors.push({msg, banner:true});
+    // highlight the group red
+    if(groupSelector) {
+      const group = groupSelector.startsWith('#')
+        ? document.getElementById(groupSelector.slice(1))
+        : document.querySelector(groupSelector);
+      if(group) {
+        group.classList.add('radio-error');
+        // add error msg if not already there
+        if(!group.nextElementSibling || !group.nextElementSibling.classList.contains('radio-error-msg')) {
+          const s = document.createElement('div');
+          s.className = 'field-error-msg radio-error-msg';
+          s.style.marginTop = '6px';
+          s.innerHTML = '⚠ ' + msg;
+          group.after(s);
+        }
+        // auto-clear on selection
+        group.querySelectorAll('input[type="radio"]').forEach(r => {
+          r.addEventListener('change', () => {
+            group.classList.remove('radio-error');
+            const em = group.nextElementSibling;
+            if(em && em.classList.contains('radio-error-msg')) em.remove();
+          }, {once:true});
+        });
+      }
+    }
+  }
+}
+function reqCheckGroup(groupId, msg, errors) {
+  const checked = getChecked(groupId);
+  const otrosChecked = document.querySelector('#'+groupId+' input[type="checkbox"]:checked');
+  if(checked.length === 0 && !otrosChecked) {
+    errors.push({msg, banner:true});
+    const group = document.getElementById(groupId);
+    if(group) {
+      group.classList.add('radio-error');
+      if(!group.nextElementSibling || !group.nextElementSibling.classList.contains('radio-error-msg')) {
+        const s = document.createElement('div');
+        s.className = 'field-error-msg radio-error-msg';
+        s.style.marginTop = '6px';
+        s.innerHTML = '⚠ ' + msg;
+        group.after(s);
+      }
+      group.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.addEventListener('change', () => {
+          group.classList.remove('radio-error');
+          const em = group.nextElementSibling;
+          if(em && em.classList.contains('radio-error-msg')) em.remove();
+        }, {once:true});
+      });
+    }
+  }
+}
+function validateStep(step) {
+  clearErrors(step);
+  const errors=[];
+  if(step===1){
+    reqRadio('residente','Selecione a residência fiscal',errors,'#residente_group');
+    req('nome','Nome completo obrigatório',errors); req('data_nasc','Data de nascimento obrigatória',errors);
+    req('naturalidade','Naturalidade obrigatória',errors); req('nacionalidade','Nacionalidade obrigatória',errors);
+    req('morada_rua','Morada obrigatória',errors); req('morada_cp','Código postal obrigatório',errors);
+    req('morada_freg','Freguesia obrigatória',errors); req('morada_conc','Concelho / País obrigatório',errors); req('profissao','Profissão obrigatória',errors);
+    req('telefone','Telefone obrigatório',errors); req('email','Email obrigatório',errors);
+    req('doc_num','Nº do documento obrigatório',errors); req('doc_val','Validade do documento obrigatória',errors); req('doc_emit','Local de emissão obrigatório',errors);
+    req('nif','NIF obrigatório',errors); req('estado_civil','Estado civil obrigatório',errors);
+    const ec=document.getElementById('estado_civil');
+    if(ec&&(ec.value.includes('Casado')||ec.value.includes('União de Facto'))){
+      req('regime','Regime de casamento obrigatório',errors);
+      req('conjuge','Nome do cônjuge obrigatório',errors);
+    }
+  } else if(step===2){
+    reqCheckGroup('fundos_group','Selecione pelo menos uma fonte de fundos',errors);
+    if(document.querySelector('#fundos_outros_wrap').style.display!=='none') req('fundos_outros','Especifique a fonte dos fundos',errors);
+    req('finalidade','Finalidade da aquisição obrigatória',errors);
+    reqCheckGroup('pagamento_group','Selecione pelo menos um meio de pagamento',errors);
+    reqRadio('ppe','Indique se o cliente é PPE (Pessoa Politicamente Exposta)',errors,'#ppe_group');
+    if(getRadio('ppe')==='sim') req('ppe_cargo','Descreva o cargo político',errors);
+  } else if(step===3){
+    reqRadio('rgpd','A autorização RGPD é obrigatória por lei',errors,'#rgpd_group');
+    req('local','Local de assinatura obrigatório',errors);
+    req('data_ass','Data de assinatura obrigatória',errors);
+  }
+  if(errors.length>0){
+    return false;
+  }
+  return true;
+}
+function req(id,msg,errors){
+  const el=document.getElementById(id); if(!el) return;
+  if(!el.value.trim()){
+    errors.push({id,msg});
+    const f=el.closest('.field');
+    if(f){f.classList.add('field-error');if(!f.querySelector('.field-error-msg')){const s=document.createElement('div');s.className='field-error-msg';s.innerHTML='⚠ '+msg;f.appendChild(s);}}
+    el.addEventListener('input',()=>{if(el.value.trim()){f&&f.classList.remove('field-error');f&&f.querySelector('.field-error-msg')?.remove();}});
+    el.addEventListener('change',()=>{if(el.value.trim()){f&&f.classList.remove('field-error');f&&f.querySelector('.field-error-msg')?.remove();}});
+  }
+}
+function clearErrors(step){
+  const c=document.getElementById('step-'+step); if(!c) return;
+  c.querySelectorAll('.field-error').forEach(f=>f.classList.remove('field-error'));
+  c.querySelectorAll('.radio-error').forEach(f=>f.classList.remove('radio-error'));
+  c.querySelectorAll('.field-error-msg').forEach(m=>m.remove());
+  c.querySelectorAll('.radio-error-msg').forEach(m=>m.remove());
+  const b=document.getElementById('err-'+step); if(b) b.classList.remove('show');
+}
+
+function gerarPDF(){
+  const v1=validateStep(1);
+  const v2=validateStep(2);
+  const v3=validateStep(3);
+  if(!v1||!v2||!v3){
+    const fe=document.querySelector('.field-error, .radio-error');
+    if(fe) fe.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+
+  // --- helpers para escapar texto com acentos de forma segura ---
+  function e(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+  // --- recolha de dados ---
+  const tipoInt = getRadio('tipo_interv') || '—';
+  const resid   = getRadio('residente');
+  const residPT = resid==='residente' ? 'Residente / Resident' : resid==='nao_residente' ? 'N\u00e3o Residente / Non-Resident' : '—';
+  const nome    = gv('nome');
+  const dataNasc= fmtData(gv('data_nasc'));
+  const natural = gv('naturalidade');
+  const nacion  = gv('nacionalidade');
+  const moradaRua = gv('morada_rua');
+  const moradaCP  = gv('morada_cp');
+  const moradaFreg= gv('morada_freg');
+  const moradaConc= gv('morada_conc');
+  const profissao = gv('profissao');
+  const entidade  = gv('entidade') || '—';
+  const tel       = gv('telefone');
+  const email     = gv('email');
+  const docNum    = gv('doc_num');
+  const docVal    = fmtData(gv('doc_val'));
+  const docEmit   = gv('doc_emit') || '—';
+  const nif       = gv('nif');
+  const ec        = gv('estado_civil');
+  const cas       = ec.includes('Casado') || ec.includes('União');
+  const regime    = gv('regime');
+  const conjuge   = gv('conjuge');
+  const ppe       = getRadio('ppe');
+  const ppeCargo  = gv('ppe_cargo');
+  const representNome = gv('representante_nome');
+  const representCC   = gv('representante_cc');
+  const representNIF  = gv('representante_nif');
+  const represent = representNome || representCC || representNIF;
+  const obs       = gv('observacoes');
+  const finalid   = gv('finalidade');
+  const local     = gv('local');
+  const dataAss   = fmtData(gv('data_ass'));
+
+  const fundos = getChecked('fundos_group');
+  const temOutrosFundos = document.querySelector('#fundos_group input[value="outros"]:checked');
+  if(temOutrosFundos) fundos.push('Outros / Other: ' + gv('fundos_outros'));
+  const fundosTexto = fundos.join(' &middot; ') || '—';
+
+  const pag = getChecked('pagamento_group');
+  const temOutrosPag = document.querySelector('#pagamento_group input[value="outros_pag"]:checked');
+  if(temOutrosPag) pag.push('Outro / Other: ' + gv('pagamento_outros'));
+  const pagTexto = pag.join(' &middot; ') || '—';
+
+  // --- construção do HTML do PDF ---
+  const parts = [];
+  const add = h => parts.push(h);
+
+  add('<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8"><title>KYC — Ficha de Cliente<\/title>');
+  add('<style>');
+  add('  @page { size: A4; margin: 14mm 18mm 14mm 18mm; margin-top: 14mm; }');
+  add('  @page :first { margin-top: 14mm; }');
+  add('  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }');
+  add('  * { margin:0; padding:0; box-sizing:border-box; }');
+  add('  body { font-family: Arial, sans-serif; font-size: 9.5pt; color: #1a1612; line-height: 1.45; }');
+  add('  h1 { font-size: 13pt; font-weight: bold; text-align: center; margin-bottom: 3pt; }');
+  add('  .subtitle { font-size: 8pt; color: #5c5449; text-align: center; margin-bottom: 2pt; }');
+  add('  .subtitle-en { font-size: 7.5pt; color: #5c5449; font-style: italic; text-align: center; margin-bottom: 6pt; }');
+  add('  .header-line { border-top: 1.5pt solid #1a1612; margin: 4pt 0; }');
+  add('  .tipo-row { font-size: 9pt; font-weight: bold; margin: 4pt 0; }');
+  add('  .section-header { background: #f5f0e8; padding: 5pt 6pt; margin: 10pt 0 4pt; border-left: 3pt solid #b8935a; }');
+  add('  .section-header strong { font-size: 9pt; text-transform: uppercase; }');
+  add('  .section-header em { display: block; font-size: 8pt; color: #5c5449; font-style: italic; }');
+  add('  .field-row { margin-bottom: 6pt; padding-bottom: 4pt; border-bottom: 0.5pt solid #d8cfc0; }');
+  add('  .field-label { font-size: 8pt; font-weight: bold; color: #1a1612; }');
+  add('  .field-label-en { font-size: 7pt; font-style: italic; color: #7a6e5e; margin-left: 4pt; }');
+  add('  .field-value { font-size: 9.5pt; padding-left: 6pt; margin-top: 2pt; }');
+  add('  .check-row { font-size: 9pt; margin: 3pt 0; }');
+  add('  .decl { margin: 8pt 0 4pt; font-size: 9pt; }');
+  add('  .decl-en { font-size: 8pt; color: #5c5449; font-style: italic; margin-bottom: 6pt; }');
+  add('  .sig-line { border-top: 1pt solid #1a1612; width: 100%; margin-top: 18pt; }');
+  add('  .sig-label { font-size: 7.5pt; color: #5c5449; margin-top: 3pt; text-align: center; }');
+  add('  .sig-block { margin: 10pt 0 4pt; text-align: center; }');
+  add('  .divider { border-top: 0.5pt solid #d8cfc0; margin: 8pt 0; }');
+  add('  .footer { font-size:7pt; color:#5c5449; text-align:center; border-top:0.5pt solid #d8cfc0; padding-top:5pt; margin-top:14pt; }');
+  add('  .footer { border-top: 0.5pt solid #d8cfc0; margin-top: 14pt; padding-top: 5pt; text-align: center; font-size: 7.5pt; color: #7a6e5e; }');
+  add('  .obs-box { background: #faf8f4; border: 0.5pt solid #d8cfc0; padding: 5pt 8pt; font-size: 9pt; margin-top: 4pt; }');
+  add('<\/style><\/head><body class="lang-pt">');
+
+  // Cabeçalho
+  add('<h1>FICHA DE CLIENTE &mdash; KNOW YOUR CLIENT<\/h1>');
+  add('<div class="subtitle">Lei n.&ordm; 83/2017, de 18 de Agosto &middot; Regulamento 276/2019<\/div>');
+  add('<div class="subtitle-en">Law 83/2017 of 18 August and Regulation 276/2019<\/div>');
+  add('<div class="header-line"><\/div>');
+  add('<div class="tipo-row">PESSOA SINGULAR / INDIVIDUAL &nbsp;&nbsp;&nbsp; Tipo / Role: ' + e(tipoInt) + ' &nbsp;&nbsp;&nbsp; ' + e(residPT) + '<\/div>');
+  add('<div class="header-line"><\/div>');
+
+  // Secção A
+  add('<div class="section-header"><strong>A. Identificação Completa<\/strong><em>Full Identification<\/em><\/div>');
+  function frow(pt, en, val) {
+    add('<div class="field-row">');
+    add('<span class="field-label">' + pt + '<\/span><span class="field-label-en">\/ ' + en + '<\/span>');
+    add('<div class="field-value">' + e(val||'—') + '<\/div>');
+    add('<\/div>');
+  }
+  frow('Nome Completo', 'Full Name', nome);
+  frow('Data de Nascimento', 'Birth Date', dataNasc);
+  frow('Naturalidade', 'Born In', natural);
+  frow('Nacionalidade', 'Citizenship', nacion);
+  frow('Morada / Rua', 'Address / Street', moradaRua);
+
+  add('<div class="field-row">');
+  add('<span class="field-label">Código Postal / Freguesia / Concelho &ndash; País<\/span><span class="field-label-en">\/ Postal Code / Parish / County &ndash; Country<\/span>');
+  add('<div class="field-value">' + e([moradaCP, moradaFreg, moradaConc].filter(Boolean).join('  ·  ')) + '<\/div>');
+  add('<\/div>');
+
+  frow('Profissão', 'Job Title', profissao);
+  frow('Entidade Patronal', 'Employer', entidade);
+  frow('Telefone / Email', 'Phone / Email', tel + '  ·  ' + email);
+  frow('Doc. Identificação N.º', 'ID Document No.', docNum);
+  frow('Válido até / Emitido em', 'Valid Until / Issued In', docVal + '  ·  ' + docEmit);
+  frow('NIF', 'Taxpayer No.', nif);
+  frow('Estado Civil', 'Marital Status', ec + (cas && regime ? '  —  ' + regime : ''));
+  if(cas && conjuge) frow('Nome do Cônjuge', 'Spouse Name', conjuge);
+
+  // Secção B — PPE
+  add('<div class="section-header"><strong>B. Pessoa Politicamente Exposta<\/strong><em>Politically Exposed Person (PEP)<\/em><\/div>');
+  add('<div class="decl">Desempenha ou desempenhou nos últimos 12 meses algum cargo público ou político?<\/div>');
+  add('<div class="decl-en">Do you hold or have held in the last 12 months any public or political office?<\/div>');
+  add('<div class="check-row">' + (ppe==='sim' ? '&#9745;' : '&#9744;') + ' Sim / Yes' + (ppe==='sim' && ppeCargo ? ' &mdash; ' + e(ppeCargo) : '') + '<\/div>');
+  add('<div class="check-row">' + (ppe==='nao' ? '&#9745;' : '&#9744;') + ' N\u00e3o<\/div>');
+
+  // Secção C — Representação Legal (opcional)
+  if(represent){
+    add('<div class="section-header"><strong>C. Representação Legal<\/strong><em>Legal Representation<\/em><\/div>');
+    frow('Nome do Representante', 'Representative Name', representNome);
+    frow('CC / Passaporte', 'ID Document No.', representCC);
+    frow('NIF do Representante', 'Representative Tax No.', representNIF);
+  }
+
+  // Secção D/E/F — Fundos, Transação e Pagamento
+  add('<div class="section-header"><strong>D/F. Fundos e Informações da Transação<\/strong><em>Source of Funds &amp; Transaction Information<\/em><\/div>');
+  add('<div class="field-row"><span class="field-label">Proveniência dos Fundos<\/span><span class="field-label-en">\/ Source of Funds<\/span><div class="field-value">' + fundosTexto + '<\/div><\/div>');
+  frow('Finalidade da Aquisição', 'Purpose of Acquisition', finalid);
+  add('<div class="field-row"><span class="field-label">Meios de Pagamento<\/span><span class="field-label-en">\/ Means of Payment<\/span><div class="field-value">' + pagTexto + '<\/div><\/div>');
+  if(obs){
+    add('<div class="field-label">Observações / Observations:<\/div>');
+    add('<div class="obs-box">' + e(obs) + '<\/div>');
+  }
+
+  // Declaração + assinatura
+  add('<div class="divider"><\/div>');
+  add('<div class="decl">Declaro que todas as afirmações prestadas são verdadeiras.<\/div>');
+  add('<div class="decl-en">I declare that all the statements made are true.<\/div>');
+  add('<div style="margin-top:6pt;font-size:9pt;">' + e(local) + ', ' + dataAss + '<\/div>');
+  add('<div class="sig-block" style="text-align:center;">');
+  add('<div style="display:inline-block;width:240pt;margin:18pt auto 0;">');
+  add('<div class="sig-line"><\/div>');
+  add('<div class="sig-label">Assinatura do cliente<\/div>');
+  add('<\/div>');
+  add('<\/div>');
+
+  // Secção G — RGPD
+  add('<div class="section-header"><strong>G. Proteção de Dados Pessoais<\/strong><em>Personal Data Protection Policy<\/em><\/div>');
+  add('<div class="decl">Os dados recolhidos serão usados exclusivamente para cumprimento da Lei n.\u00ba 83/2017 (Prevenção de Branqueamento de Capitais) e procedimentos internos, de acordo com o RGPD (EU) 2016/679. Conservados por mínimo de 7 anos.<\/div>');
+  add('<div class="decl-en">Data collected will be used solely for Law 83/2017 compliance and internal procedures, per GDPR (EU) 2016/679. Retained for a minimum of 7 years.<\/div>');
+  add('<div class="check-row" style="margin-top:6pt;">&#9745; Li e concordo expressamente com o processamento dos meus dados para as finalidades descritas.<\/div>');
+  add('<div class="decl-en">I have read and expressly agree to the processing of my data for the purposes described.<\/div>');
+  add('<div style="margin-top:6pt;font-size:9pt;">Data / Date: ' + dataAss + '<\/div>');
+  add('<div class="sig-block" style="text-align:center;">');
+  add('<div style="display:inline-block;width:240pt;margin:18pt auto 0;">');
+  add('<div class="sig-line"><\/div>');
+  add('<div class="sig-label">Assinatura do cliente<\/div>');
+  add('<\/div>');
+  add('<\/div>');
+
+  // Rodapé
+  add('<div class="footer">');
+  add(e(EMPRESA.nome) + (EMPRESA.ami ? ' &mdash; AMI ' + e(EMPRESA.ami) : ''));
+  add('<\/div>');
+
+  add('<\/body><\/html>');
+
+  const html = parts.join('\n');
+  const iframe_pdf = document.getElementById('__pdf_frame') || (() => {
+    const f = document.createElement('iframe');
+    f.id = '__pdf_frame';
+    f.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:0;height:0;border:none;';
+    document.body.appendChild(f);
+    return f;
+  })();
+  iframe_pdf.srcdoc = html;
+  iframe_pdf.onload = function() {
+    try { iframe_pdf.contentWindow.focus(); iframe_pdf.contentWindow.print(); }
+    catch(err) {
+      const a = document.createElement('a');
+      const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+      a.href = URL.createObjectURL(blob);
+      a.download = 'KYC_Singular_' + gv('nome').split(' ')[0] + '_' + gv('data_ass') + '.html';
+      a.click();
+    }
+  };
+}
+
+
+</script>
+</body>
+</html>

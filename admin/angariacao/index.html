@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<script>
+  (function() {
+    if (sessionStorage.getItem('magna_admin_auth') !== 'ok') {
+      window.location.replace('/admin/');
+    }
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentos para Angariação — Magna Properties</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#1a1612; --ink-light:#5c5449; --paper:#faf8f4; --cream:#f2ede4;
+    --gold:#b8935a; --gold-light:#d4a96a; --gold-bg:#fdf6e8;
+    --border:#d8cfc0; --green:#2d6a4f; --red:#8b2c2c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); }
+
+  .topbar { background:#0c0b09; padding:16px 24px; display:flex; align-items:center; justify-content:center; position:sticky; top:0; z-index:100; }
+  .topbar-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:#c4a35a; letter-spacing:0.05em; }
+  .topbar-sub { font-size:0.8rem; color:#6b6358; margin-top:3px; }
+  .topbar-ref { position:absolute; right:24px; font-size:0.78rem; color:#6b6358; }
+  .topbar-ref strong { color:#c4a35a; }
+  .gold-bar { height:3px; background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent); }
+
+  .wrap { max-width:860px; margin:0 auto; padding:28px 24px 120px; }
+
+  .intro-box { background:var(--paper); border:1px solid var(--border); border-left:4px solid var(--gold); padding:20px 24px; border-radius:0 2px 2px 0; margin-top:32px; }
+  .intro-box p { font-size:1rem; line-height:1.8; color:var(--ink-light); }
+  .intro-box p strong { color:var(--ink); font-weight:500; }
+  .contact-line { margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:0.92rem; color:var(--ink-light); }
+
+  .note-box { background:var(--gold-bg); border:1px dashed var(--gold); padding:14px 18px; border-radius:2px; margin-top:16px; }
+  .note-box p { font-size:0.92rem; color:var(--ink-light); line-height:1.65; }
+  .note-box p strong { color:var(--ink); }
+
+  .selector-label { font-size:1rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:400; margin-bottom:16px; line-height:1.8; text-align:center; }
+  .step-selector { margin-top:28px; }
+  .step-buttons { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .step-btn { background:var(--paper); border:2px solid var(--border); border-radius:2px; padding:28px 26px; cursor:pointer; display:flex; align-items:center; gap:20px; transition:all 0.2s; user-select:none; }
+  .step-btn:hover { border-color:var(--gold); background:var(--gold-bg); }
+  .step-btn.active { border-color:var(--gold); background:var(--gold-bg); }
+  .step-btn-icon { font-size:2.6rem; flex-shrink:0; }
+  .step-btn-label { font-size:1.1rem; font-weight:500; color:var(--ink); display:block; }
+  .step-btn-sub { font-size:0.88rem; color:var(--ink-light); display:block; margin-top:4px; }
+
+  .type-selector { margin-top:20px; display:none; }
+  .type-selector.visible { display:block; }
+  .type-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .type-btn { background:var(--paper); border:2px solid var(--border); border-radius:2px; padding:26px 14px 22px; cursor:pointer; text-align:center; transition:all 0.2s; user-select:none; }
+  .type-btn:hover { border-color:var(--gold); background:var(--gold-bg); }
+  .type-btn.active { border-color:var(--gold); background:var(--gold-bg); }
+  .type-btn-icon { font-size:2.2rem; display:block; margin-bottom:11px; }
+  .type-btn-label { font-size:1rem; font-weight:500; color:var(--ink); display:block; }
+  .type-btn-sub { font-size:0.84rem; color:var(--ink-light); display:block; margin-top:4px; }
+
+  .content-area { margin-top:24px; padding-bottom:80px; }
+  #content-anchor { display:block; height:1px; }
+
+  .section { margin-bottom:12px; background:var(--paper); border:1px solid var(--border); border-radius:2px; overflow:hidden; }
+  .section-head { padding:14px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--border); }
+  .section-icon { font-size:1.4rem; flex-shrink:0; }
+  .section-head-text { flex:1; }
+  .section-head-title { font-family:'Cormorant Garamond',serif; font-size:1.25rem; font-weight:600; }
+  .section-head-sub { font-size:0.82rem; color:var(--ink-light); margin-top:2px; }
+
+  .doc-item { display:flex; align-items:flex-start; gap:16px; padding:20px 22px; border-bottom:1px solid var(--border); transition:background 0.15s; user-select:none; }
+  .doc-item:last-child { border-bottom:none; }
+  .doc-item.ob-item { cursor:pointer; }
+  .doc-item.ob-item:hover { background:#f0ebe2; }
+  .doc-item.checked-row { background:#f4faf7; }
+  .doc-item.cond-item { cursor:default; }
+  .doc-item.na-row { background:#f7f5f0; }
+  .doc-item.na-row .doc-check { background:#ddd8ce; border-color:#c4bdb0; }
+  .doc-item.na-row .doc-check::after { content:'—'; color:#888; font-size:0.9rem; }
+  .doc-item.na-row .doc-name, .doc-item.na-row .doc-desc, .doc-item.na-row .doc-where { opacity:0.45; }
+
+  .doc-check { width:22px; height:22px; border:1.5px solid var(--border); border-radius:3px; flex-shrink:0; margin-top:2px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; background:white; pointer-events:none; }
+  .doc-item.ob-item:hover .doc-check { border-color:var(--gold); }
+  .doc-item.checked-row .doc-check { background:var(--green); border-color:var(--green); }
+  .doc-item.checked-row .doc-check::after { content:'✓'; color:white; font-size:0.82rem; font-weight:700; }
+
+  .doc-body { flex:1; }
+  .doc-name { font-size:0.95rem; font-weight:400; color:var(--ink); margin-bottom:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .req-tag { font-size:0.68rem; padding:3px 8px; border-radius:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; flex-shrink:0; }
+  .req-ob   { background:#fdf0f0; color:var(--red); border:1px solid #f0c8c8; }
+  .req-cond { background:var(--gold-bg); color:#8a5c1a; border:1px solid #e8d4a8; }
+  .doc-desc { font-size:0.92rem; color:var(--ink-light); line-height:1.65; margin-bottom:7px; }
+  .doc-where { font-size:0.8rem; color:var(--ink-light); display:flex; align-items:flex-start; gap:5px; }
+  .doc-where span { font-style:italic; }
+
+  .cond-actions { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; padding-left:2px; }
+  .cond-btn { display:inline-flex; align-items:center; gap:4px; font-size:0.75rem; font-family:'DM Sans',sans-serif; color:#9a8f82; background:transparent; border:1px solid #e0d8cc; border-radius:8px; padding:4px 11px; cursor:pointer; transition:all 0.15s; }
+  .cond-btn:hover { background:#f0ebe2; border-color:#a89880; color:var(--ink); }
+  .cond-btn.active-yes { background:#e8f5ee; border:1px solid var(--green); color:var(--green); font-weight:500; }
+  .cond-btn.active-na  { background:#e8e0d4; border:1px solid #c4bdb0; color:var(--ink-light); font-weight:500; }
+
+  /* Progress */
+  .progress-wrap { position:fixed; bottom:0; left:0; right:0; background:#0c0b09; padding:12px 24px; border-top:1px solid #2a2720; z-index:100; display:none; }
+  .progress-wrap.visible { display:block; }
+  .progress-inner { max-width:860px; margin:0 auto; display:flex; align-items:center; gap:16px; }
+  .progress-text { font-size:0.88rem; color:#aaa; white-space:nowrap; }
+  .progress-text strong { color:var(--gold-light); }
+  .progress-bar { flex:1; height:4px; background:#3a3530; border-radius:2px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:2px; transition:width 0.35s ease; }
+  .progress-pct { font-size:0.88rem; color:var(--gold-light); font-weight:500; white-space:nowrap; }
+
+  /* Overlay */
+  .overlay { display:none; position:fixed; inset:0; background:rgba(26,22,18,0.82); z-index:200; align-items:center; justify-content:center; padding:24px; }
+  .overlay.open { display:flex; }
+  .completion-card { background:var(--paper); border:1px solid var(--border); border-top:4px solid var(--gold); border-radius:2px; max-width:520px; width:100%; padding:48px 40px; text-align:center; }
+  .completion-emoji { font-size:3.5rem; margin-bottom:18px; }
+  .completion-title { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--ink); margin-bottom:10px; }
+  .completion-sub { font-size:0.92rem; color:var(--ink-light); line-height:1.75; margin-bottom:32px; }
+  .completion-sub strong { color:var(--ink); }
+  .send-btns { display:grid; grid-template-columns:1fr; gap:12px; margin-bottom:20px; max-width:280px; margin-left:auto; margin-right:auto; }
+  .send-btn { display:flex; flex-direction:column; align-items:center; gap:10px; padding:28px 16px 24px; border-radius:2px; border:2px solid var(--border); background:var(--paper); cursor:pointer; text-decoration:none; transition:all 0.2s; }
+  .send-btn:hover { transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,0,0,0.1); }
+  .send-btn.em { border-color:var(--gold); } .send-btn.em:hover { background:var(--gold-bg); }
+  .send-btn-icon { width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:var(--gold); }
+  .send-btn-icon svg { width:28px; height:28px; fill:white; }
+  .send-btn-label { font-size:0.95rem; font-weight:500; color:var(--ink); }
+  .send-btn-sub { font-size:0.69rem; color:var(--ink-light); }
+  .completion-back { background:transparent; border:1px solid var(--border); color:var(--ink-light); padding:13px 24px; font-family:'DM Sans',sans-serif; font-size:0.85rem; cursor:pointer; border-radius:1px; width:100%; transition:background 0.15s; }
+  .completion-back:hover { background:#f0ebe2; }
+
+  @media(max-width:580px){
+    .wrap { padding:16px 14px 120px; }
+    .step-buttons { grid-template-columns:1fr; }
+    .type-buttons { grid-template-columns:repeat(2,1fr); }
+    .send-btns { grid-template-columns:1fr; }
+    .completion-card { padding:28px 20px; }
+  }
+
+  .lang-toggle{position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;gap:6px}
+  .lang-btn{font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.1em;padding:5px 11px;border-radius:20px;border:1px solid #3a3528;color:#6b6358;background:transparent;cursor:pointer;transition:all .2s}
+  .lang-btn.active{background:#c4a35a;color:#0c0b09;border-color:#c4a35a}
+  .lang-pt .en-only{display:none!important}
+  .lang-en .pt-only{display:none!important}
+  .cond-btn.active-help{background:#fef9e7;border:1px solid #d4b84a;color:#7a6010;font-weight:500}
+  .doc-item.help-row{background:#fefce8}
+  .doc-item.help-row .doc-check{background:#f0d060;border-color:#c8a820}
+  .doc-item.help-row .doc-check::after{content:"!";color:#7a6010;font-size:0.85rem;font-weight:700}
+</style>
+</head>
+<body class="lang-pt">
+
+<div class="topbar" style="position:relative">
+  <div style="text-align:center;">
+    <div class="topbar-title">Magna · Properties</div>
+    <div class="topbar-sub"><span class="pt-only">Documentos para Angariação</span><span class="en-only">Documents for Property Listing</span></div>
+  </div>
+  <div class="lang-toggle"><button class="lang-btn active" id="btn-pt" onclick="setLang('pt')">PT</button><button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button></div>
+  <div class="topbar-ref" id="topbar-ref-wrap" style="display:none;">Ref: <strong id="tb-ref">—</strong></div>
+</div>
+<div class="gold-bar"></div>
+
+<div class="wrap">
+  <input type="hidden" id="negocio-ref" value="">
+  <input type="hidden" id="consultor-nome" value="">
+
+  <div class="intro-box"><span class="pt-only"><p>Para avançarmos com a venda do seu imóvel, precisamos dos documentos listados abaixo.</p><div class="contact-line">Dúvidas? Fale connosco — estamos aqui para ajudar!</div></span><span class="en-only"><p>To proceed with the sale of your property, we need the documents listed below.</p><div class="contact-line">Any questions? Get in touch — we're here to help!</div></span></div>
+
+  <div class="note-box"><span class="pt-only"><p style="text-align:center;">💡 Envie-nos a documentação por email, por favor.</p><p style="text-align:center;margin-top:10px;">Fotografias nítidas, cópias digitalizadas ou PDFs são suficientes nesta fase.</p></span><span class="en-only"><p style="text-align:center;">💡 Please send us the documents by email.</p><p style="text-align:center;margin-top:10px;">Clear photos, scanned copies or PDFs are sufficient at this stage.</p></span></div>
+
+  <!-- PASSO 1 -->
+  <div class="step-selector">
+    <div class="selector-label" style="margin-top:28px"><span class="pt-only">O imóvel pertence a uma Pessoa Singular ou a uma Empresa?</span><span class="en-only">Does the property belong to an Individual or a Company?</span></div>
+    <div class="step-buttons">
+      <div class="step-btn" id="btn-singular" onclick="selectProp('singular')">
+        <div class="step-btn-icon">👤</div>
+        <div><span class="step-btn-label"><span class="pt-only">Pessoa Singular</span><span class="en-only">Individual</span></span><span class="step-btn-sub"><span class="pt-only">Proprietário(s) individual(is)</span><span class="en-only">Individual owner(s)</span></span></div>
+      </div>
+      <div class="step-btn" id="btn-empresa" onclick="selectProp('empresa')">
+        <div class="step-btn-icon">🏦</div>
+        <div><span class="step-btn-label"><span class="pt-only">Pessoa Coletiva / Empresa</span><span class="en-only">Legal Entity / Company</span></span><span class="step-btn-sub"><span class="pt-only">Sociedade, fundo ou outra entidade</span><span class="en-only">Company, fund or other entity</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSO 2 -->
+  <div class="type-selector" id="type-selector">
+    <div class="selector-label"><span class="pt-only">Que tipo de imóvel está a vender?</span><span class="en-only">What type of property are you selling?</span></div>
+    <div class="type-buttons">
+      <div class="type-btn" id="btn-hab" onclick="selectType('hab')">
+        <span class="type-btn-icon">🏠</span>
+        <span class="type-btn-label"><span class="pt-only">Habitação</span><span class="en-only">Residential</span></span>
+        <span class="type-btn-sub"><span class="pt-only">Apartamento ou Moradia</span><span class="en-only">Apartment or House</span></span>
+      </div>
+      <div class="type-btn" id="btn-loj" onclick="selectType('loj')">
+        <span class="type-btn-icon">🏢</span>
+        <span class="type-btn-label"><span class="pt-only">Loja / Escritório</span><span class="en-only">Shop / Office</span></span>
+        <span class="type-btn-sub"><span class="pt-only">Fracção comercial</span><span class="en-only">Commercial unit</span></span>
+      </div>
+      <div class="type-btn" id="btn-pre" onclick="selectType('pre')">
+        <span class="type-btn-icon">🏛️</span>
+        <span class="type-btn-label"><span class="pt-only">Prédio</span><span class="en-only">Building</span></span>
+        <span class="type-btn-sub"><span class="pt-only">Edifício inteiro</span><span class="en-only">Entire building</span></span>
+      </div>
+      <div class="type-btn" id="btn-ter" onclick="selectType('ter')">
+        <span class="type-btn-icon">🌿</span>
+        <span class="type-btn-label"><span class="pt-only">Terreno</span><span class="en-only">Land</span></span>
+        <span class="type-btn-sub"><span class="pt-only">Urbanizável</span><span class="en-only">Developable</span></span>
+      </div>
+    </div>
+  </div>
+
+  <span id="content-anchor"></span>
+  <div class="content-area">
+
+    <!-- ══ SINGULAR ══ -->
+    <div class="section s-singular" style="display:none">
+      <div class="section-head">
+        <div class="section-icon">👤</div>
+        <div class="section-head-text">
+          <div class="section-head-title"><span class="pt-only">Identificação dos Proprietários</span><span class="en-only">Owner Identification</span></div>
+        </div>
+      </div>
+      <div class="doc-item ob-item" onclick="toggleOb(this)">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Cartão de Cidadão ou Passaporte de todos os intervenientes</span><span class="en-only">National ID Card or Passport of all parties involved</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ EMPRESA ══ -->
+    <div class="section s-empresa" style="display:none">
+      <div class="section-head">
+        <div class="section-icon">🏦</div>
+        <div class="section-head-text">
+          <div class="section-head-title"><span class="pt-only">Identificação da Empresa</span><span class="en-only">Company Identification</span></div>
+          <div class="section-head-sub"><span class="pt-only">Documentos da pessoa coletiva e dos seus representantes legais</span><span class="en-only">Documents of the legal entity and its legal representatives</span></div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certidão Permanente da Empresa</span><span class="en-only">Permanent Company Certificate</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Cartão de Identificação Fiscal (NIPC)</span><span class="en-only">Corporate Tax ID (NIPC)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Cartão de Cidadão dos Representantes Legais</span><span class="en-only">ID Card of Legal Representatives</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certidão de Registo Comercial Actualizada</span><span class="en-only">Updated Commercial Register Certificate</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Código de Acesso ao RCBE</span><span class="en-only">RCBE Access Code</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ HABITAÇÃO ══ -->
+    <div class="section tipo-hab" style="display:none">
+      <div class="section-head">
+        <div class="section-icon">📋</div>
+        <div class="section-head-text">
+          <div class="section-head-title"><span class="pt-only">Identificação do Imóvel</span><span class="en-only">Property Identification</span></div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certidão do Registo Predial (CRP)</span><span class="en-only">Permanent Land Registry Certificate (CRP)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Caderneta Predial Urbana (CPU)</span><span class="en-only">Urban Property Tax Record (CPU)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Licença de Utilização / Habitabilidade (LU)</span><span class="en-only">Usage / Habitability Licence (LU)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certificado Energético (CE)</span><span class="en-only">Energy Certificate (CE)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Ficha Técnica de Habitação (FTH)</span><span class="en-only">Technical Housing Sheet (FTH)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Plantas do Imóvel</span><span class="en-only">Property Floor Plans</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LOJA ══ -->
+    <div class="section tipo-loj" style="display:none">
+      <div class="section-head">
+        <div class="section-icon">📋</div>
+        <div class="section-head-text">
+          <div class="section-head-title"><span class="pt-only">Identificação do Imóvel</span><span class="en-only">Property Identification</span></div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certidão do Registo Predial (CRP)</span><span class="en-only">Permanent Land Registry Certificate (CRP)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Caderneta Predial Urbana (CPU)</span><span class="en-only">Urban Property Tax Record (CPU)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Licença de Utilização (LU)</span><span class="en-only">Usage Licence (LU)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certificado Energético (CE)</span><span class="en-only">Energy Certificate (CE)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Plantas do Imóvel</span><span class="en-only">Property Floor Plans</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PRÉDIO ══ -->
+    <div class="section tipo-pre" style="display:none">
+      <div class="section-head">
+        <div class="section-icon">📋</div>
+        <div class="section-head-text">
+          <div class="section-head-title"><span class="pt-only">Identificação do Imóvel</span><span class="en-only">Property Identification</span></div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certidão do Registo Predial de todas as frações (CRP)</span><span class="en-only">Permanent Land Registry Certificate for all units (CRP)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Caderneta Predial Urbana de todas as frações (CPU)</span><span class="en-only">Urban Property Tax Record for all units (CPU)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Licença de Utilização de todas as frações (LU)</span><span class="en-only">Usage Licence for all units (LU)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certificado Energético de todas as frações (CE)</span><span class="en-only">Energy Certificate for all units (CE)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Plantas do Prédio / Frações</span><span class="en-only">Building / Unit Floor Plans</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TERRENO ══ -->
+    <div class="section tipo-ter" style="display:none">
+      <div class="section-head">
+        <div class="section-icon">📋</div>
+        <div class="section-head-text">
+          <div class="section-head-title"><span class="pt-only">Identificação do Imóvel</span><span class="en-only">Property Identification</span></div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Certidão do Registo Predial (CRP)</span><span class="en-only">Permanent Land Registry Certificate (CRP)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Caderneta Predial Urbana (CPU)</span><span class="en-only">Urban Property Tax Record (CPU)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Caderneta Predial Rústica (CPR)</span><span class="en-only">Rural Property Tax Record (CPR)</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="doc-item cond-item">
+        <div class="doc-check"></div>
+        <div class="doc-body">
+          <div class="doc-name"><span class="pt-only">Plantas / Delimitações do Terreno</span><span class="en-only">Land Plans / Boundary Delimitations</span></div>
+          <div class="cond-actions">
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'yes')"><span class="pt-only">✓ Tenho</span><span class="en-only">✓ I have it</span></button>
+            <button class="cond-btn" onclick="setCond(this.closest('.doc-item'),'help')"><span class="pt-only">💬 Não tenho, preciso de ajuda</span><span class="en-only">💬 I need help</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap" id="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-text"><span class="pt-only">Documentos verificados:</span><span class="en-only">Documents checked:</span> <strong id="prog-count">0 / 0</strong></div>
+    <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="progress-pct" id="prog-pct">0%</div>
+  </div>
+</div>
+
+<!-- COMPLETION OVERLAY -->
+<div class="overlay" id="completion-overlay">
+  <div class="completion-card">
+    <div class="completion-emoji">🎉</div>
+    <div class="completion-title">
+      <span class="pt-only">Tem tudo pronto!</span>
+      <span class="en-only">You're all set!</span>
+    </div>
+    <div class="completion-sub">
+      <span class="pt-only">Envie agora os documentos para o seu consultor e daremos imediatamente início ao processo.</span>
+      <span class="en-only">Send your documents to your consultant now and we'll get the process started right away.</span>
+    </div>
+    <div class="completion-sub" style="margin-top:-16px;margin-bottom:32px;">
+      <span class="pt-only">Obrigado por confiar na Magna Properties!</span>
+      <span class="en-only">Thank you for trusting Magna Properties!</span>
+    </div>
+    <div class="send-btns">
+      <button id="webhook-btn" class="send-btn em" onclick="submitToMake()" style="border:none;width:100%;cursor:pointer;">
+        <div class="send-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+        </div>
+        <span class="send-btn-label" id="webhook-btn-label">
+          <span class="pt-only">Enviar para a Magna Properties</span>
+          <span class="en-only">Send to Magna Properties</span>
+        </span>
+        <span class="send-btn-sub" id="webhook-btn-sub">
+          <span class="pt-only">A informação é enviada de forma segura</span>
+          <span class="en-only">Your information is sent securely</span>
+        </span>
+      </button>
+    </div>
+    <div id="webhook-success" style="display:none;background:#f0f7f4;border:1px solid #2d6a4f;border-radius:4px;padding:16px 20px;margin-bottom:20px;text-align:center;">
+      <div style="font-size:1.8rem;margin-bottom:8px;">✅</div>
+      <div style="font-size:.95rem;font-weight:500;color:#2d6a4f;">
+        <span class="pt-only">Informação enviada com sucesso!</span>
+        <span class="en-only">Information sent successfully!</span>
+      </div>
+      <div style="font-size:.85rem;color:#5c5449;margin-top:4px;" id="success-consultor-msg">
+        <span class="pt-only">O nosso consultor irá contactá-lo brevemente.</span>
+        <span class="en-only">Our consultant will be in touch shortly.</span>
+      </div>
+    </div>
+    <button class="completion-back" onclick="closeCompletion()">
+      <span class="pt-only">Rever a lista</span>
+      <span class="en-only">Review the list</span>
+    </button>
+  </div>
+</div>
+
+<script>
+function setLang(l){
+  document.body.classList.toggle('lang-pt', l==='pt');
+  document.body.classList.toggle('lang-en', l==='en');
+  document.getElementById('btn-pt').classList.toggle('active', l==='pt');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.documentElement.lang = l;
+}
+
+const WEBHOOK_URL = 'SUBSTITUIR_PELO_URL_DO_MAKE_WEBHOOK';
+
+// Pré-preencher referência e consultor via URL: ?ref=ALP-001&consultor=Tomás
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if (ref) {
+    const inp = document.getElementById('negocio-ref');
+    if (inp) inp.value = ref;
+    const wrap = document.getElementById('topbar-ref-wrap');
+    const tb = document.getElementById('tb-ref');
+    if (wrap) wrap.style.display = 'block';
+    if (tb) tb.textContent = ref;
+  }
+  const consultor = params.get('consultor');
+  if (consultor) {
+    const el = document.getElementById('consultor-nome');
+    if (el) el.value = consultor;
+  }
+})();
+
+let currentProp = null;
+let currentType = null;
+
+function selectProp(prop) {
+  currentProp = prop;
+  ['singular','empresa'].forEach(p =>
+    document.getElementById('btn-'+p).classList.toggle('active', p===prop));
+  document.getElementById('type-selector').classList.add('visible');
+  if (currentType) showContent();
+}
+
+function selectType(type) {
+  if (!currentProp) {
+    document.querySelector('.step-selector').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  currentType = type;
+  ['hab','ter','loj','pre'].forEach(t =>
+    document.getElementById('btn-'+t).classList.toggle('active', t===type));
+  showContent();
+}
+
+function showContent() {
+  document.querySelectorAll('.section').forEach(s => {
+    let show = false;
+    if      (s.classList.contains('s-singular'))        show = currentProp === 'singular';
+    else if (s.classList.contains('s-empresa'))         show = currentProp === 'empresa';
+    else if (s.classList.contains('s-all'))             show = true;
+    else if (s.classList.contains('tipo-'+currentType)) show = true;
+    s.style.display = show ? 'block' : 'none';
+  });
+
+  // Reset items inside hidden sections
+  document.querySelectorAll('.doc-item').forEach(row => {
+    if (row.closest('.section').style.display === 'none') {
+      row.classList.remove('checked-row','na-row');
+      row.querySelectorAll('.cond-btn').forEach(b => b.classList.remove('active-yes','active-na'));
+    }
+  });
+
+  document.getElementById('progress-wrap').classList.add('visible');
+  updateProgress();
+  setTimeout(() => {
+    const typeSelector = document.getElementById('type-selector');
+    const anchor = document.getElementById('content-anchor');
+    if (anchor.getBoundingClientRect().top > window.innerHeight * 0.8) {
+      typeSelector.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, 80);
+}
+
+function toggleOb(row) {
+  row.classList.toggle('checked-row');
+  updateProgress();
+  checkCompletion();
+}
+
+function setCond(row, state) {
+  row.classList.remove('checked-row','na-row','help-row');
+  row.querySelectorAll('.cond-btn').forEach(b => b.classList.remove('active-yes','active-na','active-help'));
+  if (state === 'yes') {
+    row.classList.add('checked-row');
+    row.querySelector('.cond-btn[onclick*="yes"]').classList.add('active-yes');
+  } else if (state === 'help') {
+    row.classList.add('help-row');
+    row.querySelector('.cond-btn[onclick*="help"]').classList.add('active-help');
+  } else {
+    row.classList.add('na-row');
+    row.querySelector('.cond-btn[onclick*="na"]').classList.add('active-na');
+  }
+  updateProgress();
+  checkCompletion();
+}
+
+function getVisibleItems() {
+  return [...document.querySelectorAll('.section')]
+    .filter(s => s.style.display === 'block')
+    .flatMap(s => [...s.querySelectorAll('.doc-item')]);
+}
+
+function isResolved(row) {
+  return row.classList.contains('checked-row') || row.classList.contains('na-row') || row.classList.contains('help-row');
+}
+
+function updateProgress() {
+  const items = getVisibleItems();
+  const done  = items.filter(isResolved).length;
+  const pct   = items.length > 0 ? Math.round(done/items.length*100) : 0;
+  document.getElementById('prog-count').textContent = done+' / '+items.length;
+  document.getElementById('prog-fill').style.width  = pct+'%';
+  document.getElementById('prog-pct').textContent   = pct+'%';
+  if (items.length > 0 && done === items.length) setTimeout(checkCompletion, 150);
+}
+
+function checkCompletion() {
+  const items = getVisibleItems();
+  if (items.length === 0) return;
+  if (!items.every(isResolved)) return;
+  if (document.getElementById('completion-overlay').classList.contains('open')) return;
+  document.getElementById('completion-overlay').classList.add('open');
+}
+
+async function submitToMake() {
+  const btn = document.getElementById('webhook-btn');
+  const btnLabel = document.getElementById('webhook-btn-label');
+  const btnSub = document.getElementById('webhook-btn-sub');
+  const successBox = document.getElementById('webhook-success');
+
+  btn.disabled = true;
+  btnLabel.querySelector('.pt-only').textContent = 'A enviar...';
+  btnLabel.querySelector('.en-only').textContent = 'Sending...';
+  btnSub.querySelector('.pt-only').textContent   = 'Por favor aguarde';
+  btnSub.querySelector('.en-only').textContent   = 'Please wait';
+
+  const propLabel = currentProp === 'singular' ? 'Pessoa Singular' : 'Pessoa Coletiva / Empresa';
+  const typeLabels = {hab:'Habitação',ter:'Terreno',loj:'Loja / Escritório',pre:'Prédio'};
+  const typeLabel = typeLabels[currentType] || '—';
+  const ref = document.getElementById('negocio-ref')?.value.trim() || '—';
+  const items = getVisibleItems();
+  const documentos = items.map(r => {
+    const name = r.querySelector('.doc-name')?.childNodes[0]?.textContent.trim();
+    if (!name) return null;
+    if (r.classList.contains('checked-row')) return { doc: name, estado: 'Reunido' };
+    if (r.classList.contains('na-row'))      return { doc: name, estado: 'Não aplicável' };
+    return { doc: name, estado: 'Pendente' };
+  }).filter(Boolean);
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    formulario: 'Documentos Angariação',
+    referencia: ref,
+    tipo_proprietario: propLabel,
+    tipo_imovel: typeLabel,
+    documentos: documentos
+  };
+
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      mode: 'no-cors'
+    });
+  } catch(e) {}
+
+  btn.style.display = 'none';
+  successBox.style.display = 'block';
+
+  const consultorNome = document.getElementById('consultor-nome')?.value.trim();
+  const msgEl = document.getElementById('success-consultor-msg');
+  if (msgEl && consultorNome) {
+    msgEl.querySelector('.pt-only').textContent = 'O ' + consultorNome + ' irá contactá-lo brevemente.';
+    msgEl.querySelector('.en-only').textContent = consultorNome + ' will be in touch shortly.';
+  }
+}
+
+function closeCompletion() {
+  document.getElementById('completion-overlay').classList.remove('open');
+}
+</script>
+</body>
+</html>

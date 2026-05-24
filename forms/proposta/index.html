@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Proposta de Compra — Magna Properties</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#1a1612; --ink-light:#5c5449; --paper:#faf8f4; --cream:#f2ede4;
+    --gold:#b8935a; --gold-light:#d4a96a; --gold-bg:#fdf6e8;
+    --red:#8b2c2c; --border:#d8cfc0; --success:#2d6a4f;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; }
+
+  .topbar { background:#0c0b09; color:var(--paper); padding:16px 24px; display:flex; align-items:center; justify-content:center; position:sticky; top:0; z-index:100; }
+  .topbar-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:#c4a35a; letter-spacing:0.05em; }
+  .topbar-sub { font-size:0.8rem; color:#6b6358; margin-top:3px; letter-spacing:0; text-transform:none; }
+  .topbar-badge { display:none !important; }
+  .progress-bar { background:#1a1812; height:3px; }
+  .progress-fill { background:linear-gradient(90deg,#c4a35a,#d4b06a); height:100%; transition:width 0.5s ease; }
+  .steps-nav { display:none !important; padding:0 40px 16px; display:flex; gap:6px; }
+  .step-pill { font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; padding:4px 12px; border-radius:20px; cursor:pointer; transition:all 0.2s; border:1px solid #3a3530; color:#888; background:transparent; }
+  .step-pill.active { background:#c4a35a; color:#0c0b09; border-color:#c4a35a; font-weight:500; }
+  .step-pill.done { background:#1a1812; color:#c4a35a; border-color:#2a2720; }
+
+  .main { max-width:860px; margin:40px auto; padding:0 20px 80px; }
+  .section-card { background:var(--paper); border:1px solid var(--border); border-radius:2px; padding:36px 40px; display:block; margin-bottom:20px; }
+  
+  .section-header { margin-bottom:28px; padding-bottom:20px; border-bottom:1px solid var(--border); }
+  .section-number { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold); margin-bottom:6px; }
+  .section-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; font-weight:600; }
+  .section-title-en { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:400; color:var(--ink-light); font-style:italic; margin-top:2px; }
+  .section-desc { font-size:0.8rem; color:var(--ink-light); margin-top:6px; }
+
+  .sub-title { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-weight:600; padding:8px 0; border-top:1px solid var(--border); margin:22px 0 14px; color:var(--ink); }
+  .sub-title.first { border-top:none; margin-top:0; }
+  .sub-title span { font-family:'DM Sans',sans-serif; font-size:0.78rem; font-weight:400; color:var(--ink-light); font-style:italic; }
+
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px 20px; }
+  .form-grid.c1 { grid-template-columns:1fr; }
+  .form-grid.c3 { grid-template-columns:1fr 1fr 1fr; }
+  .form-grid.c4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+  .field { display:flex; flex-direction:column; gap:5px; }
+  .field label { font-size:0.88rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:500; }
+  .field label .en { font-style:italic; text-transform:none; letter-spacing:0; font-weight:400; color:#9a8e82; font-size:0.8rem; }
+  .field input,.field select,.field textarea { border:1px solid var(--border); background:white; padding:11px 14px; font-family:'DM Sans',sans-serif; font-size:1rem; color:var(--ink); border-radius:4px; transition:border-color 0.15s; width:100%; }
+  .field input:focus,.field select:focus,.field textarea:focus { outline:none; border-color:var(--gold); }
+  .field textarea { resize:vertical; min-height:90px; }
+  .req { color:var(--red); }
+  .sp { height:16px; }
+  .divider { border:none; border-top:1px solid var(--border); margin:24px 0; }
+
+  /* Valor destaque */
+  .valor-hero { background:white; border:2px solid var(--gold); border-radius:2px; padding:24px 28px; margin-bottom:6px; }
+  .valor-hero-label { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:8px; }
+  .valor-hero input { border:none; background:transparent; font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--ink); width:100%; outline:none; padding:0; }
+  .valor-hero input::placeholder { color:#d8cfc0; }
+  .valor-hero-hint { font-size:0.72rem; color:var(--ink-light); margin-top:6px; }
+
+  /* Financiamento radio */
+  .fin-group { display:flex; gap:10px; flex-wrap:wrap; }
+  .fin-opt { flex:1; min-width:130px; padding:12px 16px; border:1.5px solid var(--border); border-radius:24px; cursor:pointer; background:white; transition:all 0.2s; user-select:none; color:var(--ink-light); }
+  .fin-opt:hover { border-color:#c4a35a; background:var(--gold-bg); color:var(--ink); }
+  .fin-opt.selected { border-color:#c4a35a; background:var(--gold-bg); color:var(--ink); box-shadow:0 2px 8px rgba(184,147,90,0.2); }
+  .fin-opt input { display:none; }
+  .fin-opt strong { display:block; font-size:0.88rem; font-weight:500; }
+  .fin-opt span { font-size:0.75rem; color:var(--ink-light); }
+
+  /* Observações destaque */
+  .obs-wrap { background:#fffdf7; border:1.5px dashed var(--gold); border-radius:2px; padding:20px 22px; }
+  .obs-wrap-label { font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .obs-wrap-label::before { content:''; display:inline-block; width:16px; height:1px; background:var(--gold); }
+  .obs-wrap textarea { border:none; background:transparent; width:100%; font-family:'DM Sans',sans-serif; font-size:0.875rem; color:var(--ink); outline:none; resize:vertical; min-height:80px; line-height:1.6; }
+  .obs-wrap textarea::placeholder { color:#bbb; font-style:italic; }
+
+  /* Negócio type */
+  .neg-group { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .neg-btn { padding:16px 18px; border:1px solid var(--border); border-radius:1px; cursor:pointer; background:white; transition:all 0.2s; user-select:none; }
+  .neg-btn:hover { border-color:var(--gold); background:var(--gold-bg); }
+  .neg-btn.selected { border-color:var(--gold); background:var(--gold-bg); }
+  .neg-btn strong { display:block; font-size:0.9rem; margin-bottom:3px; }
+  .neg-btn span { font-size:0.76rem; color:var(--ink-light); line-height:1.4; display:block; }
+
+  /* Signature */
+  .sig-container { border:1px solid var(--border); border-radius:1px; background:white; overflow:hidden; }
+  .sig-header { background:var(--cream); padding:8px 14px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .sig-lbl { font-size:0.82rem; letter-spacing:0; text-transform:none; color:var(--ink-light); font-weight:500; }
+  .sig-clear { font-size:0.75rem; padding:4px 12px; border:1px solid var(--border); background:white; border-radius:20px; cursor:pointer; color:var(--ink-light); font-family:'DM Sans',sans-serif; }
+  .sig-clear:hover { border-color:var(--red); color:var(--red); }
+  canvas.sig-pad { display:block; width:100%; height:160px; cursor:crosshair; touch-action:none; background:white; }
+  .sig-hint { font-size:0.7rem; color:#bbb; text-align:center; padding:5px; font-style:italic; }
+  .sig-grid { display:grid; gap:16px; grid-template-columns:1fr 1fr; }
+
+  /* Info / warn boxes */
+  .info-box { background:#f0f7f4; border-left:3px solid var(--success); padding:12px 16px; border-radius:0 2px 2px 0; font-size:0.82rem; color:#2d5a47; line-height:1.5; margin-bottom:16px; }
+  .info-box strong { display:block; margin-bottom:2px; }
+  .warn-box { background:#fff8f0; border-left:3px solid var(--gold); padding:12px 16px; border-radius:0 2px 2px 0; font-size:0.82rem; color:#7a5c2a; line-height:1.5; margin-bottom:16px; }
+  .warn-box strong { display:block; margin-bottom:2px; }
+
+  /* Errors */
+  .step-error-banner { background:#fdf0f0; border:1px solid #e8b4b4; border-left:3px solid var(--red); padding:12px 16px; font-size:0.83rem; color:#7a2222; margin-bottom:20px; display:none; }
+  .step-error-banner.show { display:block; }
+  .step-error-banner strong { display:block; margin-bottom:2px; }
+  .field-error input,.field-error select,.field-error textarea { border-color:var(--red)!important; box-shadow:0 0 0 3px rgba(139,44,44,.12)!important; }
+  .field-error-msg { font-size:0.72rem; color:var(--red); margin-top:4px; }
+  .valor-hero.err { border-color:var(--red); }
+  .inline-error { font-size:0.72rem; color:var(--red); margin-top:6px; display:none; }
+
+  .nav-buttons { display:flex; justify-content:space-between; align-items:center; margin-top:36px; padding-top:24px; border-top:1px solid var(--border); }
+  .btn { font-family:'DM Sans',sans-serif; font-size:0.88rem; letter-spacing:0; text-transform:none; font-weight:500; padding:12px 28px; border-radius:24px; cursor:pointer; border:none; transition:all 0.2s; }
+  .btn-ghost { background:transparent; color:var(--ink-light); border:1px solid var(--border); border-radius:24px; }
+  .btn-ghost:hover { border-color:var(--ink-light); }
+  .btn-primary { background:var(--ink); color:var(--paper); border-radius:24px; }
+  .btn-primary:hover { background:#2e2a25; }
+  .btn-gold { background:var(--gold); color:white; font-size:0.88rem; padding:14px 36px; border-radius:24px; box-shadow:0 2px 8px rgba(184,147,90,0.3); }
+  .btn-gold:hover { background:var(--gold-light); box-shadow:0 4px 14px rgba(184,147,90,0.4); }
+
+  @media(max-width:600px){
+    .form-grid,.form-grid.c3,.form-grid.c4 { grid-template-columns:1fr; }
+    .section-card { padding:20px 16px; }
+    .topbar,.steps-nav { padding-left:16px; padding-right:16px; }
+    .neg-group,.sig-grid { grid-template-columns:1fr; }
+    canvas.sig-pad { height:150px; }
+    .valor-hero input { font-size:1.5rem; }
+    .btn-gold { width:100%; }
+  }
+
+  .lang-toggle{position:absolute;right:20px;top:50%;transform:translateY(-50%);display:flex;gap:6px}
+  .lang-btn{font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.1em;padding:5px 11px;border-radius:20px;border:1px solid #3a3528;color:#6b6358;background:transparent;cursor:pointer;transition:all .2s}
+  .lang-btn.active{background:#c4a35a;color:#0c0b09;border-color:#c4a35a}
+
+  .fin-wrap-error .fin-opt { border-color:var(--red) !important; box-shadow:0 0 0 3px rgba(139,44,44,.12) !important; }
+  .sig-error .sig-container { border:2px solid var(--red) !important; border-radius:4px; }
+</style>
+</head>
+<body class="lang-pt">
+
+<div class="topbar" style="position:relative">
+  <div style="text-align:center;">
+    <div class="topbar-title">Magna Properties</div>
+    <div class="topbar-sub" data-trans="topbar-sub">Proposta de Compra</div>
+  <div class="lang-toggle"><button class="lang-btn active" id="btn-pt" onclick="setLang('pt')">PT</button><button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button></div>
+  </div>
+</div>
+<div style="height:3px;background:linear-gradient(90deg,transparent,#c4a35a,#d4b06a,transparent)"></div>
+</div>
+
+<div class="main">
+
+<!-- ══ PASSO 1 ══ -->
+<div class="section-card active" id="step-1">
+  <div class="section-header">
+    <div class="section-number" data-trans="step1">Passo 01 / 02</div>
+    <div class="section-title" data-trans="title1">Imóvel e Comprador</div>
+    <div class="section-desc" data-trans="desc1">Dados do imóvel e do cliente que apresenta a proposta</div>
+  </div>
+  <div class="step-error-banner" id="err-1"><strong>⚠️ Campos obrigatórios em falta</strong>Preencha todos os campos assinalados com * antes de avançar.</div>
+
+  <!-- Imóvel -->
+  <div class="sub-title first" data-trans="sub-imovel">Imóvel</div>
+  <div class="form-grid c3">
+    <div class="field">
+      <label data-trans="lbl-ref">Referência <span class="req">*</span></label>
+      <input type="text" id="ref_imovel" placeholder="Ex: ALP-001" >
+    </div>
+    <div class="field">
+      <label data-trans="lbl-tipo">Tipologia <span class="req">*</span></label>
+      <select id="tipologia" data-trans-select="tipologia">
+        <option value="">— —</option>
+        <option data-pt="T0" data-en="Studio">T0</option><option>T1</option><option>T2</option><option>T3</option><option>T4</option><option>T4+</option>
+        <option data-pt="Moradia" data-en="Villa">Moradia</option><option data-pt="Terreno" data-en="Land">Terreno</option><option>Comercial</option><option data-pt="Outro" data-en="Other">Outro</option>
+      </select>
+    </div>
+    <div class="field">
+      <label data-trans="lbl-asking">Asking Price <span class="req">*</span></label>
+      <input type="text" id="preco_pedido" placeholder="Ex: 450 000 €" oninput="fmtPreco(this)">
+    </div>
+  </div>
+  <div class="sp"></div>
+  <div class="form-grid c1">
+    <div class="field"><label data-trans="lbl-morada">Morada do Imóvel <span class="req">*</span></label><input type="text" id="morada" placeholder="Rua, número, andar..." data-ph-pt="Rua, número, andar..." data-ph-en="Street, number, floor..."></div>
+  </div>
+  <div class="sp"></div>
+  <div class="form-grid c3">
+    <div class="field">
+      <label data-trans="lbl-conc">Concelho <span class="req">*</span></label>
+      <select id="concelho" onchange="popFregProposta()">
+        <option value="">— Selecionar —</option>
+        <option>Albufeira</option><option>Alcoutim</option><option>Aljezur</option>
+        <option>Castro Marim</option><option>Faro</option><option>Lagoa</option>
+        <option>Lagos</option><option>Loulé</option><option>Monchique</option>
+        <option>Olhão</option><option>Portimão</option><option>São Brás de Alportel</option>
+        <option>Silves</option><option>Tavira</option><option>Vila do Bispo</option>
+        <option>Vila Real de Santo António</option>
+      </select>
+    </div>
+    <div class="field">
+      <label data-trans="lbl-freg">Freguesia <span class="req">*</span></label>
+      <select id="freguesia">
+        <option value="">— Selecione o Concelho primeiro —</option>
+      </select>
+    </div>
+    <div class="field"><label data-trans="lbl-cp">Código Postal <span class="req">*</span></label><input type="text" id="cod_postal" placeholder="Ex: 8100-000" data-ph-pt="Ex: 8100-000" data-ph-en="Ex: 8100-000"></div>
+  </div>
+
+  <div class="sp"></div>
+
+  <!-- Comprador -->
+  <div class="sub-title" data-trans="sub-comprador">Cliente Comprador</div>
+  <div class="form-grid c1">
+    <div class="field"><label data-trans="lbl-nome">Nome <span class="req">*</span></label><input type="text" id="cli_nome" placeholder="Primeiro e Último Nome" data-ph-pt="Primeiro e Último Nome" data-ph-en="First and Last Name"></div>
+  </div>
+  <div class="sp"></div>
+  <div class="form-grid">
+  </div>
+
+  <div class="sp"></div>
+
+  <!-- Consultor -->
+  <div class="sub-title" data-trans="sub-consultor">Consultor Angariador</div>
+  <div class="form-grid">
+    <div class="field"><label data-trans="lbl-nome-cons">Nome <span class="req">*</span></label><input type="text" id="consultor" placeholder="Nome do consultor angariador" data-ph-pt="Nome do consultor angariador" data-ph-en="Listing agent name"></div>
+    <div class="field"><label data-trans="lbl-data">Data da Proposta <span class="req">*</span></label><input type="date" id="data_proposta"></div>
+  </div>
+
+  <div class="nav-buttons">
+    <div></div>
+  </div>
+</div>
+
+<!-- ══ PASSO 2 ══ -->
+<div class="section-card" id="step-2">
+  <div class="section-header">
+    <div class="section-number" data-trans="step2">Passo 02 / 02</div>
+    <div class="section-title" data-trans="title2">Proposta e Assinatura</div>
+    <div class="section-desc" data-trans="desc2">Condições da proposta de compra</div>
+  </div>
+  <div class="step-error-banner" id="err-2"><strong>⚠️ Campos obrigatórios em falta</strong>Preencha todos os campos assinalados com * antes de avançar.</div>
+
+  <!-- Valor proposto -->
+  <div class="sub-title first" data-trans="sub-valor">Valor Proposto</div>
+  <div class="valor-hero" id="valor_hero_wrap">
+    <div class="valor-hero-label" data-trans="lbl-valor-hero">Valor da Proposta</div>
+    <div style="display:flex;align-items:baseline;gap:8px">
+      <input type="text" id="valor_proposto" placeholder="000 000" oninput="onValorInput(this)">
+      <span style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--gold)">€</span>
+    </div>
+    <div id="valor_extenso_display" style="font-size:0.82rem;color:var(--ink-light);font-style:italic;margin-top:8px;min-height:18px;border-top:1px solid var(--border);padding-top:6px"></div>
+  </div>
+  <div class="inline-error" id="err-valor">⚠ Indique o valor da proposta</div>
+
+  <div class="sp"></div>
+
+  <!-- Condições financeiras -->
+  <div class="sub-title" id="sub-financeiro" data-trans="sub-financeiro">Condições Financeiras</div>
+  <div style="background:var(--gold-bg);border:1px solid #e8d9b8;border-radius:2px;padding:16px 18px;margin-bottom:14px">
+    <div style="font-size:0.72rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px" data-trans="lbl-sinal">Sinal no CPCV <span style="font-weight:400;font-style:italic;text-transform:none;letter-spacing:0;color:#9a8e82"> — escreve % ou valor em €</span></div>
+    <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">
+        <label style="font-size:0.7rem;color:var(--ink-light);display:block;margin-bottom:4px" data-trans="lbl-pct">Percentagem / %</label>
+        <input type="text" id="sinal_pct" placeholder="Ex: 10%" oninput="onSinalPctInput(this)"
+          style="border:1px solid var(--border);background:white;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--ink);border-radius:1px;width:100%;outline:none">
+      </div>
+      <div style="display:flex;align-items:center;padding-top:24px;color:var(--gold);font-size:1rem;font-weight:300">⇄</div>
+      <div style="flex:2;min-width:160px">
+        <label style="font-size:0.7rem;color:var(--ink-light);display:block;margin-bottom:4px" data-trans="lbl-valor-eur">Valor em €</label>
+        <input type="text" id="sinal_cpcv" placeholder="Ex: 20 000 €" oninput="onSinalValInput(this)"
+          style="border:1px solid var(--border);background:white;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:0.875rem;color:var(--ink);border-radius:1px;width:100%;outline:none">
+      </div>
+    </div>
+    <div id="sinal_extenso_display" style="font-size:0.78rem;color:var(--ink-light);font-style:italic;margin-top:8px;min-height:16px"></div>
+  </div>
+  <div class="form-grid">
+    <div class="field">
+      <label data-trans="lbl-data-cpcv">Data prevista do CPCV <span class="req">*</span></label>
+      <input type="date" id="data_cpcv">
+    </div>
+    <div class="field">
+      <label data-trans="lbl-data-escritura">Data prevista para Escritura <span class="req">*</span></label>
+      <input type="date" id="data_escritura">
+    </div>
+  </div>
+
+  <div class="sp"></div>
+
+  <!-- Financiamento -->
+  <div class="sub-title" id="sub-financiamento" data-trans="sub-financiamento">Financiamento <span class="req">*</span></div>
+  <div class="field" id="fin-field">
+  <div class="fin-group">
+    <div class="fin-opt" id="fin_proprios" onclick="setFin('proprios')">
+      <input type="radio" name="fin" value="Capitais Próprios">
+      <strong data-trans="fin-proprios">Capitais Próprios</strong>
+    </div>
+    <div class="fin-opt" id="fin_credito" onclick="setFin('credito')">
+      <input type="radio" name="fin" value="Crédito Habitação">
+      <strong data-trans="fin-credito">Crédito Habitação</strong>
+    </div>
+    <div class="fin-opt" id="fin_misto" onclick="setFin('misto')">
+      <input type="radio" name="fin" value="Misto">
+      <strong data-trans="fin-misto">Misto</strong>
+    </div>
+  </div>
+  </div>
+
+  <div class="sp"></div>
+
+  <!-- Observações -->
+  <div class="sub-title" data-trans="sub-obs">Observações</div>
+  <div class="obs-wrap">
+    <div class="obs-wrap-label" data-trans="lbl-obs-wrap">Condições Especiais e Notas</div>
+    <textarea id="observacoes" placeholder="Ex: Proposta condicionada" data-ph-pt="Ex: Proposta condicionada à aprovação de crédito habitação. Inclui todos os equipamentos e mobiliário fixo. Prazo máximo de resposta: 48 horas..." data-ph-en="Ex: Offer subject to mortgage approval. Includes all fixtures and fittings. Maximum response time: 48 hours..." a aprovação de crédito habitação. Inclui todos os equipamentos e mobiliário fixo. Prazo máximo de resposta: 48 horas..."></textarea>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Assinaturas -->
+  <div class="sub-title" id="sub-assinaturas" style="border-top:none;margin-top:0" data-trans="sub-assinaturas">Assinaturas Digitais <span class="req">*</span></div>
+  <div class="sig-grid" id="sig-grid-wrap">
+    <div>
+      <div style="font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--gold);font-weight:500;margin-bottom:4px" data-trans="sig-comprador">Cliente comprador</div>
+      <div id="sig_comp_name" style="font-size:0.76rem;color:var(--ink-light);font-style:italic;margin-bottom:6px"></div>
+      <div class="sig-container" id="sig-field-comp">
+        <div class="sig-header">
+          <span class="sig-lbl" data-trans="sig-lbl">Assinatura</span>
+          <button class="sig-clear" onclick="clearSig('sig_comprador')" data-trans="btn-limpar">✕ Limpar</button>
+        </div>
+        <canvas class="sig-pad" id="sig_comprador" onmousedown="ensureSig('sig_comprador',event)" ontouchstart="ensureSig('sig_comprador',event)"></canvas>
+        <div class="sig-hint" data-trans="sig-hint">Assine aqui</div>
+      </div>
+      <div id="sig-err-comp" class="field-error-msg" style="display:none">⚠ Assinatura do comprador obrigatória</div>
+    </div>
+    <div>
+      <div style="font-size:0.88rem;letter-spacing:0;text-transform:none;color:var(--gold);font-weight:500;margin-bottom:4px" data-trans="sig-consultor">Consultor angariador</div>
+      <div id="sig_ang_name" style="font-size:0.76rem;color:var(--ink-light);font-style:italic;margin-bottom:6px"></div>
+      <div class="sig-container" id="sig-field-ang">
+        <div class="sig-header">
+          <span class="sig-lbl" data-trans="sig-lbl">Assinatura</span>
+          <button class="sig-clear" onclick="clearSig('sig_angariador')" data-trans="btn-limpar">✕ Limpar</button>
+        </div>
+        <canvas class="sig-pad" id="sig_angariador" onmousedown="ensureSig('sig_angariador',event)" ontouchstart="ensureSig('sig_angariador',event)"></canvas>
+        <div class="sig-hint" data-trans="sig-hint">Assine aqui</div>
+      </div>
+      <div id="sig-err-ang" class="field-error-msg" style="display:none">⚠ Assinatura do consultor obrigatória</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="form-grid c1">
+    <div class="field"><label data-trans="lbl-preenche">Preenchido por <span class="req">*</span></label><input type="text" id="preenchido_por" placeholder="Nome do consultor" data-ph-pt="Nome do consultor" data-ph-en="Consultant name"></div>
+  </div>
+
+  <div class="nav-buttons" style="justify-content:center">
+    <button class="btn btn-gold" onclick="gerarPDF()" data-trans="btn-imprimir">🖨 Imprimir / Gerar PDF</button>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const FREGUESIAS_PR={
+  'Albufeira':['Albufeira e Olhos de Água','Ferreiras','Guia','Paderne'],
+  'Alcoutim':['Alcoutim','Giões','Martim Longo','Pereiro','Vaqueiros'],
+  'Aljezur':['Aljezur','Bordeira','Odeceixe','Rogil'],
+  'Castro Marim':['Altura','Castro Marim','Odeleite'],
+  'Faro':['Conceição e Estoi','Faro (Sé e São Pedro)','Montenegro','Santa Bárbara de Nexe'],
+  'Lagoa':['Estômbar e Parchal','Ferragudo','Lagoa e Carvoeiro','Porches'],
+  'Lagos':['Lagos (São Sebastião e Santa Maria)','Luz','Mexilhoeira Grande','Odiáxere'],
+  'Loulé':['Almancil','Alte','Ameixial','Benafim','Boliqueime','Loulé (São Clemente)','Loulé (São Sebastião)','Querença, Tôr e Benafim','Quarteira','Salir'],
+  'Monchique':['Alferce','Marmelete','Monchique'],
+  'Olhão':['Moncarapacho e Fuseta','Olhão','Pechão','Quelfes'],
+  'Portimão':['Alvor','Portimão'],
+  'São Brás de Alportel':['São Brás de Alportel'],
+  'Silves':['Alcantarilha e Pêra','Algoz e Tunes','Armação de Pêra','Silves','São Bartolomeu de Messines','São Marcos da Serra'],
+  'Tavira':['Conceição e Cabanas de Tavira','Luz de Tavira e Santo Estêvão','Santa Lúzia','Tavira (Santa Maria e Santiago)'],
+  'Vila do Bispo':['Budens','Sagres','Vila do Bispo e Raposeira'],
+  'Vila Real de Santo António':['Monte Gordo','Vila Nova de Cacela','Vila Real de Santo António']
+};
+function popFregProposta(){
+  const c=document.getElementById('concelho').value;
+  const s=document.getElementById('freguesia');
+  s.innerHTML='<option value="">— Selecionar —</option>';
+  if(FREGUESIAS_PR[c]) FREGUESIAS_PR[c].forEach(f=>{const o=document.createElement('option');o.value=f;o.textContent=f;s.appendChild(o);});
+}
+
+function setLang(l){
+  document.body.classList.toggle('lang-pt',l==='pt');
+  document.body.classList.toggle('lang-en',l==='en');
+  document.getElementById('btn-pt').classList.toggle('active',l==='pt');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  const i=l==='pt'?0:1;
+  document.querySelectorAll('[data-ph-en]').forEach(el=>{el.placeholder=l==='en'?el.dataset.phEn:el.dataset.phPt;});
+  document.querySelectorAll('[data-trans-select]').forEach(sel=>{
+    const cur=sel.value;
+    if(sel.options[0]) sel.options[0].text=l==='en'?'— Select':'— —';
+    Array.from(sel.options).slice(1).forEach(opt=>{if(opt.dataset.pt&&opt.dataset.en) opt.text=l==='en'?opt.dataset.en:opt.dataset.pt;});
+    sel.value=cur;
+  });
+  document.querySelectorAll('[data-trans]').forEach(el=>{
+    const k=el.dataset.trans;if(TRANS_P[k]){
+      const req=el.querySelector('.req');
+      el.textContent=TRANS_P[k][i];
+      if(req)el.appendChild(req);
+    }
+  });
+}
+
+const TRANS_P={
+  'topbar-sub':['Proposta de Compra','Purchase Offer'],
+  'step1':['Passo 01 / 02','Step 01 / 02'],
+  'step2':['Passo 02 / 02','Step 02 / 02'],
+  'title1':['Imóvel e Comprador','Property & Buyer'],
+  'title2':['Proposta e Assinatura','Offer & Signature'],
+  'desc1':['Dados do imóvel e do cliente que apresenta a proposta','Property and buyer information'],
+  'desc2':['Condições da proposta de compra','Purchase offer terms'],
+  'sub-imovel':['Imóvel','Property'],
+  'sub-comprador':['Cliente Comprador','Buyer'],
+  'sub-consultor':['Consultor Angariador','Listing Agent'],
+  'sub-valor':['Valor Proposto','Offered Price'],
+  'sub-financeiro':['Condições Financeiras','Financial Terms'],
+  'sub-financiamento':['Financiamento','Financing'],
+  'sub-obs':['Observações e Condições Especiais','Notes & Special Conditions'],
+  'sub-assinatura':['Assinatura Digital','Digital Signature'],
+  'lbl-ref':['Referência','Reference'],
+  'lbl-tipo':['Tipologia','Property Type'],
+  'lbl-asking':['Asking Price','Asking Price'],
+  'lbl-morada':['Morada do Imóvel','Property Address'],
+  'lbl-cp':['Código Postal','Post Code'],
+  'lbl-freg':['Freguesia','Parish'],
+  'lbl-conc':['Concelho','Municipality'],
+  'lbl-cc':['CC / Passaporte','ID No.'],
+  'lbl-nif':['NIF','Tax No.'],
+  'lbl-email':['Email','Email'],
+  'lbl-tel':['Telefone','Phone'],
+  'lbl-nac':['Nacionalidade','Nationality'],
+  'lbl-nome-cons':['Nome','Name'],
+  'lbl-data':['Data da Proposta','Proposal Date'],
+  'lbl-data-cpcv':['Data prevista do CPCV','Expected CPCV Date'],
+  'lbl-data-escritura':['Data prevista para Escritura','Expected Deed Date'],
+  'lbl-banco':['Banco / Entidade Financiadora','Bank / Lender'],
+  'lbl-valor-hero':['Valor da Proposta','Offer Amount'],
+  'fin-proprios':['Capitais Próprios','Own Capital'],
+  'fin-misto':['Misto','Mixed'],
+  'btn-gerar':['🖨 Gerar Proposta','🖨 Generate Offer'],
+  'sig-hint':['Assine aqui','Sign here'],
+  'lbl-banco':['Banco','Bank / Lender'],
+  'lbl-obs-wrap':['Condições Especiais e Notas','Special Conditions & Notes'],
+  'sig-instrucao':['ℹ️ Assinar com o dedo ou stylus','ℹ️ Sign with finger or stylus'],
+  'sig-desc':['As assinaturas são incorporadas no PDF enviado ao vendedor.','Signatures are embedded in the PDF sent to the seller.'],
+  'sig-lbl':['Assinatura','Signature'],
+  'btn-imprimir':['🖨 Imprimir / Gerar PDF','🖨 Print / Generate PDF'],
+  'fin-credito':['Crédito Habitação','Mortgage'],
+  'lbl-nome':['Nome','Name'],
+  'lbl-sinal':['Sinal no CPCV','Deposit'],
+  'lbl-valor-eur':['Valor em €','Amount (€)'],
+  'sig-comprador':['Cliente comprador','Buyer'],
+  'sig-consultor':['Consultor angariador','Listing Agent'],
+  'fin-sub-proprios':['Capitais Próprios','Own Funds'],
+  'fin-sub-credito':['Crédito Habitação','Mortgage'],
+  'fin-sub-misto':['Misto','Mixed'],
+  'sub-obs':['Observações','Notes'],
+  'sub-assinaturas':['Assinaturas Digitais','Digital Signatures'],
+  'btn-limpar':['✕ Limpar','✕ Clear'],
+  'lbl-pct':['Percentagem / %','Percentage / %'],
+  'lbl-preenche':['Preenchido por','Filled by'],
+};
+
+const EMPRESA = { nome:"MAGNA PROPERTIES", ami:"" };
+let currentStep=1, financiamento='';
+
+// ── NAVIGATION ──────────────────────────────────────────────
+function goToStep(n){if(n>currentStep)return;swap(currentStep,n,true);}
+function nextStep(){if(!validateStep(currentStep))return;swap(currentStep,currentStep+1,false);}
+function prevStep(){if(currentStep<=1)return;swap(currentStep,currentStep-1,true);}
+function swap(from,to,back){
+  document.getElementById('step-'+from).classList.remove('active');
+  const pills=document.querySelectorAll('.step-pill');
+  pills[from-1].classList.remove('active');
+  if(!back)pills[from-1].classList.add('done');
+  currentStep=to;
+  document.getElementById('step-'+to).classList.add('active');
+  pills[to-1].classList.remove('done');pills[to-1].classList.add('active');
+  document.getElementById('progress').style.width=(to/2*100)+'%';
+  document.getElementById('step-counter').textContent='Passo '+to+' de 2';
+  window.scrollTo({top:0,behavior:'instant'});
+  if(to===2) initSigs();
+}
+
+// ── NÚMERO POR EXTENSO ───────────────────────────────────────
+const _u=['','um','dois','três','quatro','cinco','seis','sete','oito','nove',
+  'dez','onze','doze','treze','catorze','quinze','dezasseis','dezassete','dezoito','dezanove'];
+const _d=['','','vinte','trinta','quarenta','cinquenta','sessenta','setenta','oitenta','noventa'];
+const _c=['','cem','duzentos','trezentos','quatrocentos','quinhentos','seiscentos','setecentos','oitocentos','novecentos'];
+function _ext3(n){
+  if(n===0)return'';
+  if(n===100)return'cem';
+  let r='';
+  const c=Math.floor(n/100),rem=n%100;
+  if(c>0)r+=_c[c];
+  if(rem>0){
+    if(r)r+=' e ';
+    if(rem<20)r+=_u[rem];
+    else{r+=_d[Math.floor(rem/10)];if(rem%10)r+=' e '+_u[rem%10];}
+  }
+  return r;
+}
+function numExtenso(n){
+  n=Math.round(n);
+  if(n===0)return'zero euros';
+  if(n<0)return'menos '+numExtenso(-n);
+  let parts=[];
+  const bi=Math.floor(n/1000000000);n%=1000000000;
+  const mi=Math.floor(n/1000000);n%=1000000;
+  const mi2=Math.floor(n/1000);n%=1000;
+  const re=n;
+  if(bi)parts.push(_ext3(bi)+(bi===1?' bilião':' biliões'));
+  if(mi)parts.push(_ext3(mi)+(mi===1?' milhão':' milhões'));
+  if(mi2)parts.push(_ext3(mi2)+(mi2===1?' mil':' mil'));
+  if(re)parts.push(_ext3(re));
+  return parts.join(' e ')+' euros';
+}
+
+// ── VALOR PROPOSTO ───────────────────────────────────────────
+function getRawValor(){
+  const raw=gv('valor_proposto').replace(/\s/g,'').replace(/\./g,'').replace(',','.');
+  return parseFloat(raw)||0;
+}
+function onValorInput(el){
+  // Preserve cursor – format number
+  let digits=el.value.replace(/\D/g,'');
+  if(digits){
+    const num=parseInt(digits,10);
+    el.value=num.toLocaleString('pt-PT');
+  }
+  // Update extenso
+  const v=getRawValor();
+  const extEl=document.getElementById('valor_extenso_display');
+  extEl.textContent=v>0?'('+numExtenso(v)+')':'';
+  // Recalc sinal if pct is set
+  const pctEl=document.getElementById('sinal_pct');
+  if(pctEl&&pctEl.value.trim()) onSinalPctInput(pctEl);
+}
+
+function fmtPreco(el){
+  let digits=el.value.replace(/[^\d]/g,'');
+  if(digits) el.value=parseInt(digits,10).toLocaleString('pt-PT')+' €';
+}
+
+
+let _sinalLock=false;
+function onSinalPctInput(el){
+  if(_sinalLock)return;_sinalLock=true;
+  const pctStr=el.value.replace('%','').replace(',','.').trim();
+  const pct=parseFloat(pctStr);
+  const base=getRawValor();
+  const sinalEl=document.getElementById('sinal_cpcv');
+  if(!isNaN(pct)&&pct>0&&base>0){
+    const val=Math.round(base*pct/100);
+    sinalEl.value=val.toLocaleString('pt-PT')+' €';
+    document.getElementById('sinal_extenso_display').textContent=pct+'% → ('+numExtenso(val)+')';
+  } else {
+    if(!isNaN(pct)&&base===0) document.getElementById('sinal_extenso_display').textContent='⚠ Preenche o valor da proposta primeiro';
+    else document.getElementById('sinal_extenso_display').textContent='';
+    if(!pctStr) sinalEl.value='';
+  }
+  _sinalLock=false;
+}
+function onSinalValInput(el){
+  if(_sinalLock)return;_sinalLock=true;
+  // Format
+  let digits=el.value.replace(/[^\d]/g,'');
+  const pctEl=document.getElementById('sinal_pct');
+  if(digits){
+    const val=parseInt(digits,10);
+    el.value=val.toLocaleString('pt-PT')+' €';
+    const base=getRawValor();
+    if(base>0){
+      const pct=(val/base*100).toFixed(1).replace('.',',');
+      pctEl.value=pct+'%';
+      document.getElementById('sinal_extenso_display').textContent=pct+'% do valor proposto → ('+numExtenso(val)+')';
+    } else {
+      pctEl.value='';
+      document.getElementById('sinal_extenso_display').textContent='('+numExtenso(val)+')';
+    }
+  } else {
+    pctEl.value='';
+    document.getElementById('sinal_extenso_display').textContent='';
+  }
+  _sinalLock=false;
+}
+
+function setFin(v){
+  financiamento=v;
+  ['proprios','credito','misto'].forEach(x=>{
+    document.getElementById('fin_'+x).classList.remove('selected');
+  });
+  document.getElementById('fin_'+v).classList.add('selected');
+}
+
+// ── SIGNATURE PADS ───────────────────────────────────────────
+const sigPads = {};
+
+function ensureSig(id, e) {
+  if (!sigPads[id]) initSigPad(id);
+  const p = sigPads[id];
+  if (!p) return;
+  p.canvas.dispatchEvent(new MouseEvent('mousedown', { clientX: (e.touches?e.touches[0]:e).clientX, clientY: (e.touches?e.touches[0]:e).clientY, bubbles: true }));
+}
+
+function initSigs(){
+  document.getElementById('sig_comp_name').textContent=gv('cli_nome');
+  document.getElementById('sig_ang_name').textContent=gv('consultor');
+  initWhenVisible('sig_comprador');
+  initWhenVisible('sig_angariador');
+}
+
+function initWhenVisible(id) {
+  requestAnimationFrame(() => initSigPad(id));
+}
+
+function initSigPad(id) {
+  const old = document.getElementById(id);
+  if (!old) return;
+  const parent = old.parentNode;
+  const newCanvas = document.createElement('canvas');
+  newCanvas.id = id;
+  newCanvas.className = old.className;
+  parent.replaceChild(newCanvas, old);
+  const dpr = window.devicePixelRatio || 1;
+  void newCanvas.offsetWidth;
+  const rect = newCanvas.getBoundingClientRect();
+  const w = rect.width || newCanvas.offsetWidth || newCanvas.parentNode.offsetWidth || 300;
+  const h = rect.height || newCanvas.offsetHeight || 160;
+  newCanvas.width = w * dpr;
+  newCanvas.height = h * dpr;
+  const ctx = newCanvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#1a1612'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  let drawing = false;
+  function getPos(e) { const r=newCanvas.getBoundingClientRect(),src=e.touches?e.touches[0]:e; return [src.clientX-r.left, src.clientY-r.top]; }
+  newCanvas.addEventListener('mousedown', e=>{e.preventDefault();drawing=true;const[x,y]=getPos(e);ctx.beginPath();ctx.moveTo(x,y);});
+  newCanvas.addEventListener('mousemove', e=>{if(!drawing)return;const[x,y]=getPos(e);ctx.lineTo(x,y);ctx.stroke();});
+  newCanvas.addEventListener('mouseup', ()=>drawing=false);
+  newCanvas.addEventListener('mouseleave', ()=>drawing=false);
+  newCanvas.addEventListener('touchstart', e=>{e.preventDefault();drawing=true;const[x,y]=getPos(e);ctx.beginPath();ctx.moveTo(x,y);},{passive:false});
+  newCanvas.addEventListener('touchmove', e=>{e.preventDefault();if(!drawing)return;const[x,y]=getPos(e);ctx.lineTo(x,y);ctx.stroke();},{passive:false});
+  newCanvas.addEventListener('touchend', e=>{e.preventDefault();drawing=false;},{passive:false});
+  newCanvas.addEventListener('mousedown', e=>{if(!sigPads[id])return;},{once:true});
+  sigPads[id] = {canvas:newCanvas, ctx, dpr};
+}
+
+function clearSig(id){const p=sigPads[id];if(p)p.ctx.clearRect(0,0,p.canvas.width,p.canvas.height);}
+function getSig(id){const p=sigPads[id];if(!p)return null;const d=p.ctx.getImageData(0,0,p.canvas.width,p.canvas.height).data;return d.some(v=>v!==0)?p.canvas.toDataURL('image/png'):null;}
+
+// ── HELPERS ──────────────────────────────────────────────────
+function gv(id){const e=document.getElementById(id);return e?(e.value||''):''}
+function fmtData(d){if(!d)return'—';const[y,m,day]=d.split('-');return day+'/'+m+'/'+y;}
+const finLabels={proprios:'Capitais Próprios',credito:'Crédito Habitação',misto:'Misto'};
+
+// ── VALIDATION ───────────────────────────────────────────────
+function req(id,msg,errors){
+  const el=document.getElementById(id);if(!el)return;
+  if(!el.value.trim()){
+    errors.push(msg);const f=el.closest('.field');
+    if(f&&!f.querySelector('.field-error-msg')){f.classList.add('field-error');const s=document.createElement('div');s.className='field-error-msg';s.innerHTML='⚠ '+msg;f.appendChild(s);}
+    el.addEventListener('input',()=>{if(el.value.trim()){f?.classList.remove('field-error');f?.querySelector('.field-error-msg')?.remove();}},{once:true});
+  }
+}
+function clearErrors(step){
+  const c=document.getElementById('step-'+step);if(!c)return;
+  c.querySelectorAll('.field-error').forEach(f=>f.classList.remove('field-error'));
+  c.querySelectorAll('.field-error-msg').forEach(m=>m.remove());
+  document.getElementById('err-'+step).classList.remove('show');
+  const vh=document.getElementById('valor_hero_wrap');if(vh)vh.classList.remove('err');
+  const ve=document.getElementById('err-valor');if(ve)ve.style.display='none';
+}
+function validateStep(step){
+  const errors=[];
+  if(step===1){
+    req('ref_imovel','Referência do imóvel obrigatória',errors);
+    req('tipologia','Tipologia obrigatória',errors);
+    req('preco_pedido','Asking Price obrigatório',errors);
+    req('morada','Morada do imóvel obrigatória',errors);
+    req('concelho','Concelho obrigatório',errors);
+    req('freguesia','Freguesia obrigatória',errors);
+    req('cod_postal','Código postal obrigatório',errors);
+    req('cli_nome','Nome do comprador obrigatório',errors);
+    req('consultor','Nome do consultor obrigatório',errors);
+    req('data_proposta','Data da proposta obrigatória',errors);
+  }else if(step===2){
+    if(!gv('valor_proposto').trim()){
+      errors.push('Valor da proposta obrigatório');
+      document.getElementById('valor_hero_wrap')?.classList.add('err');
+      const ev=document.getElementById('err-valor');if(ev)ev.style.display='block';
+    }
+    if(!financiamento){
+      errors.push('Financiamento obrigatório');
+      const finField=document.getElementById('fin-field');
+      if(finField){
+        finField.classList.add('field-error');
+        const msg=document.createElement('div');msg.className='field-error-msg';
+        msg.innerHTML='⚠ Selecione uma opção de financiamento';finField.appendChild(msg);
+        document.querySelectorAll('.fin-opt').forEach(o=>{o.addEventListener('click',()=>{
+          finField.classList.remove('field-error');finField.querySelector('.field-error-msg')?.remove();
+        },{once:true});});
+      }
+    }
+    req('data_cpcv','Data prevista do CPCV obrigatória',errors);
+    req('data_escritura','Data prevista para Escritura obrigatória',errors);
+    req('sinal_cpcv','Valor do sinal obrigatório',errors);
+    req('preenchido_por','Preenchido por obrigatório',errors);
+    const sigComp=getSig('sig_comprador');
+    const sigAng=getSig('sig_angariador');
+    if(!sigComp){
+      errors.push('Assinatura do comprador obrigatória');
+      const f=document.getElementById('sig-field-comp');if(f)f.style.outline='2px solid var(--red)';
+      const e=document.getElementById('sig-err-comp');if(e)e.style.display='block';
+    }
+    if(!sigAng){
+      errors.push('Assinatura do consultor obrigatória');
+      const f=document.getElementById('sig-field-ang');if(f)f.style.outline='2px solid var(--red)';
+      const e=document.getElementById('sig-err-ang');if(e)e.style.display='block';
+    }
+  }
+  return errors.length===0;
+}
+
+// ── GENERATE PDF ─────────────────────────────────────────────
+function gerarPDF(){
+  // Clear all previous errors
+  document.querySelectorAll('.field-error').forEach(f=>f.classList.remove('field-error'));
+  document.querySelectorAll('.field-error-msg').forEach(m=>m.remove());
+  document.getElementById('valor_hero_wrap')?.classList.remove('err');
+  const ve=document.getElementById('err-valor');if(ve)ve.style.display='none';
+  const se=document.getElementById('sig-err-comp');if(se)se.style.display='none';
+  const se2=document.getElementById('sig-err-ang');if(se2)se2.style.display='none';
+  ['sig-field-comp','sig-field-ang'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.outline='';});
+
+  // Validate all fields
+  const v1=validateStep(1);
+  const v2=validateStep(2);
+  if(!v1||!v2){
+    setTimeout(()=>{
+      const fe=document.querySelector('.field-error, [style*="outline: 2px"]');
+      if(fe) fe.scrollIntoView({behavior:'smooth',block:'center'});
+    },80);
+    return;
+  }
+  function e(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+
+  const dataProp   = fmtData(gv('data_proposta'));
+  const refImovel  = gv('ref_imovel');
+  const tipologia  = gv('tipologia');
+  const precoPed   = gv('preco_pedido');
+  const morada     = gv('morada');
+  const codPostal  = gv('cod_postal');
+  const freguesia  = gv('freguesia');
+  const concelho   = gv('concelho');
+  const cliNome    = gv('cli_nome');
+  const cliCC      = gv('cli_cc');
+  const cliNIF     = gv('cli_nif');
+  const consultor  = gv('consultor');
+  const valorProp  = gv('valor_proposto');
+  const valorExtRaw= getRawValor();
+  const valorExt   = valorExtRaw>0?numExtenso(valorExtRaw):'';
+  const sinalCPCV  = gv('sinal_cpcv');
+  const sinalPctRaw = gv('sinal_pct');
+  const sinalPct = sinalPctRaw ? (sinalPctRaw.includes('%') ? sinalPctRaw : sinalPctRaw + '%') : '';
+  const dataCPCV   = fmtData(gv('data_cpcv'));
+  const dataEscrit = fmtData(gv('data_escritura'));
+  const banco      = gv('banco');
+  const obs        = gv('observacoes');
+  const prefBy     = gv('preenchido_por');
+  const finLabel   = finLabels[financiamento]||'—';
+
+  const sigComp = getSig('sig_comprador');
+  const sigAng  = getSig('sig_angariador');
+
+  const parts=[];const add=h=>parts.push(h);
+
+  add('<!DOCTYPE html><html lang="pt"><head><meta charset="UTF-8">');
+  add('<title>Proposta de Compra \u2014 '+e(refImovel)+'<\/title>');
+  add('<style>');
+  add('@page{size:A4;margin:18mm 16mm}@media print{html{-webkit-print-color-adjust:exact;print-color-adjust:exact}}');
+  add('*{margin:0;padding:0;box-sizing:border-box}');
+  add('body{font-family:Arial,sans-serif;font-size:9pt;color:#1a1612;line-height:1.5;word-wrap:break-word;overflow-wrap:break-word}');
+  add('.header{text-align:center;border-bottom:2pt solid #1a1612;padding-bottom:10pt;margin-bottom:10pt}');
+  add('.header h1{font-size:16pt;font-weight:bold;letter-spacing:0.04em;margin-bottom:2pt}');
+  add('.header .sub{font-size:8pt;color:#5c5449}');
+  add('.sh{background:#f5f0e8;padding:4pt 8pt;margin:10pt 0 5pt;border-left:3pt solid #b8935a;font-size:8pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em}');
+  add('.g2{display:grid;grid-template-columns:1fr 1fr;gap:8pt}');
+  add('.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8pt}');
+  add('.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8pt}');
+  add('.fr{border-bottom:.5pt solid #d8cfc0;padding-bottom:4pt;margin-bottom:4pt}');
+  add('.fl{font-size:7.5pt;font-weight:bold;color:#1a1612}');
+  add('.fle{font-size:6.5pt;font-style:italic;color:#7a6e5e;margin-left:3pt}');
+  add('.fv{font-size:9pt;padding-left:3pt;margin-top:1.5pt}');
+  /* Valor hero */
+  add('.valor-box{border:2pt solid #b8935a;padding:10pt 14pt;margin:6pt 0;display:flex;align-items:baseline;gap:6pt}');
+  add('.valor-num{font-size:20pt;font-weight:bold;color:#1a1612}');
+  add('.valor-sym{font-size:14pt;font-weight:bold;color:#b8935a}');
+  add('.valor-ext{font-size:8.5pt;color:#5c5449;margin-top:3pt;font-style:italic}');
+  add('.fin-badge{display:inline-block;background:#f5f0e8;border:1pt solid #b8935a;padding:3pt 8pt;font-size:8pt;font-weight:bold;border-radius:2pt}');
+  add('.obs-box{background:#fffdf7;border:1pt dashed #b8935a;padding:8pt 10pt;font-size:8.5pt;line-height:1.6;margin-top:4pt;word-wrap:break-word;overflow-wrap:break-word;white-space:pre-wrap}');
+  add('.obs-lbl{font-size:7pt;font-weight:bold;text-transform:uppercase;letter-spacing:0.06em;color:#b8935a;margin-bottom:3pt}');
+  add('.sw{display:flex;gap:20pt;margin-top:10pt;flex-wrap:wrap}');
+  add('.sb{flex:1;min-width:120pt}');
+  add('.si{max-width:100%;height:55pt;object-fit:contain;display:block;border-bottom:1pt solid #1a1612}');
+  add('.sl{height:55pt;border-bottom:1pt solid #1a1612;width:100%}');
+  add('.slb{font-size:7pt;color:#5c5449;margin-top:3pt}');
+  add('.sln{font-size:8pt;font-style:italic;margin-top:1pt}');
+  add('.footer{border-top:.5pt solid #d8cfc0;margin-top:14pt;padding-top:5pt;text-align:center;font-size:7pt;color:#7a6e5e}');
+  add('.note-legal{font-size:7pt;color:#7a6e5e;font-style:italic;margin-top:8pt;line-height:1.4;border-top:.5pt solid #d8cfc0;padding-top:5pt}');
+  add('<\/style><\/head><body class="lang-pt">');
+
+  // Cabeçalho
+  add('<div class="header">');
+  add('<h1>PROPOSTA DE COMPRA / PURCHASE OFFER<\/h1>');
+  add('<div class="sub">'+e(EMPRESA.nome)+(EMPRESA.ami?' \u2014 AMI '+e(EMPRESA.ami):'')+'<\/div>');
+  add('<\/div>');
+
+  // Meta linha
+  add('<div class="g2" style="margin-bottom:6pt">');
+  add('<div class="fr"><span class="fl">Data da Proposta<\/span><span class="fle">\/ Date<\/span><div class="fv">'+e(dataProp)+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">Consultor Angariador<\/span><span class="fle">\/ Listing Agent<\/span><div class="fv">'+e(consultor)+'<\/div><\/div>');
+  add('<\/div>');
+
+  // Imóvel
+  add('<div class="sh">Im\u00f3vel / Property<\/div>');
+  add('<div class="g3" style="margin-bottom:5pt">');
+  add('<div class="fr"><span class="fl">Refer\u00eancia<\/span><span class="fle">\/ Ref.<\/span><div class="fv">'+e(refImovel)+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">Tipologia<\/span><span class="fle">\/ Type<\/span><div class="fv">'+e(tipologia||'\u2014')+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">Asking Price<\/span><div class="fv">'+e(precoPed||'\u2014')+'<\/div><\/div>');
+  add('<\/div>');
+  add('<div class="fr"><span class="fl">Morada<\/span><span class="fle">\/ Address<\/span><div class="fv">'+e(morada)+'<\/div><\/div>');
+  add('<div class="g3">');
+  add('<div class="fr"><span class="fl">C\u00f3digo Postal<\/span><div class="fv">'+e(codPostal||'\u2014')+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">Freguesia<\/span><div class="fv">'+e(freguesia||'\u2014')+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">Concelho<\/span><div class="fv">'+e(concelho||'\u2014')+'<\/div><\/div>');
+  add('<\/div>');
+
+  // Comprador
+  add('<div class="sh">Cliente Comprador / Buyer<\/div>');
+  add('<div class="g3">');
+  add('<div class="fr"><span class="fl">Nome<\/span><span class="fle">\/ Name<\/span><div class="fv">'+e(cliNome)+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">CC \/ ID<\/span><div class="fv">'+e(cliCC)+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">NIF<\/span><div class="fv">'+e(cliNIF)+'<\/div><\/div>');
+  add('<\/div>');
+
+  // Proposta
+  add('<div class="sh">Proposta de Compra / Purchase Offer<\/div>');
+
+  // Valor hero
+  add('<div class="valor-box">');
+  add('<div><div class="valor-num">'+e(valorProp)+' \u20ac<\/div>'+(valorExt?'<div class="valor-ext">('+e(valorExt)+')<\/div>':'')+'<\/div>');
+  add('<\/div>');
+
+  // Condições
+  add('<div class="g3" style="margin-top:6pt">');
+  add('<div class="fr"><span class="fl">Sinal no CPCV<\/span><span class="fle">\/ Deposit<\/span><div class="fv">'+e(sinalCPCV)+(sinalPct?' <span style="font-size:7.5pt;color:#b8935a">('+e(sinalPct)+')<\/span>':'')+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">Data do CPCV<\/span><span class="fle">\/ CPCV Date<\/span><div class="fv">'+e(dataCPCV)+'<\/div><\/div>');
+  add('<div class="fr"><span class="fl">Data da Escritura<\/span><span class="fle">\/ Deed Date<\/span><div class="fv">'+e(dataEscrit)+'<\/div><\/div>');
+  add('<\/div>');
+
+  // Financiamento
+  add('<div style="margin:5pt 0"><span class="fl">Financiamento \/ Financing:<\/span> <span class="fin-badge">'+e(finLabel)+'<\/span>'+( banco?' <span style="font-size:8pt;color:#5c5449">\u2014 '+e(banco)+'<\/span>':'' )+'<\/div>');
+
+  // Observações
+  if(obs){
+    add('<div class="obs-box"><div class="obs-lbl">Observa\u00e7\u00f5es \/ Notes<\/div>'+e(obs).replace(/\n/g,'<br>')+'<\/div>');
+  }
+
+  // Assinaturas
+  add('<div class="sh">Assinaturas / Signatures<\/div>');
+  add('<div class="sw">');
+
+  function sb(img,labelPT,labelEN,name){
+    add('<div class="sb">');
+    if(img)add('<img class="si" src="'+img+'" alt="Assinatura">');
+    else add('<div class="sl"><\/div>');
+    add('<div class="slb">'+labelPT+' \/ '+labelEN+'<\/div>');
+    add('<div class="sln">'+e(name)+'<\/div>');
+    add('<\/div>');
+  }
+
+  sb(sigComp,'Cliente Comprador','Buyer',cliNome);
+  sb(sigAng,'Consultor Angariador','Listing Agent',consultor);
+
+  add('<\/div>');
+
+  // Nota legal
+  add('<div class="note-legal">');
+  add('A presente proposta de compra n\u00e3o constitui acordo vinculativo at\u00e9 \u00e0 outorga do Contrato Promessa de Compra e Venda (CPCV). / ');
+  add('This purchase offer is not binding until the execution of the Promissory Purchase and Sale Agreement (CPCV).');
+  add('<\/div>');
+
+  // Rodapé
+  add('<div class="footer">'+e(EMPRESA.nome)+(EMPRESA.ami?' \u2014 AMI '+e(EMPRESA.ami):'')+' \u2014 Preenchido por: '+e(prefBy)+'<\/div>');
+  add('<\/body><\/html>');
+
+  const html=parts.join('\n');
+  let iframe=document.getElementById('__pdf_frame');
+  if(!iframe){
+    iframe=document.createElement('iframe');
+    iframe.id='__pdf_frame';
+    iframe.style.cssText='position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;';
+    document.body.appendChild(iframe);
+  }
+  iframe.srcdoc=html;
+  iframe.onload=function(){
+    try{iframe.contentWindow.focus();iframe.contentWindow.print();}
+    catch(err){
+      const a=document.createElement('a');
+      const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+      a.href=URL.createObjectURL(blob);
+      a.download='PropostaCompra_'+gv('ref_imovel')+'_'+gv('data_proposta')+'.html';
+      a.click();
+    }
+  };
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+document.getElementById('data_proposta').valueAsDate=new Date();
+</script>
+</body>
+</html>
