@@ -545,8 +545,8 @@
       <li><a href="#contact" data-i18n="nav.private">Private Access</a></li>
     </ul>
     <div class="lang-toggle" role="tablist" aria-label="Language">
-      <button id="lang-pt" type="button">PT</button>
-      <button id="lang-en" type="button" class="active">EN</button>
+      <button id="lang-pt" type="button" class="active">PT</button>
+      <button id="lang-en" type="button">EN</button>
     </div>
   </div>
 </nav>
@@ -672,7 +672,7 @@ const dict = {
   }
 };
 
-let currentLang = 'en';
+let currentLang = 'pt';
 function setLang(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
@@ -808,7 +808,7 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   // Observar mudanças de idioma — interceta os botões PT/EN
   document.addEventListener('DOMContentLoaded', function() {
     // Detectar idioma inicial
-    const langAtivo = document.getElementById('lang-en').classList.contains('active') ? 'en' : 'pt';
+    const langAtivo = document.getElementById('lang-en').classList.contains('active') ? 'pt' : 'en';
     atualizarLinksLang(langAtivo);
 
     // Quando muda o idioma, atualizar os links
