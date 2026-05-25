@@ -697,6 +697,7 @@ document.getElementById('lang-pt').addEventListener('click', () => setLang('pt')
 document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
 
 setLang('pt'); // ← aqui
+atualizarLinksLang(lang); // ← adiciona esta linha aqui
 
 /* ============ SCROLL REVEAL ============ */
 const io = new IntersectionObserver((entries) => {
@@ -806,12 +807,6 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
       if (el) el.href = href;
     });
   }
-
-  // Observar mudanças de idioma — interceta os botões PT/EN
-  document.addEventListener('DOMContentLoaded', function() {
-    // Detectar idioma inicial
-    const langAtivo = document.getElementById('lang-en').classList.contains('active') ? 'pt' : 'en';
-    atualizarLinksLang(langAtivo);
 
     // Quando muda o idioma, atualizar os links
     document.getElementById('lang-pt').addEventListener('click', () => atualizarLinksLang('pt'));
