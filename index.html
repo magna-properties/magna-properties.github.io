@@ -696,6 +696,8 @@ function setLang(lang) {
 document.getElementById('lang-pt').addEventListener('click', () => setLang('pt'));
 document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
 
+setLang('pt'); // ← aqui
+
 /* ============ SCROLL REVEAL ============ */
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
