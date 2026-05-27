@@ -124,33 +124,6 @@
     text-align: center;
     max-width: 1100px;
   }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 18px;
-    border: 1px solid rgba(184, 147, 90, 0.3);
-    border-radius: 999px;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold-bright);
-    margin-bottom: 48px;
-    background: rgba(184, 147, 90, 0.04);
-  }
-  .badge .dot-pulse {
-    width: 6px; height: 6px;
-    background: var(--gold);
-    border-radius: 50%;
-    box-shadow: 0 0 0 0 rgba(184, 147, 90, 0.5);
-    animation: pulse 2.4s ease-out infinite;
-  }
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(184, 147, 90, 0.6); }
-    70% { box-shadow: 0 0 0 12px rgba(184, 147, 90, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(184, 147, 90, 0); }
-  }
-
   .hero-kicker {
     font-family: 'DM Sans', sans-serif;
     font-size: 12px;
@@ -276,7 +249,7 @@
   .who h2 em { font-style: italic; color: var(--gold-bright); font-weight: 300; }
 
   .who-body {
-    max-width: 620px;
+    max-width: 680px;
     margin: 0 auto;
     text-align: center;
     color: var(--ink);
@@ -285,6 +258,30 @@
     font-weight: 300;
   }
   .who-body p { margin-bottom: 28px; color: rgba(242, 237, 228, 0.8); }
+
+  .who-body ul {
+    list-style: none;
+    margin: 0 auto 28px;
+    text-align: left;
+    display: inline-block;
+    color: rgba(242, 237, 228, 0.8);
+  }
+  .who-body ul li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 12px;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .who-body ul li::before {
+    content: "·";
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-size: 1.4em;
+    line-height: 1.1;
+  }
+
   .who-pledge {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
@@ -295,39 +292,6 @@
     text-align: center;
     margin-top: 56px;
     letter-spacing: 0.005em;
-  }
-
-  /* ===== PRIVATE ACCESS ===== */
-  .private {
-    background: var(--bg);
-    text-align: center;
-    border-top: 1px solid var(--line);
-  }
-  .private h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-weight: 400;
-    font-size: clamp(36px, 5.2vw, 72px);
-    line-height: 1.05;
-    letter-spacing: -0.01em;
-    margin-bottom: 32px;
-    max-width: 1000px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .private h2 em { font-style: italic; color: var(--gold-bright); font-weight: 300; }
-
-  .private-sub {
-    max-width: 620px;
-    margin: 0 auto 56px;
-    color: rgba(242, 237, 228, 0.7);
-    font-size: 16px;
-    line-height: 1.75;
-  }
-  .cta-center {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
   }
 
   /* ===== FOOTER ===== */
@@ -382,19 +346,16 @@
     html, body { overflow-x: hidden; max-width: 100vw; }
     section.story { padding: 96px 24px; }
     .hero { padding: 110px 20px 80px; }
-    .badge { margin-bottom: 28px; font-size: 10px; padding: 6px 14px; }
     h1.hero-title { font-size: clamp(34px, 8.5vw, 52px); margin-bottom: 28px; }
     .hero-kicker { font-size: 10px; letter-spacing: 0.24em; margin-bottom: 22px; }
     .hero-sub { font-size: 15px; margin: -4px auto 32px; padding: 0 6px; }
-    .who h2, .private h2 { font-size: clamp(34px, 8vw, 56px); }
-    .who-body { font-size: 15px; }
+    .who h2 { font-size: clamp(34px, 8vw, 56px); }
+    .who-body { font-size: 16px; }
+    .who-body ul li { font-size: 15px; }
     .who-body p { margin-bottom: 22px; }
     .who-pledge { font-size: clamp(24px, 6.5vw, 32px); margin-top: 40px; }
-    .private-sub { font-size: 15px; padding: 0 8px; }
     .cta-row { flex-direction: column; width: 100%; gap: 12px; }
     .cta-row .btn { width: 100%; justify-content: center; }
-    .cta-center { width: 100%; flex-direction: column; gap: 12px; }
-    .cta-center .btn { width: 100%; justify-content: center; }
     .lang-toggle button { padding: 5px 11px; font-size: 10px; }
     footer { padding: 40px 24px; }
   }
@@ -407,7 +368,6 @@
   <div class="nav-right">
     <ul class="nav-links">
       <li><a href="#manifesto" data-i18n="nav.about">Quem Somos</a></li>
-      <li><a href="#contact" data-i18n="nav.private">Acesso Privado</a></li>
     </ul>
     <div class="lang-toggle" role="tablist" aria-label="Language">
       <button id="lang-pt" type="button" class="active">PT</button>
@@ -422,11 +382,15 @@
 
   <div class="hero-content">
     <div class="hero-kicker" data-i18n="hero.kicker"></div>
-    <h1 class="hero-title" data-i18n-html="hero.title">Bem-vindo.<br>Avaliamos e distribuímos investimentos imobiliários em <em>segundos.</em></h1>
+    <h1 class="hero-title" data-i18n-html="hero.title">Bem-vindo <em>ao futuro</em> do imobiliário.</h1>
     <p class="hero-sub" data-i18n="hero.sub"></p>
     <div class="cta-row">
       <a href="/venda/?lang=pt" class="btn btn-primary" id="hero-cta1">
         <span data-i18n="hero.cta1">Apresentar o Meu Negócio a Investidores</span>
+        <span class="arrow">→</span>
+      </a>
+      <a href="/investir/?lang=pt" class="btn btn-ghost" id="hero-cta2">
+        <span data-i18n="hero.cta2">Quero Investir</span>
         <span class="arrow">→</span>
       </a>
     </div>
@@ -437,25 +401,8 @@
 <section id="manifesto" class="story who reveal" data-screen-label="02 Who We Are">
   <div class="section-label" data-i18n="who.label">Quem Somos</div>
   <h2 data-i18n-html="who.title">Diferentes<br><em>por natureza.</em></h2>
-  <div class="who-body">
-    <p data-i18n="who.p1">A Magna Properties é uma empresa de consultoria imobiliária sediada no Algarve, em Portugal.</p>
-    <p data-i18n="who.p2">Analisamos, avaliamos e distribuímos negócios através da nossa network — em tempo real, 24/7.</p>
-    <p data-i18n="who.p3">Os investidores sabem sempre os custos, os prazos e o retorno.</p>
-    <p data-i18n="who.p4">Investimos diariamente em automações e na eficiência dos nossos sistemas, para que a burocracia fique do nosso lado — e a tranquilidade do seu.</p>
-    <div class="who-pledge" data-i18n="who.pledge">Rule #1: Speed.</div>
-  </div>
-</section>
-
-<!-- ============ PRIVATE ACCESS ============ -->
-<section id="contact" class="story private reveal" data-screen-label="03 Private Access">
-  <div class="section-label" data-i18n="private.label">Acesso Privado</div>
-  <h2 data-i18n-html="private.title">As melhores oportunidades<br><em>estão offline.</em></h2>
-
-  <div class="cta-center">
-    <a href="/investir/?lang=pt" class="btn btn-ghost" id="private-cta2">
-      <span data-i18n="private.cta2">Quero Investir</span>
-      <span class="arrow">→</span>
-    </a>
+  <div class="who-body" id="who-body-content">
+    <!-- injected by setLang -->
   </div>
 </section>
 
@@ -464,53 +411,63 @@
   <div class="logo">Magna<span class="dot">·</span>Properties</div>
   <ul class="footer-links">
     <li><a href="#manifesto" data-i18n="foot.about">Quem Somos</a></li>
-    <li><a href="#contact" data-i18n="foot.private">Acesso Privado</a></li>
   </ul>
   <div class="copy">© 2026 Magna Properties, Lda. · Algarve</div>
 </footer>
 
 <script>
 /* ============ I18N ============ */
+const whoBodyContent = {
+  pt: `
+    <p>A Magna Properties é uma empresa de consultoria imobiliária sediada no Algarve, especializada em identificar oportunidades de investimento com elevado potencial.</p>
+    <p>Atuamos num mercado exigente e competitivo, onde cada decisão requer conhecimento profundo, visão estratégica e um acompanhamento próximo e personalizado.</p>
+    <p>Acreditamos que cada investimento merece uma abordagem exclusiva e sempre assente na transparência.</p>
+    <p>Os nossos serviços incluem:</p>
+    <ul>
+      <li>Análise e avaliação de oportunidades de investimento imobiliário.</li>
+      <li>Elaboração de dossiês de negócio detalhados, dirigidos a investidores nacionais e internacionais, com ou sem experiência.</li>
+      <li>Acompanhamento integral em processos de aquisição, construção, reabilitação e revenda.</li>
+      <li>Promoção e comercialização de novos empreendimentos imobiliários.</li>
+    </ul>
+    <div class="who-pledge">Rule #1: Speed.</div>
+  `,
+  en: `
+    <p>Magna Properties is a real estate advisory company based in the Algarve, specialized in identifying high-potential investment opportunities.</p>
+    <p>We operate in a demanding and competitive market, where every decision requires deep knowledge, strategic vision, and close, personalized support.</p>
+    <p>We believe every investment deserves an exclusive approach, always grounded in transparency.</p>
+    <p>Our services include:</p>
+    <ul>
+      <li>Analysis and evaluation of real estate investment opportunities.</li>
+      <li>Preparation of detailed business dossiers, aimed at national and international investors, with or without prior experience.</li>
+      <li>Full support throughout acquisition, construction, rehabilitation, and resale processes.</li>
+      <li>Promotion and commercialization of new real estate developments.</li>
+    </ul>
+    <div class="who-pledge">Rule #1: Speed.</div>
+  `
+};
+
 const dict = {
   en: {
     "nav.about": "About",
-    "nav.private": "Private Access",
     "hero.kicker": "",
-    "hero.title": "Welcome to the future. Curated real estate deals — revealed in <em>seconds</em>.",
+    "hero.title": "Welcome to the <em>future</em> of real estate.",
     "hero.sub": "",
     "hero.cta1": "Present My Deal to Investors",
+    "hero.cta2": "I Want to Invest",
     "who.label": "Who We Are",
     "who.title": "Different<br><em>by nature.</em>",
-    "who.p1": "Magna Properties is a real estate advisory company based in the Algarve.",
-    "who.p2": "We analyze, evaluate and distribute curated business deals through our closed network — in real time, around the clock.",
-    "who.p3": "Investors always know the cost, the timeline, and the returns.",
-    "who.p4": "We invest daily in automation and process efficiency, so that the bureaucracy stays on our side — and peace of mind stays on yours.",
-    "who.pledge": "Rule #1: Speed.",
-    "private.label": "Private Access",
-    "private.title": "The best opportunities<br><em>are offline.</em>",
-    "private.cta2": "I Want to Invest",
-    "foot.about": "About",
-    "foot.private": "Private Access"
+    "foot.about": "About"
   },
   pt: {
     "nav.about": "Quem Somos",
-    "nav.private": "Acesso Privado",
     "hero.kicker": "",
-    "hero.title": "Bem-vindo.<br>Avaliamos e distribuímos investimentos imobiliários em <em>segundos.</em>",
+    "hero.title": "Bem-vindo ao <em>futuro</em> do imobiliário.",
     "hero.sub": "",
     "hero.cta1": "Apresentar o Meu Negócio a Investidores",
+    "hero.cta2": "Quero Investir",
     "who.label": "Quem Somos",
     "who.title": "Diferentes<br><em>por natureza.</em>",
-    "who.p1": "A Magna Properties é uma empresa de consultoria imobiliária sediada no Algarve, em Portugal.",
-    "who.p2": "Analisamos, avaliamos e distribuímos negócios através da nossa network — em tempo real, 24/7.",
-    "who.p3": "Os investidores sabem sempre os custos, os prazos e o retorno.",
-    "who.p4": "Investimos diariamente em automações e na eficiência dos nossos sistemas, para que a burocracia fique do nosso lado — e a tranquilidade do seu.",
-    "who.pledge": "Rule #1: Speed.",
-    "private.label": "Acesso Privado",
-    "private.title": "As melhores oportunidades<br><em>estão offline.</em>",
-    "private.cta2": "Quero Investir",
-    "foot.about": "Quem Somos",
-    "foot.private": "Acesso Privado"
+    "foot.about": "Quem Somos"
   }
 };
 
@@ -518,8 +475,8 @@ let currentLang = 'pt';
 
 function atualizarLinksLang(lang) {
   const links = {
-    'hero-cta1':    '/venda/?lang=' + lang,
-    'private-cta2': '/investir/?lang=' + lang,
+    'hero-cta1': '/venda/?lang=' + lang,
+    'hero-cta2': '/investir/?lang=' + lang,
   };
   Object.entries(links).forEach(([id, href]) => {
     const el = document.getElementById(id);
@@ -530,6 +487,7 @@ function atualizarLinksLang(lang) {
 function setLang(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
+
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (dict[lang][key] !== undefined) el.textContent = dict[lang][key];
@@ -538,12 +496,18 @@ function setLang(lang) {
     const key = el.getAttribute('data-i18n-html');
     if (dict[lang][key] !== undefined) el.innerHTML = dict[lang][key];
   });
-  // Hide elements whose translation is an empty string
+
+  // Hide elements whose translation is empty
   document.querySelectorAll('[data-i18n], [data-i18n-html]').forEach(el => {
     const key = el.getAttribute('data-i18n') || el.getAttribute('data-i18n-html');
     const val = dict[lang][key];
     el.style.display = (val === '' || val === undefined && el.textContent.trim() === '') ? 'none' : '';
   });
+
+  // Inject who-body content
+  const whoBody = document.getElementById('who-body-content');
+  if (whoBody) whoBody.innerHTML = whoBodyContent[lang];
+
   document.getElementById('lang-pt').classList.toggle('active', lang === 'pt');
   document.getElementById('lang-en').classList.toggle('active', lang === 'en');
   atualizarLinksLang(lang);
@@ -552,7 +516,6 @@ function setLang(lang) {
 document.getElementById('lang-pt').addEventListener('click', () => setLang('pt'));
 document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
 
-// Init with PT
 setLang('pt');
 
 /* ============ SCROLL REVEAL ============ */
@@ -602,7 +565,6 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   function step() {
     ctx.clearRect(0, 0, W, H);
-
     for (const p of particles) {
       p.x += p.vx;
       p.y += p.vy;
@@ -613,7 +575,6 @@ document.querySelectorAll('.reveal').forEach(el => io.observe(el));
       ctx.fillStyle = 'rgba(184, 147, 90, 0.55)';
       ctx.fill();
     }
-
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const a = particles[i], b = particles[j];
