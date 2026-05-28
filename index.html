@@ -19,9 +19,7 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
-
   body {
     background: var(--bg);
     color: var(--ink);
@@ -52,16 +50,8 @@
     color: var(--ink);
   }
   .logo .dot { color: var(--gold); margin: 0 6px; }
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 40px;
-  }
-  .nav-links {
-    display: flex;
-    gap: 36px;
-    list-style: none;
-  }
+  .nav-right { display: flex; align-items: center; gap: 40px; }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
   .nav-links a {
     color: var(--ink);
     text-decoration: none;
@@ -72,13 +62,11 @@
     transition: color 0.3s ease;
   }
   .nav-links a:hover { color: var(--gold); }
-
   .lang-toggle {
     border: 1px solid var(--line);
     border-radius: 999px;
     padding: 6px;
     display: inline-flex;
-    gap: 0;
     background: rgba(12, 10, 18, 0.5);
   }
   .lang-toggle button {
@@ -94,10 +82,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
   }
-  .lang-toggle button.active {
-    background: var(--gold);
-    color: var(--bg);
-  }
+  .lang-toggle button.active { background: var(--gold); color: var(--bg); }
 
   /* ===== HERO ===== */
   .hero {
@@ -113,8 +98,7 @@
   #particle-canvas {
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     display: block;
     z-index: 0;
   }
@@ -136,13 +120,11 @@
   .hero-sub {
     max-width: 640px;
     margin: -8px auto 48px;
-    font-family: 'DM Sans', sans-serif;
     font-size: 17px;
     font-weight: 300;
     line-height: 1.6;
     color: rgba(242, 237, 228, 0.78);
     text-align: center;
-    text-wrap: balance;
   }
   .hero-sub:empty { display: none; }
   h1.hero-title {
@@ -157,18 +139,11 @@
     text-wrap: balance;
   }
   h1.hero-title em {
-    font-family: 'Cormorant Garamond', serif;
     font-style: italic;
     color: #b8935a;
     font-weight: 400;
   }
-
-  .cta-row {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+  .cta-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
   .btn {
     display: inline-flex;
     align-items: center;
@@ -185,36 +160,16 @@
     transition: all 0.3s ease;
     border: 1px solid transparent;
   }
-  .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(184, 147, 90, 0.35);
-  }
-  .btn-primary {
-    background: var(--gold);
-    color: var(--bg);
-  }
-  .btn-primary:hover {
-    background: var(--gold-bright);
-  }
-  .btn-ghost {
-    background: transparent;
-    border-color: rgba(242, 237, 228, 0.25);
-    color: var(--ink);
-  }
-  .btn-ghost:hover {
-    border-color: var(--gold);
-    color: var(--gold-bright);
-  }
-  .btn .arrow {
-    transition: transform 0.3s ease;
-  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(184,147,90,0.35); }
+  .btn-primary { background: var(--gold); color: var(--bg); }
+  .btn-primary:hover { background: var(--gold-bright); }
+  .btn-ghost { background: transparent; border-color: rgba(242,237,228,0.25); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .btn .arrow { transition: transform 0.3s ease; }
   .btn:hover .arrow { transform: translateX(4px); }
 
   /* ===== SECTION COMMON ===== */
-  section.story {
-    padding: 160px 56px;
-    position: relative;
-  }
+  section.story { padding: 160px 56px; position: relative; }
   .section-label {
     font-size: 11px;
     letter-spacing: 0.3em;
@@ -227,8 +182,7 @@
     justify-content: center;
     gap: 16px;
   }
-  .section-label::before,
-  .section-label::after {
+  .section-label::before, .section-label::after {
     content: "";
     width: 36px;
     height: 1px;
@@ -243,7 +197,7 @@
     font-size: clamp(44px, 6vw, 88px);
     line-height: 1.0;
     text-align: center;
-    margin-bottom: 64px;
+    margin-bottom: 56px;
     letter-spacing: -0.02em;
   }
   .who h2 em { font-style: italic; color: var(--gold-bright); font-weight: 300; }
@@ -252,46 +206,62 @@
     max-width: 680px;
     margin: 0 auto;
     text-align: center;
-    color: var(--ink);
-    font-size: 19px;
+    font-size: 18px;
     line-height: 1.75;
     font-weight: 300;
   }
-  .who-body p { margin-bottom: 28px; color: rgba(242, 237, 228, 0.8); }
-
-  .who-body ul {
-    list-style: none;
-    margin: 0 auto 28px;
-    text-align: left;
-    display: inline-block;
-    color: rgba(242, 237, 228, 0.8);
+  .who-body p {
+    margin-bottom: 24px;
+    color: rgba(242, 237, 228, 0.75);
   }
-  .who-body ul li {
+
+  /* ===== SERVICES — REVEAL STRIP ===== */
+  .services-strip {
+    margin: 56px auto 0;
+    max-width: 680px;
     position: relative;
-    padding-left: 20px;
-    margin-bottom: 12px;
-    font-size: 18px;
-    line-height: 1.6;
-  }
-  .who-body ul li::before {
-    content: "·";
-    position: absolute;
-    left: 0;
-    color: var(--gold);
-    font-size: 1.4em;
-    line-height: 1.1;
   }
 
+  .service-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-top: 1px solid rgba(242, 237, 228, 0.08);
+    cursor: default;
+  }
+  .service-item:last-of-type {
+    border-bottom: 1px solid rgba(242, 237, 228, 0.08);
+  }
+
+  .service-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(17px, 2.2vw, 22px);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(242, 237, 228, 0.8);
+    line-height: 1.45;
+    padding: 24px 0;
+    transition: color 0.4s ease;
+    text-align: center;
+  }
+
+  .service-item:hover .service-text {
+    color: var(--ink);
+  }
+
+  /* ===== PLEDGE ===== */
   .who-pledge {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    color: #b8935a;
-    font-size: clamp(28px, 3.4vw, 44px);
+    color: var(--gold);
+    font-size: clamp(26px, 3.2vw, 42px);
     font-weight: 400;
     line-height: 1.2;
     text-align: center;
-    margin-top: 56px;
+    margin-top: 80px;
     letter-spacing: 0.005em;
+    opacity: 0.9;
   }
 
   /* ===== FOOTER ===== */
@@ -305,11 +275,7 @@
     gap: 16px;
   }
   footer .logo { font-size: 1.8rem; }
-  footer .footer-links {
-    display: flex;
-    gap: 32px;
-    list-style: none;
-  }
+  footer .footer-links { display: flex; gap: 32px; list-style: none; }
   footer .footer-links a {
     color: var(--muted);
     text-decoration: none;
@@ -319,11 +285,7 @@
     transition: color 0.3s ease;
   }
   footer .footer-links a:hover { color: var(--gold); }
-  footer .copy {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
+  footer .copy { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
 
   /* ===== SCROLL FADE ===== */
   .reveal {
@@ -331,10 +293,21 @@
     transform: translateY(28px);
     transition: opacity 1.2s ease, transform 1.2s ease;
   }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* stagger children of who-body */
+  .who-body p,
+  .services-strip,
+  .who-pledge {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
   }
+  .who-section-visible .who-body p { opacity: 1; transform: translateY(0); }
+  .who-section-visible .who-body p:nth-child(1) { transition-delay: 0.1s; }
+  .who-section-visible .who-body p:nth-child(2) { transition-delay: 0.25s; }
+  .who-section-visible .services-strip { opacity: 1; transform: translateY(0); transition-delay: 0.4s; }
+  .who-section-visible .who-pledge { opacity: 1; transform: translateY(0); transition-delay: 0.65s; }
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px) {
@@ -347,13 +320,10 @@
     section.story { padding: 96px 24px; }
     .hero { padding: 110px 20px 80px; }
     h1.hero-title { font-size: clamp(34px, 8.5vw, 52px); margin-bottom: 28px; }
-    .hero-kicker { font-size: 10px; letter-spacing: 0.24em; margin-bottom: 22px; }
     .hero-sub { font-size: 15px; margin: -4px auto 32px; padding: 0 6px; }
     .who h2 { font-size: clamp(34px, 8vw, 56px); }
     .who-body { font-size: 16px; }
-    .who-body ul li { font-size: 15px; }
-    .who-body p { margin-bottom: 22px; }
-    .who-pledge { font-size: clamp(24px, 6.5vw, 32px); margin-top: 40px; }
+    .service-text { font-size: 16px; }
     .cta-row { flex-direction: column; width: 100%; gap: 12px; }
     .cta-row .btn { width: 100%; justify-content: center; }
     .lang-toggle button { padding: 5px 11px; font-size: 10px; }
@@ -376,13 +346,12 @@
   </div>
 </nav>
 
-<!-- ============ HERO ============ -->
-<header class="hero" data-screen-label="01 Hero">
+<!-- HERO -->
+<header class="hero">
   <canvas id="particle-canvas"></canvas>
-
   <div class="hero-content">
     <div class="hero-kicker" data-i18n="hero.kicker"></div>
-    <h1 class="hero-title" data-i18n-html="hero.title">Bem-vindo <em>ao futuro</em> do imobiliário.</h1>
+    <h1 class="hero-title" data-i18n-html="hero.title">Bem-vindo ao <em>futuro</em> do imobiliário.</h1>
     <p class="hero-sub" data-i18n="hero.sub"></p>
     <div class="cta-row">
       <a href="/venda/?lang=pt" class="btn btn-primary" id="hero-cta1">
@@ -397,16 +366,14 @@
   </div>
 </header>
 
-<!-- ============ WHO WE ARE ============ -->
-<section id="manifesto" class="story who reveal" data-screen-label="02 Who We Are">
+<!-- WHO WE ARE -->
+<section id="manifesto" class="story who reveal" id="who-section">
   <div class="section-label" data-i18n="who.label">Quem Somos</div>
   <h2 data-i18n-html="who.title">Diferentes<br><em>por natureza.</em></h2>
-  <div class="who-body" id="who-body-content">
-    <!-- injected by setLang -->
-  </div>
+  <div class="who-body" id="who-body-content"></div>
 </section>
 
-<!-- ============ FOOTER ============ -->
+<!-- FOOTER -->
 <footer>
   <div class="logo">Magna<span class="dot">·</span>Properties</div>
   <ul class="footer-links">
@@ -416,32 +383,43 @@
 </footer>
 
 <script>
-/* ============ I18N ============ */
 const whoBodyContent = {
   pt: `
-    <p>A Magna Properties é uma empresa de consultoria imobiliária sediada no Algarve, especializada em identificar oportunidades de investimento com elevado potencial.</p>
-    <p>Atuamos num mercado exigente e competitivo, onde cada decisão requer conhecimento profundo, visão estratégica e um acompanhamento próximo e personalizado.</p>
+    <p>A Magna Properties é uma empresa de consultoria imobiliária sediada no Algarve.</p>
     <p>Acreditamos que cada investimento merece uma abordagem exclusiva e sempre assente na transparência.</p>
-    <p>Os nossos serviços incluem:</p>
-    <ul>
-      <li>Análise e avaliação de oportunidades de investimento imobiliário.</li>
-      <li>Elaboração de dossiês de negócio detalhados, dirigidos a investidores nacionais e internacionais, com ou sem experiência.</li>
-      <li>Acompanhamento integral em processos de aquisição, construção, reabilitação e revenda.</li>
-      <li>Promoção e comercialização de novos empreendimentos imobiliários.</li>
-    </ul>
+    <div class="services-strip">
+      <div class="service-item">
+        <span class="service-text">Análise e avaliação de oportunidades de investimento imobiliário.</span>
+      </div>
+      <div class="service-item">
+        <span class="service-text">Elaboração de dossiês de negócio detalhados, dirigidos a investidores nacionais e internacionais, com ou sem experiência.</span>
+      </div>
+      <div class="service-item">
+        <span class="service-text">Acompanhamento integral em processos de aquisição, construção, reabilitação e revenda.</span>
+      </div>
+      <div class="service-item">
+        <span class="service-text">Promoção e comercialização de novos empreendimentos imobiliários.</span>
+      </div>
+    </div>
     <div class="who-pledge">Rule #1: Speed.</div>
   `,
   en: `
-    <p>Magna Properties is a real estate advisory company based in the Algarve, specialized in identifying high-potential investment opportunities.</p>
-    <p>We operate in a demanding and competitive market, where every decision requires deep knowledge, strategic vision, and close, personalized support.</p>
+    <p>Magna Properties is a real estate advisory company based in the Algarve.</p>
     <p>We believe every investment deserves an exclusive approach, always grounded in transparency.</p>
-    <p>Our services include:</p>
-    <ul>
-      <li>Analysis and evaluation of real estate investment opportunities.</li>
-      <li>Preparation of detailed business dossiers, aimed at national and international investors, with or without prior experience.</li>
-      <li>Full support throughout acquisition, construction, rehabilitation, and resale processes.</li>
-      <li>Promotion and commercialization of new real estate developments.</li>
-    </ul>
+    <div class="services-strip">
+      <div class="service-item">
+        <span class="service-text">Analysis and evaluation of real estate investment opportunities.</span>
+      </div>
+      <div class="service-item">
+        <span class="service-text">Preparation of detailed business dossiers, aimed at national and international investors, with or without prior experience.</span>
+      </div>
+      <div class="service-item">
+        <span class="service-text">Full support throughout acquisition, construction, rehabilitation, and resale processes.</span>
+      </div>
+      <div class="service-item">
+        <span class="service-text">Promotion and commercialization of new real estate developments.</span>
+      </div>
+    </div>
     <div class="who-pledge">Rule #1: Speed.</div>
   `
 };
@@ -474,10 +452,7 @@ const dict = {
 let currentLang = 'pt';
 
 function atualizarLinksLang(lang) {
-  const links = {
-    'hero-cta1': '/venda/?lang=' + lang,
-    'hero-cta2': '/investir/?lang=' + lang,
-  };
+  const links = { 'hero-cta1': '/venda/?lang=' + lang, 'hero-cta2': '/investir/?lang=' + lang };
   Object.entries(links).forEach(([id, href]) => {
     const el = document.getElementById(id);
     if (el) el.href = href;
@@ -487,7 +462,6 @@ function atualizarLinksLang(lang) {
 function setLang(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
-
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (dict[lang][key] !== undefined) el.textContent = dict[lang][key];
@@ -496,18 +470,23 @@ function setLang(lang) {
     const key = el.getAttribute('data-i18n-html');
     if (dict[lang][key] !== undefined) el.innerHTML = dict[lang][key];
   });
-
-  // Hide elements whose translation is empty
   document.querySelectorAll('[data-i18n], [data-i18n-html]').forEach(el => {
     const key = el.getAttribute('data-i18n') || el.getAttribute('data-i18n-html');
     const val = dict[lang][key];
-    el.style.display = (val === '' || val === undefined && el.textContent.trim() === '') ? 'none' : '';
+    el.style.display = (val === '' || (val === undefined && el.textContent.trim() === '')) ? 'none' : '';
   });
-
-  // Inject who-body content
   const whoBody = document.getElementById('who-body-content');
-  if (whoBody) whoBody.innerHTML = whoBodyContent[lang];
-
+  if (whoBody) {
+    whoBody.innerHTML = whoBodyContent[lang];
+    // re-trigger stagger if already visible
+    const section = document.getElementById('manifesto');
+    if (section && section.classList.contains('who-section-visible')) {
+      whoBody.querySelectorAll('p, .services-strip, .who-pledge').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      });
+    }
+  }
   document.getElementById('lang-pt').classList.toggle('active', lang === 'pt');
   document.getElementById('lang-en').classList.toggle('active', lang === 'en');
   atualizarLinksLang(lang);
@@ -515,94 +494,62 @@ function setLang(lang) {
 
 document.getElementById('lang-pt').addEventListener('click', () => setLang('pt'));
 document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
-
 setLang('pt');
 
-/* ============ SCROLL REVEAL ============ */
+/* SCROLL REVEAL */
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
+      // stagger the who section children
+      if (e.target.classList.contains('who')) {
+        e.target.classList.add('who-section-visible');
+      }
       io.unobserve(e.target);
     }
   });
-}, { threshold: 0.15 });
+}, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-/* ============ PARTICLE CANVAS ============ */
+/* PARTICLE CANVAS */
 (function(){
   const canvas = document.getElementById('particle-canvas');
   const ctx = canvas.getContext('2d');
   let W, H, particles = [];
-  const COUNT = 70;
-  const LINK_DIST = 150;
+  const COUNT = 70, LINK_DIST = 150;
 
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = canvas.getBoundingClientRect();
-    W = Math.max(rect.width, window.innerWidth);
-    H = Math.max(rect.height, window.innerHeight);
-    canvas.style.width = W + 'px';
-    canvas.style.height = H + 'px';
-    canvas.width = Math.floor(W * dpr);
-    canvas.height = Math.floor(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const dpr = Math.min(window.devicePixelRatio||1, 2);
+    W = Math.max(canvas.getBoundingClientRect().width, window.innerWidth);
+    H = Math.max(canvas.getBoundingClientRect().height, window.innerHeight);
+    canvas.style.width = W+'px'; canvas.style.height = H+'px';
+    canvas.width = Math.floor(W*dpr); canvas.height = Math.floor(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
   }
-
   function init() {
-    resize();
-    particles = [];
-    for (let i = 0; i < COUNT; i++) {
-      particles.push({
-        x: Math.random() * W,
-        y: Math.random() * H,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 1.4 + 0.6
-      });
-    }
+    resize(); particles = [];
+    for(let i=0;i<COUNT;i++) particles.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,r:Math.random()*1.4+.6});
   }
-
   function step() {
-    ctx.clearRect(0, 0, W, H);
-    for (const p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0 || p.x > W) p.vx *= -1;
-      if (p.y < 0 || p.y > H) p.vy *= -1;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(184, 147, 90, 0.55)';
-      ctx.fill();
+    ctx.clearRect(0,0,W,H);
+    for(const p of particles){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(184,147,90,0.55)'; ctx.fill();
     }
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const a = particles[i], b = particles[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < LINK_DIST) {
-          const alpha = (1 - dist / LINK_DIST) * 0.18;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(184, 147, 90, ${alpha})`;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
+    for(let i=0;i<particles.length;i++) for(let j=i+1;j<particles.length;j++){
+      const a=particles[i],b=particles[j],dx=a.x-b.x,dy=a.y-b.y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<LINK_DIST){
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=`rgba(184,147,90,${(1-dist/LINK_DIST)*.18})`; ctx.lineWidth=1; ctx.stroke();
       }
     }
     requestAnimationFrame(step);
   }
-
-  window.addEventListener('resize', () => {
-    resize();
-    for (const p of particles) {
-      if (p.x > W) p.x = Math.random() * W;
-      if (p.y > H) p.y = Math.random() * H;
-    }
-  });
-  init();
-  step();
+  window.addEventListener('resize',()=>{resize();for(const p of particles){if(p.x>W)p.x=Math.random()*W;if(p.y>H)p.y=Math.random()*H;}});
+  init(); step();
 })();
 </script>
 </body>
