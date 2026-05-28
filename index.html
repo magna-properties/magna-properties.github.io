@@ -215,6 +215,19 @@
     color: rgba(242, 237, 228, 0.75);
   }
 
+  /* ===== SERVICES SECTION ===== */
+  .services-section { border-top: 1px solid var(--line); }
+  .services-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: clamp(44px, 6vw, 88px);
+    line-height: 1.0;
+    text-align: center;
+    margin-bottom: 56px;
+    letter-spacing: -0.02em;
+  }
+  .services-title em { font-style: italic; color: var(--gold-bright); font-weight: 300; }
+
   /* ===== SERVICES — REVEAL STRIP ===== */
   .services-strip {
     margin: 56px auto 0;
@@ -338,6 +351,7 @@
   <div class="nav-right">
     <ul class="nav-links">
       <li><a href="#manifesto" data-i18n="nav.about">Quem Somos</a></li>
+      <li><a href="#servicos" data-i18n="nav.services">Serviços</a></li>
     </ul>
     <div class="lang-toggle" role="tablist" aria-label="Language">
       <button id="lang-pt" type="button" class="active">PT</button>
@@ -373,11 +387,25 @@
   <div class="who-body" id="who-body-content"></div>
 </section>
 
+<!-- OS NOSSOS SERVIÇOS -->
+<section id="servicos" class="story services-section reveal">
+  <div class="section-label" data-i18n="serv.label">Os Nossos Serviços</div>
+  <h2 class="services-title" data-i18n-html="serv.title">O que<br><em>fazemos.</em></h2>
+  <div class="services-strip">
+    <div class="service-item"><span class="service-text" data-i18n="serv.s1">Análise e avaliação de investimentos imobiliários.</span></div>
+    <div class="service-item"><span class="service-text" data-i18n="serv.s2">Seleção de parceiros especializados para realização de obras.</span></div>
+    <div class="service-item"><span class="service-text" data-i18n="serv.s3">Elaboração de dossiês de investimento "chave na mão".</span></div>
+    <div class="service-item"><span class="service-text" data-i18n="serv.s4">Acompanhamento desde o processo de aquisição à revenda.</span></div>
+    <div class="service-item"><span class="service-text" data-i18n="serv.s5">Promoção e comercialização de novos empreendimentos.</span></div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="logo">Magna<span class="dot">·</span>Properties</div>
   <ul class="footer-links">
     <li><a href="#manifesto" data-i18n="foot.about">Quem Somos</a></li>
+    <li><a href="#servicos" data-i18n="foot.services">Serviços</a></li>
   </ul>
   <div class="copy">© 2026 Magna Properties, Lda. · Algarve</div>
 </footer>
@@ -386,40 +414,14 @@
 const whoBodyContent = {
   pt: `
     <p>A Magna Properties é uma empresa de consultoria imobiliária sediada no Algarve.</p>
-    <p>Acreditamos que cada investimento merece uma abordagem exclusiva e sempre assente na transparência.</p>
-    <div class="services-strip">
-      <div class="service-item">
-        <span class="service-text">Análise e avaliação de oportunidades de investimento imobiliário.</span>
-      </div>
-      <div class="service-item">
-        <span class="service-text">Elaboração de dossiês de negócio detalhados, dirigidos a investidores nacionais e internacionais, com ou sem experiência.</span>
-      </div>
-      <div class="service-item">
-        <span class="service-text">Acompanhamento integral em processos de aquisição, construção, reabilitação e revenda.</span>
-      </div>
-      <div class="service-item">
-        <span class="service-text">Promoção e comercialização de novos empreendimentos imobiliários.</span>
-      </div>
-    </div>
+    <p>Atuamos num mercado exigente e competitivo, onde cada decisão requer conhecimento, visão e um acompanhamento diferenciado.</p>
+    <p>Acreditamos que cada investidor merece uma abordagem exclusiva e assente na transparência.</p>
     <div class="who-pledge">Rule #1: Speed.</div>
   `,
   en: `
     <p>Magna Properties is a real estate advisory company based in the Algarve.</p>
-    <p>We believe every investment deserves an exclusive approach, always grounded in transparency.</p>
-    <div class="services-strip">
-      <div class="service-item">
-        <span class="service-text">Analysis and evaluation of real estate investment opportunities.</span>
-      </div>
-      <div class="service-item">
-        <span class="service-text">Preparation of detailed business dossiers, aimed at national and international investors, with or without prior experience.</span>
-      </div>
-      <div class="service-item">
-        <span class="service-text">Full support throughout acquisition, construction, rehabilitation, and resale processes.</span>
-      </div>
-      <div class="service-item">
-        <span class="service-text">Promotion and commercialization of new real estate developments.</span>
-      </div>
-    </div>
+    <p>We operate in a demanding and competitive market, where every decision requires knowledge, vision, and a differentiated approach.</p>
+    <p>We believe every investor deserves an exclusive approach, always grounded in transparency.</p>
     <div class="who-pledge">Rule #1: Speed.</div>
   `
 };
@@ -427,6 +429,7 @@ const whoBodyContent = {
 const dict = {
   en: {
     "nav.about": "About",
+    "nav.services": "Services",
     "hero.kicker": "",
     "hero.title": "Welcome to the <em>future</em> of real estate.",
     "hero.sub": "",
@@ -434,10 +437,19 @@ const dict = {
     "hero.cta2": "I Want to Invest",
     "who.label": "Who We Are",
     "who.title": "Different<br><em>by nature.</em>",
-    "foot.about": "About"
+    "serv.label": "Our Services",
+    "serv.title": "What we<br><em>do.</em>",
+    "serv.s1": "Analysis and evaluation of real estate investments.",
+    "serv.s2": "Selection of specialised partners for construction works.",
+    "serv.s3": "Preparation of turnkey investment dossiers.",
+    "serv.s4": "Full support from acquisition through to resale.",
+    "serv.s5": "Promotion and commercialisation of new developments.",
+    "foot.about": "About",
+    "foot.services": "Services"
   },
   pt: {
     "nav.about": "Quem Somos",
+    "nav.services": "Serviços",
     "hero.kicker": "",
     "hero.title": "Bem-vindo ao <em>futuro</em> do imobiliário.",
     "hero.sub": "",
@@ -445,7 +457,15 @@ const dict = {
     "hero.cta2": "Quero Investir",
     "who.label": "Quem Somos",
     "who.title": "Diferentes<br><em>por natureza.</em>",
-    "foot.about": "Quem Somos"
+    "serv.label": "Os Nossos Serviços",
+    "serv.title": "O que<br><em>fazemos.</em>",
+    "serv.s1": "Análise e avaliação de investimentos imobiliários.",
+    "serv.s2": "Seleção de parceiros especializados para realização de obras.",
+    "serv.s3": "Elaboração de dossiês de investimento \"chave na mão\".",
+    "serv.s4": "Acompanhamento desde o processo de aquisição à revenda.",
+    "serv.s5": "Promoção e comercialização de novos empreendimentos.",
+    "foot.about": "Quem Somos",
+    "foot.services": "Serviços"
   }
 };
 
