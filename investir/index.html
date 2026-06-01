@@ -183,7 +183,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);m
           </select>
         </div>
         <div class="ff">
-          <label id="lbl-freg">Freguesia <span class="req">*</span></label>
+          <label id="lbl-freg">Freguesia / Zona <span class="req">*</span></label>
           <select id="b-freg"><option value="">— Selecione primeiro o Concelho —</option></select>
         </div>
       </div>
@@ -253,7 +253,7 @@ const T = {
     'lbl-nome':'Nome', 'lbl-tel':'Contacto Telefónico', 'lbl-email':'Email',
     'lbl-tipo':'Tipo de imóvel','lbl-tipologia':'Tipologia mínima desejada',
     'lbl-orc':'Orçamento','lbl-finalidade':'Finalidade da compra',
-    'lbl-conc':'Concelho','lbl-freg':'Freguesia',
+    'lbl-conc':'Concelho','lbl-freg':'Freguesia / Zona',
     'lbl-carac-sub':'Selecione todas as que se aplicam',
     'lbl-obs':'Outras características importantes para si','lbl-opt':'(opcional)',
     'txt-privacy':'<strong>Privacidade:</strong> A informação submetida é tratada de forma confidencial pela Magna Properties e não é partilhada com terceiros.',
@@ -277,7 +277,7 @@ const T = {
     'lbl-nome':'Name','lbl-tel':'Phone Number','lbl-email':'Email',
     'lbl-tipo':'Property type <span class="req">*</span>','lbl-tipologia':'Minimum typology <span class="req">*</span>',
     'lbl-orc':'Budget','lbl-finalidade':'Purpose of purchase <span class="req">*</span>',
-    'lbl-conc':'Municipality <span class="req">*</span>','lbl-freg':'Parish <span class="req">*</span>',
+    'lbl-conc':'Municipality <span class="req">*</span>','lbl-freg':'Parish / Area <span class="req">*</span>',
     'lbl-carac-sub':'Select all that apply',
     'lbl-obs':'Other important features for you','lbl-opt':'(optional)',
     'txt-privacy':'<strong>Privacy:</strong> All submitted information is treated confidentially by Magna Properties and is not shared with third parties.',
@@ -424,22 +424,13 @@ function validateAndSubmit(){
 
 // ── FREGUESIAS ──
 const FREGUESIAS = {
-  'Albufeira':['Albufeira e Olhos de Água','Ferreiras','Guia','Paderne'],
-  'Alcoutim':['Alcoutim e Pereiro','Giões','Martim Longo','Vaqueiros'],
-  'Aljezur':['Aljezur','Bordeira','Odeceixe','Rogil'],
-  'Castro Marim':['Altura','Castro Marim','Odeleite'],
-  'Faro':['Conceição e Estoi','Faro (Sé e São Pedro)','Montenegro','Santa Bárbara de Nexe'],
-  'Lagoa':['Estômbar e Parchal','Ferragudo','Lagoa e Carvoeiro','Porches'],
-  'Lagos':['Bensafrim e Barão de São João','Luz','Odiáxere','São Sebastião e Santa Maria'],
-  'Loulé':['Almancil','Alte','Ameixial','Boliqueime','Loulé (São Clemente)','Loulé (São Sebastião)','Querença, Tôr e Benafim','Quarteira','Salir'],
-  'Monchique':['Alferce','Marmelete','Monchique'],
-  'Olhão':['Moncarapacho e Fuseta','Olhão','Pechão','Quelfes'],
-  'Portimão':['Alvor','Portimão'],
-  'São Brás de Alportel':['São Brás de Alportel'],
-  'Silves':['Alcantarilha e Pêra','Armação de Pêra','Mexilhoeira Grande','São Bartolomeu de Messines','São Marcos da Serra','Silves'],
-  'Tavira':['Cachopo','Conceição e Cabanas de Tavira','Luz de Tavira e Santo Estêvão','Santa Lúzia','Tavira (Santa Maria e Santiago)'],
-  'Vila do Bispo':['Budens','Sagres','Vila do Bispo e Raposeira'],
-  'Vila Real de Santo António':['Monte Gordo','Vila Nova de Cacela','Vila Real de Santo António']
+  'Albufeira':['Albufeira e Olhos de Água','Guia'],
+  'Faro':['Faro (Sé e São Pedro)','Montenegro'],
+  'Lagoa':['Lagoa e Carvoeiro','Ferragudo','Porches'],
+  'Lagos':['Lagos','Luz','Odiáxere','Bensafrim e Barão de São João'],
+  'Loulé':['Almancil','Quinta do Lago','Vale do Lobo','Vale do Garrão','Ancão','Quarteira','Vilamoura','Loulé'],
+  'Olhão':['Olhão','Quelfes','Moncarapacho e Fuseta','Pechão'],
+  'Silves':['Alcantarilha e Pêra','Armação de Pêra','Silves']
 };
 function popFregInvestir(){
   const c = document.getElementById('b-concelho').value;
