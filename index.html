@@ -425,11 +425,11 @@
     <h1 class="hero-title" data-i18n-html="hero.title">Bem-vindo ao <em>futuro</em> do imobiliário.</h1>
     <p class="hero-sub" data-i18n="hero.sub"></p>
     <div class="cta-row">
-      <a href="/venda/?lang=pt" class="btn btn-primary" id="hero-cta1">
+      <a href="https://form.typeform.com/to/cgYuPLqD" class="btn btn-primary" id="hero-cta1" target="_blank" rel="noopener">
         <span data-i18n="hero.cta1">Quero Apresentar Negócio</span>
         <span class="arrow">→</span>
       </a>
-      <a href="/investir/?lang=pt" class="btn btn-ghost" id="hero-cta2">
+      <a href="https://form.typeform.com/to/cqE0LE1M" class="btn btn-ghost" id="hero-cta2" target="_blank" rel="noopener">
         <span data-i18n="hero.cta2">Quero Investir</span>
         <span class="arrow">→</span>
       </a>
@@ -538,14 +538,6 @@ const dict = {
 
 let currentLang = 'pt';
 
-function atualizarLinksLang(lang) {
-  const links = { 'hero-cta1': '/venda/?lang=' + lang, 'hero-cta2': '/investir/?lang=' + lang };
-  Object.entries(links).forEach(([id, href]) => {
-    const el = document.getElementById(id);
-    if (el) el.href = href;
-  });
-}
-
 function setLang(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
@@ -576,7 +568,6 @@ function setLang(lang) {
   }
   document.getElementById('lang-pt').classList.toggle('active', lang === 'pt');
   document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-  atualizarLinksLang(lang);
 }
 
 document.getElementById('lang-pt').addEventListener('click', () => setLang('pt'));
