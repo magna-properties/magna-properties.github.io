@@ -52,7 +52,8 @@
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.65rem;
     font-weight: 500;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--ink);
   }
   .logo .dot { color: var(--gold); margin: 0 6px; }
@@ -126,9 +127,9 @@
   .hero-sub {
     max-width: 640px;
     margin: -8px auto 48px;
-    font-size: 17px;
+    font-size: 19px;
     font-weight: 300;
-    line-height: 1.6;
+    line-height: 1.65;
     color: rgba(242, 237, 228, 0.78);
     text-align: center;
   }
@@ -136,7 +137,7 @@
   h1.hero-title {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 400;
-    font-size: clamp(40px, 5.6vw, 84px);
+    font-size: clamp(46px, 6.4vw, 96px);
     line-height: 1.05;
     letter-spacing: -0.015em;
     color: var(--ink);
@@ -391,8 +392,8 @@
     html, body { overflow-x: hidden; max-width: 100vw; }
     section.story { padding: 96px 24px; }
     .hero { padding: 110px 20px 80px; }
-    h1.hero-title { font-size: clamp(34px, 8.5vw, 52px); margin-bottom: 28px; }
-    .hero-sub { font-size: 15px; margin: -4px auto 32px; padding: 0 6px; }
+    h1.hero-title { font-size: clamp(36px, 9.2vw, 56px); margin-bottom: 28px; }
+    .hero-sub { font-size: 16px; margin: -4px auto 32px; padding: 0 6px; }
     .who h2 { font-size: clamp(34px, 8vw, 56px); }
     .who-body { font-size: 16px; }
     .service-text { font-size: 16px; }
@@ -454,8 +455,6 @@
     <div class="service-item"><span class="service-text" data-i18n="serv.s1">Avaliação e Distribuição de Investimentos Imobiliários.</span></div>
     <div class="service-item"><span class="service-text" data-i18n="serv.s2">Angariação, Promoção e Venda de Imóveis.</span></div>
     <div class="service-item"><span class="service-text" data-i18n="serv.s3">Acompanhamento durante todo o Processo de Aquisição e Venda.</span></div>
-    <!--<div class="service-item"><span class="service-text" data-i18n="serv.s4">Acompanhamento desde aquisição à revenda.</span></div>-->
-    <!--<div class="service-item"><span class="service-text" data-i18n="serv.s5">Promoção e Comercialização de Novos Empreendimentos.</span></div>-->
   </div>
 </section>
 
@@ -511,8 +510,6 @@ const dict = {
     "serv.s1": "Real Estate Investment Assessment and Distribution.",
     "serv.s2": "Property Acquisition, Marketing and Sales.",
     "serv.s3": "Full Support Throughout the Acquisition and Sales Process.",
-    /*"serv.s4": "Full support from acquisition through to resale.",*/
-    /*"serv.s5": "Promotion and commercialisation of new developments.",*/
     "foot.about": "About",
     "foot.services": "Services"
   },
@@ -531,8 +528,6 @@ const dict = {
     "serv.s1": "Avaliação e Distribuição de Investimentos Imobiliários.",
     "serv.s2": "Angariação, Promoção e Venda de Imóveis.",
     "serv.s3": "Acompanhamento durante todo o Processo de Aquisição e Venda.",
-    /*"serv.s4": "Acompanhamento desde aquisição à revenda.",*/
-    /*"serv.s5": "Promoção e Comercialização de Novos Empreendimentos.",*/
     "foot.about": "Quem Somos",
     "foot.services": "Serviços"
   }
@@ -559,7 +554,6 @@ function setLang(lang) {
   const whoBody = document.getElementById('who-body-content');
   if (whoBody) {
     whoBody.innerHTML = whoBodyContent[lang];
-    // re-trigger stagger if already visible
     const section = document.getElementById('manifesto');
     if (section && section.classList.contains('who-section-visible')) {
       whoBody.querySelectorAll('p, .services-strip, .who-pledge').forEach(el => {
@@ -576,12 +570,10 @@ document.getElementById('lang-pt').addEventListener('click', () => setLang('pt')
 document.getElementById('lang-en').addEventListener('click', () => setLang('en'));
 setLang('pt');
 
-/* SCROLL REVEAL */
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
-      // stagger the who section children
       if (e.target.classList.contains('who')) {
         e.target.classList.add('who-section-visible');
       }
@@ -591,7 +583,6 @@ const io = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-/* PARTICLE CANVAS */
 (function(){
   const canvas = document.getElementById('particle-canvas');
   const ctx = canvas.getContext('2d');
