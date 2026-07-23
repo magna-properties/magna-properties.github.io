@@ -317,7 +317,12 @@
     gap: 16px;
   }
   footer .logo { font-size: 1.8rem; }
-  footer .footer-links { display: flex; gap: 32px; list-style: none; }
+
+  footer .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
   footer .footer-links a {
     color: var(--muted);
     text-decoration: none;
@@ -327,7 +332,6 @@
     transition: color 0.3s ease;
   }
   footer .footer-links a:hover { color: var(--gold); }
-  footer .copy { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
 
   /* ===== FOOTER SOCIAL ===== */
   .footer-social {
@@ -361,6 +365,68 @@
     width: 38px;
     height: 38px;
   }
+
+  /* ===== FOOTER LEGAL DIVIDER ===== */
+  .footer-divider {
+    width: 100%;
+    max-width: 560px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--line), transparent);
+    margin: 4px 0;
+  }
+
+  /* ===== FOOTER LEGAL LINKS ===== */
+  .footer-legal {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    list-style: none;
+    width: 100%;
+  }
+  .footer-legal li {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .footer-legal li + li::before {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 9px;
+    background: rgba(138, 132, 121, 0.25);
+    margin: 0 12px;
+  }
+  .footer-legal a {
+    color: rgba(138, 132, 121, 0.55);
+    text-decoration: none;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+  }
+  .footer-legal a:hover { color: var(--gold); }
+
+  @media (max-width: 900px) {
+    .footer-legal {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 0;
+    }
+    .footer-legal li + li::before {
+      margin: 0 10px;
+    }
+  }
+
+  /* ===== FOOTER COPYRIGHT ===== */
+  footer .copy {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
 
   /* ===== SCROLL FADE ===== */
   .reveal {
@@ -403,6 +469,7 @@
     .cta-row .btn { width: 100%; justify-content: center; }
     .lang-toggle button { padding: 5px 11px; font-size: 10px; }
     footer { padding: 40px 24px; }
+    .footer-legal { gap: 6px 14px; }
   }
 </style>
 </head>
@@ -463,6 +530,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="logo">Magna<span class="dot">·</span>Properties</div>
+
   <ul class="footer-links">
     <li><a href="#manifesto" data-i18n="foot.about">Quem Somos</a></li>
     <li><a href="#servicos" data-i18n="foot.services">Serviços</a></li>
@@ -477,7 +545,21 @@
     </a>
   </div>
 
-  <div class="copy">© 2026 Magna Properties, Lda. · Algarve</div>
+  <!-- Divisor subtil antes dos links legais -->
+  <div class="footer-divider" aria-hidden="true"></div>
+
+  <!-- Links legais obrigatórios -->
+  <ul class="footer-legal" aria-label="Informação legal">
+    <li><a href="/termos-e-condicoes" data-i18n="foot.terms">Termos e Condições</a></li>
+    <li><a href="/politica-de-privacidade" data-i18n="foot.privacy">Política de Privacidade</a></li>
+    <li><a href="/politica-de-cookies" data-i18n="foot.cookies">Política de Cookies</a></li>
+    <li><a href="https://www.livroreclamacoes.pt/inicio" target="_blank" rel="noopener" data-i18n="foot.complaints">Livro de Reclamações</a></li>
+    <li><a href="/resolucao-alternativa-de-litigios" data-i18n="foot.ral">Resolução Alternativa de Litígios</a></li>
+    <li><a href="/gerir-dados" data-i18n="foot.data">Gerir Dados</a></li>
+  </ul>
+
+  <div class="copy">© 2026 Magna Properties, Lda. · AMI 14969 · Algarve</div>
+
 </footer>
 
 <script>
@@ -513,7 +595,13 @@ const dict = {
     "serv.s2": "Property Acquisition, Marketing and Sales.",
     "serv.s3": "Full Support Throughout the Acquisition and Sales Process.",
     "foot.about": "About",
-    "foot.services": "Services"
+    "foot.services": "Services",
+    "foot.terms": "Terms & Conditions",
+    "foot.privacy": "Privacy Policy",
+    "foot.cookies": "Cookie Policy",
+    "foot.complaints": "Complaints Book",
+    "foot.ral": "Alternative Dispute Resolution",
+    "foot.data": "Manage Data"
   },
   pt: {
     "nav.about": "Quem Somos",
@@ -531,7 +619,13 @@ const dict = {
     "serv.s2": "Angariação, Promoção e Venda de Imóveis.",
     "serv.s3": "Acompanhamento durante todo o Processo de Aquisição e Venda.",
     "foot.about": "Quem Somos",
-    "foot.services": "Serviços"
+    "foot.services": "Serviços",
+    "foot.terms": "Termos e Condições",
+    "foot.privacy": "Política de Privacidade",
+    "foot.cookies": "Política de Cookies",
+    "foot.complaints": "Livro de Reclamações",
+    "foot.ral": "Resolução Alternativa de Litígios",
+    "foot.data": "Gerir Dados"
   }
 };
 
