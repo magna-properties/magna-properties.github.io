@@ -5,25 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="icon" type="image/x-icon" href="/favicon.ico">
 <meta name="theme-color" content="#06050a">
-<title>Política de Privacidade — Magna Properties</title>
+<title id="page-title">Política de Privacidade — Magna Properties</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#06050a;--bg-soft:#0c0a12;--gold:#b8935a;--gold-bright:#d4a96a;--ink:#f2ede4;--muted:#8a8479;--line:rgba(242,237,228,0.08)}
+  :root{--bg:#06050a;--gold:#b8935a;--gold-bright:#d4a96a;--ink:#f2ede4;--muted:#8a8479;--line:rgba(242,237,228,0.08)}
   *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:28px 56px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(6,5,10,0.92),rgba(6,5,10,0));backdrop-filter:blur(2px)}
   .logo{font-family:"Cormorant Garamond",serif;font-size:1.65rem;font-weight:500;line-height:1;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);text-decoration:none}
   .logo .dot{color:var(--gold);margin:0 6px}
-  .nav-back{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s ease;display:flex;align-items:center;gap:8px}
+  .nav-right{display:flex;align-items:center;gap:24px}
+  .nav-back{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s ease}
   .nav-back:hover{color:var(--gold)}
+  .lang-toggle{border:1px solid var(--line);border-radius:999px;padding:6px;display:inline-flex;background:rgba(12,10,18,0.5)}
+  .lang-toggle button{background:none;border:none;color:var(--muted);font-family:"DM Sans",sans-serif;font-size:11px;font-weight:400;letter-spacing:0.15em;padding:6px 14px;border-radius:999px;cursor:pointer;transition:all 0.3s ease}
+  .lang-toggle button.active{background:var(--gold);color:var(--bg)}
   .legal-page{max-width:760px;margin:0 auto;padding:160px 32px 120px}
   .legal-kicker{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:flex;align-items:center;gap:16px}
   .legal-kicker::before{content:"";width:36px;height:1px;background:var(--gold);opacity:0.5}
-  .legal-page h1{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-0.015em;color:var(--ink);margin-bottom:16px}
+  .legal-page h1{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-0.015em;color:var(--ink);margin-bottom:40px}
   .legal-page h1 em{font-style:italic;color:var(--gold-bright);font-weight:300}
-  .legal-meta{font-size:11px;color:var(--muted);letter-spacing:0.1em;margin-bottom:64px;padding-bottom:32px;border-bottom:1px solid var(--line)}
   .legal-page h2{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(20px,2.5vw,28px);letter-spacing:0.01em;color:var(--ink);margin:48px 0 16px}
   .legal-page p{font-size:15px;line-height:1.8;color:rgba(242,237,228,0.72);margin-bottom:16px}
   .legal-page ul,.legal-page ol{margin:0 0 16px 20px}
@@ -32,10 +35,8 @@
   .legal-page a:hover{border-color:var(--gold)}
   .legal-highlight{border-left:1px solid var(--gold);padding:16px 24px;margin:32px 0;background:rgba(184,147,90,0.04)}
   .legal-highlight p{margin:0;color:rgba(242,237,228,0.85)}
-  .rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
-  .right-card{border:1px solid var(--line);padding:20px 24px;border-radius:2px}
-  .right-card strong{display:block;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:400}
-  .right-card p{font-size:13px;margin:0;color:rgba(242,237,228,0.6)}
+  [data-lang]{display:none}
+  [data-lang].active{display:block}
   footer{border-top:1px solid var(--line);padding:56px 24px 40px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
   footer .logo{font-size:1.8rem}
   footer .footer-links{display:flex;gap:32px;list-style:none}
@@ -52,89 +53,149 @@
   .footer-legal a{color:rgba(138,132,121,0.55);text-decoration:none;border-bottom:none;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.3s ease;white-space:nowrap}
   .footer-legal a:hover{color:var(--gold)}
   footer .copy{font-size:11px;color:var(--muted);letter-spacing:0.1em}
-  @media(max-width:900px){nav{padding:18px 20px}.footer-legal{flex-wrap:wrap;gap:6px 0}.footer-legal li+li::before{margin:0 10px}.rights-grid{grid-template-columns:1fr}}
+  @media(max-width:900px){nav{padding:18px 20px}.footer-legal{flex-wrap:wrap;gap:6px 0}.footer-legal li+li::before{margin:0 10px}}
   @media(max-width:768px){.legal-page{padding:120px 24px 80px}}
+  
+  .rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+  .right-card{border:1px solid var(--line);padding:20px 24px;border-radius:2px}
+  .right-card strong{display:block;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:400}
+  .right-card p{font-size:13px;margin:0;color:rgba(242,237,228,0.6)}
+  @media(max-width:600px){.rights-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
-<body>
-<nav>
+<body><nav>
   <a href="/" class="logo">Magna<span class="dot">·</span>Properties</a>
-  <a href="/" class="nav-back">← Voltar</a>
+  <div class="nav-right">
+    <a href="/" class="nav-back" id="nav-back-link">← Voltar</a>
+    <div class="lang-toggle" role="tablist" aria-label="Language">
+      <button id="lang-pt" type="button" class="active" onclick="setLang('pt')">PT</button>
+      <button id="lang-en" type="button" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
 </nav>
-
 <main class="legal-page">
+<div data-lang="pt">
+
   <div class="legal-kicker">Legal</div>
   <h1>Política de <em>Privacidade</em></h1>
 
   <h2>1. Responsável pelo Tratamento</h2>
-  <p><strong>Magna Properties, Lda.</strong>, com NIF <strong>519380428</strong>, AMI n.º <strong>14969</strong>, sediada no Algarve, Portugal, é a entidade responsável pelo tratamento dos dados pessoais recolhidos através deste website.</p>
-  <p>Para qualquer questão relacionada com privacidade e proteção de dados, pode contactar-nos através do email: <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a></p>
+  <p><strong>Magna Properties, Lda.</strong>, NIF <strong>519380428</strong>, AMI n.º <strong>14969</strong>, Algarve, Portugal. Contacto de privacidade: <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a></p>
 
   <h2>2. Dados Recolhidos e Finalidades</h2>
-  <p>Recolhemos os seguintes dados pessoais, exclusivamente através dos formulários disponibilizados via Typeform:</p>
+  <p>Recolhemos os seguintes dados através dos formulários Typeform:</p>
   <ul>
     <li><strong>Email</strong> — para resposta e comunicação comercial;</li>
-    <li><strong>Telefone / WhatsApp</strong> — para contacto direto e acompanhamento;</li>
-    <li><strong>Tipo de investimento ou imóvel de interesse</strong> — para personalizar a proposta;</li>
-    <li><strong>Orçamento / valor disponível</strong> — para adequar as opções apresentadas;</li>
-    <li><strong>Informação livre (campo de texto)</strong> — para contexto adicional fornecido pelo utilizador.</li>
+    <li><strong>Telefone / WhatsApp</strong> — para contacto direto;</li>
+    <li><strong>Tipo de investimento ou imóvel</strong> — para personalizar a proposta;</li>
+    <li><strong>Orçamento / valor</strong> — para adequar as opções;</li>
+    <li><strong>Campo de texto livre</strong> — para contexto adicional.</li>
   </ul>
-  <p>Estes dados são tratados exclusivamente para as seguintes finalidades:</p>
+  <p>Finalidades: gestão de leads, comunicação comercial e cumprimento de obrigações legais.</p>
+
+  <h2>3. Base Legal</h2>
   <ul>
-    <li>Gestão e seguimento de leads imobiliárias;</li>
-    <li>Comunicação comercial e apresentação de propostas;</li>
-    <li>Cumprimento de obrigações legais decorrentes da atividade de mediação imobiliária.</li>
+    <li><strong>Diligências pré-contratuais</strong> (art. 6.º, n.º 1, al. b) RGPD);</li>
+    <li><strong>Interesse legítimo</strong> (art. 6.º, n.º 1, al. f) RGPD);</li>
+    <li><strong>Obrigação legal</strong> (art. 6.º, n.º 1, al. c) RGPD).</li>
   </ul>
 
-  <h2>3. Base Legal do Tratamento</h2>
-  <p>O tratamento dos seus dados pessoais assenta nas seguintes bases legais, nos termos do Regulamento (UE) 2016/679 (RGPD):</p>
+  <h2>4. Subprocessadores</h2>
   <ul>
-    <li><strong>Execução de diligências pré-contratuais</strong> (art. 6.º, n.º 1, al. b)) — para responder ao seu pedido de contacto;</li>
-    <li><strong>Interesse legítimo</strong> (art. 6.º, n.º 1, al. f)) — para gestão interna de leads e melhoria do serviço;</li>
-    <li><strong>Cumprimento de obrigação legal</strong> (art. 6.º, n.º 1, al. c)) — quando aplicável por lei.</li>
+    <li><strong>Typeform, S.L.</strong> — plataforma de formulários, sediada na UE. <a href="https://www.typeform.com/help/a/typeform-gdpr-and-your-data-360029222831/" target="_blank" rel="noopener">Política de privacidade Typeform</a>;</li>
+    <li><strong>CRM interno</strong> — acesso restrito à equipa Magna Properties.</li>
   </ul>
-
-  <h2>4. Subprocessadores e Terceiros</h2>
-  <p>Para a recolha e gestão de dados, recorremos aos seguintes subprocessadores:</p>
-  <ul>
-    <li><strong>Typeform, S.L.</strong> — plataforma de formulários online, com sede na União Europeia, que processa os dados em nosso nome. Sujeita aos seus próprios <a href="https://www.typeform.com/help/a/typeform-gdpr-and-your-data-360029222831/" target="_blank" rel="noopener">termos de privacidade</a>;</li>
-    <li><strong>CRM interno</strong> — os dados submetidos são importados para um sistema de gestão de clientes de uso interno, com acesso restrito à equipa da Magna Properties.</li>
-  </ul>
-  <p>Não vendemos, cedemos nem partilhamos os seus dados com terceiros para fins de marketing ou publicidade.</p>
+  <p>Não vendemos nem partilhamos os seus dados com terceiros para fins de marketing.</p>
 
   <h2>5. Prazo de Conservação</h2>
-  <p>Os seus dados são conservados pelo período necessário à finalidade para a qual foram recolhidos, designadamente:</p>
   <ul>
-    <li>Durante o período de acompanhamento ativo da lead;</li>
-    <li>Até 3 anos após o último contacto, para efeitos de gestão comercial e cumprimento de obrigações legais;</li>
-    <li>Pelo período legalmente exigido quando aplicável (ex.: obrigações fiscais ou contabilísticas).</li>
+    <li>Durante o período de acompanhamento ativo;</li>
+    <li>Até 3 anos após o último contacto;</li>
+    <li>Pelo período legalmente exigido quando aplicável.</li>
   </ul>
 
   <h2>6. Os Seus Direitos</h2>
-  <p>Ao abrigo do RGPD, tem os seguintes direitos relativamente aos seus dados pessoais:</p>
   <div class="rights-grid">
-    <div class="right-card"><strong>Acesso</strong><p>Saber que dados temos sobre si e obter uma cópia.</p></div>
-    <div class="right-card"><strong>Retificação</strong><p>Corrigir dados incorretos ou incompletos.</p></div>
-    <div class="right-card"><strong>Apagamento</strong><p>Solicitar a eliminação dos seus dados ("direito a ser esquecido").</p></div>
-    <div class="right-card"><strong>Oposição</strong><p>Opor-se ao tratamento com base em interesse legítimo.</p></div>
-    <div class="right-card"><strong>Portabilidade</strong><p>Receber os seus dados num formato estruturado e legível.</p></div>
-    <div class="right-card"><strong>Limitação</strong><p>Solicitar a suspensão temporária do tratamento.</p></div>
+    <div class="right-card"><strong>Acesso</strong><p>Saber que dados temos e obter cópia.</p></div>
+    <div class="right-card"><strong>Retificação</strong><p>Corrigir dados incorretos.</p></div>
+    <div class="right-card"><strong>Apagamento</strong><p>Solicitar eliminação dos dados.</p></div>
+    <div class="right-card"><strong>Oposição</strong><p>Opor-se ao tratamento.</p></div>
+    <div class="right-card"><strong>Portabilidade</strong><p>Receber os dados em formato legível.</p></div>
+    <div class="right-card"><strong>Limitação</strong><p>Suspender temporariamente o tratamento.</p></div>
   </div>
-  <p>Para exercer qualquer um destes direitos, contacte-nos através de <a href="/gerir-dados">Gerir Dados</a> ou por email para <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a>. Responderemos no prazo máximo de 30 dias.</p>
-  <p>Tem ainda o direito de apresentar reclamação à <strong>Comissão Nacional de Proteção de Dados (CNPD)</strong>, em <a href="https://www.cnpd.pt" target="_blank" rel="noopener">www.cnpd.pt</a>.</p>
+  <p>Para exercer estes direitos: <a href="/gerir-dados">Gerir Dados</a> ou <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a>. Prazo de resposta: 30 dias. Pode também reclamar junto da <a href="https://www.cnpd.pt" target="_blank" rel="noopener">CNPD</a>.</p>
 
-  <h2>7. Segurança dos Dados</h2>
-  <p>Implementamos medidas técnicas e organizativas adequadas para proteger os seus dados pessoais contra acesso não autorizado, perda, destruição ou divulgação, incluindo acesso restrito por credenciais e armazenamento em sistemas seguros.</p>
+  <h2>7. Segurança</h2>
+  <p>Implementamos medidas técnicas e organizativas adequadas para proteger os seus dados contra acesso não autorizado, perda ou divulgação.</p>
 
-  <h2>8. Alterações à Política de Privacidade</h2>
-  <p>Esta política pode ser atualizada periodicamente. A data da última revisão é sempre indicada no topo desta página. Recomendamos a consulta regular.</p>
+  <h2>8. Alterações</h2>
+  <p>Esta política pode ser atualizada periodicamente. A versão em vigor é sempre a publicada nesta página.</p>
+
+</div><div data-lang="en">
+
+  <div class="legal-kicker">Legal</div>
+  <h1><em>Privacy</em> Policy</h1>
+
+  <h2>1. Data Controller</h2>
+  <p><strong>Magna Properties, Lda.</strong>, VAT <strong>519380428</strong>, AMI no. <strong>14969</strong>, Algarve, Portugal. Privacy contact: <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a></p>
+
+  <h2>2. Data Collected and Purposes</h2>
+  <p>We collect the following data through Typeform forms:</p>
+  <ul>
+    <li><strong>Email</strong> — for replies and commercial communication;</li>
+    <li><strong>Phone / WhatsApp</strong> — for direct contact;</li>
+    <li><strong>Type of investment or property</strong> — to tailor our proposal;</li>
+    <li><strong>Budget / value</strong> — to match suitable options;</li>
+    <li><strong>Free text field</strong> — for additional context.</li>
+  </ul>
+  <p>Purposes: lead management, commercial communication, and compliance with legal obligations.</p>
+
+  <h2>3. Legal Basis</h2>
+  <ul>
+    <li><strong>Pre-contractual steps</strong> (Art. 6(1)(b) GDPR);</li>
+    <li><strong>Legitimate interest</strong> (Art. 6(1)(f) GDPR);</li>
+    <li><strong>Legal obligation</strong> (Art. 6(1)(c) GDPR).</li>
+  </ul>
+
+  <h2>4. Sub-processors</h2>
+  <ul>
+    <li><strong>Typeform, S.L.</strong> — form platform, EU-based. <a href="https://www.typeform.com/help/a/typeform-gdpr-and-your-data-360029222831/" target="_blank" rel="noopener">Typeform privacy policy</a>;</li>
+    <li><strong>Internal CRM</strong> — access restricted to the Magna Properties team.</li>
+  </ul>
+  <p>We do not sell or share your data with third parties for marketing purposes.</p>
+
+  <h2>5. Retention Period</h2>
+  <ul>
+    <li>During active lead follow-up;</li>
+    <li>Up to 3 years after last contact;</li>
+    <li>For legally required periods where applicable.</li>
+  </ul>
+
+  <h2>6. Your Rights</h2>
+  <div class="rights-grid">
+    <div class="right-card"><strong>Access</strong><p>Know what data we hold and get a copy.</p></div>
+    <div class="right-card"><strong>Rectification</strong><p>Correct inaccurate data.</p></div>
+    <div class="right-card"><strong>Erasure</strong><p>Request deletion of your data.</p></div>
+    <div class="right-card"><strong>Objection</strong><p>Object to processing.</p></div>
+    <div class="right-card"><strong>Portability</strong><p>Receive your data in a readable format.</p></div>
+    <div class="right-card"><strong>Restriction</strong><p>Temporarily suspend processing.</p></div>
+  </div>
+  <p>To exercise these rights: <a href="/gerir-dados">Manage Data</a> or <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a>. Response time: 30 days. You may also lodge a complaint with the <a href="https://www.cnpd.pt" target="_blank" rel="noopener">CNPD</a> (Portuguese data protection authority).</p>
+
+  <h2>7. Security</h2>
+  <p>We implement appropriate technical and organisational measures to protect your data against unauthorised access, loss or disclosure.</p>
+
+  <h2>8. Changes</h2>
+  <p>This policy may be updated periodically. The version in force is always the one published on this page.</p>
+
+</div>
 </main>
-
 <footer>
   <a href="/" class="logo">Magna<span class="dot">·</span>Properties</a>
   <ul class="footer-links">
-    <li><a href="/#manifesto">Quem Somos</a></li>
-    <li><a href="/#servicos">Serviços</a></li>
+    <li><a href="/#manifesto" data-i18n-ft="about">Quem Somos</a></li>
+    <li><a href="/#servicos" data-i18n-ft="services">Serviços</a></li>
   </ul>
   <div class="footer-social">
     <a href="https://wa.me/351910207507" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -146,14 +207,43 @@
   </div>
   <div class="footer-divider" aria-hidden="true"></div>
   <ul class="footer-legal" aria-label="Informação legal">
-    <li><a href="/termos-e-condicoes">Termos e Condições</a></li>
-    <li><a href="/politica-de-privacidade">Política de Privacidade</a></li>
-    <li><a href="/politica-de-cookies">Política de Cookies</a></li>
-    <li><a href="https://www.livroreclamacoes.pt/inicio" target="_blank" rel="noopener">Livro de Reclamações</a></li>
-    <li><a href="/resolucao-alternativa-de-litigios">Resolução Alternativa de Litígios</a></li>
-    <li><a href="/gerir-dados">Gerir Dados</a></li>
+    <li><a href="/termos-e-condicoes" data-i18n-ft="terms">Termos e Condições</a></li>
+    <li><a href="/politica-de-privacidade" data-i18n-ft="privacy">Política de Privacidade</a></li>
+    <li><a href="/politica-de-cookies" data-i18n-ft="cookies">Política de Cookies</a></li>
+    <li><a href="https://www.livroreclamacoes.pt/inicio" target="_blank" rel="noopener" data-i18n-ft="complaints">Livro de Reclamações</a></li>
+    <li><a href="/resolucao-alternativa-de-litigios" data-i18n-ft="ral">Resolução Alternativa de Litígios</a></li>
+    <li><a href="/gerir-dados" data-i18n-ft="data">Gerir Dados</a></li>
   </ul>
   <div class="copy">© 2026 Magna Properties, Lda. · AMI 14969 · Algarve</div>
 </footer>
+<script>
+const ftDict = {
+  pt: { about:'Quem Somos', services:'Serviços', terms:'Termos e Condições',
+        privacy:'Política de Privacidade', cookies:'Política de Cookies',
+        complaints:'Livro de Reclamações', ral:'Resolução Alternativa de Litígios', data:'Gerir Dados' },
+  en: { about:'About', services:'Services', terms:'Terms & Conditions',
+        privacy:'Privacy Policy', cookies:'Cookie Policy',
+        complaints:'Complaints Book', ral:'Alternative Dispute Resolution', data:'Manage Data' }
+};
+
+function setLang(lang) {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.classList.toggle('active', el.dataset.lang === lang);
+  });
+  document.querySelectorAll('[data-i18n-ft]').forEach(el => {
+    const key = el.dataset.i18nFt;
+    if (ftDict[lang][key]) el.textContent = ftDict[lang][key];
+  });
+  document.getElementById('lang-pt').classList.toggle('active', lang === 'pt');
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  const back = document.getElementById('nav-back-link');
+  if (back) back.textContent = lang === 'pt' ? '← Voltar' : '← Back';
+  localStorage.setItem('mp-lang', lang);
+}
+
+const saved = localStorage.getItem('mp-lang') || 'pt';
+setLang(saved);
+</script>
 </body>
 </html>
