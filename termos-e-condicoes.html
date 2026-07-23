@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<meta name="theme-color" content="#06050a">
+<title>Termos e Condições — Magna Properties</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#06050a;--bg-soft:#0c0a12;--gold:#b8935a;--gold-bright:#d4a96a;--ink:#f2ede4;--muted:#8a8479;--line:rgba(242,237,228,0.08); }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:28px 56px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(6,5,10,0.92),rgba(6,5,10,0));backdrop-filter:blur(2px)}
+  .logo{font-family:"Cormorant Garamond",serif;font-size:1.65rem;font-weight:500;line-height:1;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);text-decoration:none}
+  .logo .dot{color:var(--gold);margin:0 6px}
+  .nav-back{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s ease;display:flex;align-items:center;gap:8px}
+  .nav-back:hover{color:var(--gold)}
+  .legal-page{max-width:760px;margin:0 auto;padding:160px 32px 120px}
+  .legal-kicker{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:flex;align-items:center;gap:16px}
+  .legal-kicker::before{content:"";width:36px;height:1px;background:var(--gold);opacity:0.5}
+  .legal-page h1{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(36px,5vw,64px);line-height:1.05;letter-spacing:-0.015em;color:var(--ink);margin-bottom:16px}
+  .legal-page h1 em{font-style:italic;color:var(--gold-bright);font-weight:300}
+  .legal-meta{font-size:11px;color:var(--muted);letter-spacing:0.1em;margin-bottom:64px;padding-bottom:32px;border-bottom:1px solid var(--line)}
+  .legal-page h2{font-family:"Cormorant Garamond",serif;font-weight:400;font-size:clamp(20px,2.5vw,28px);letter-spacing:0.01em;color:var(--ink);margin:48px 0 16px}
+  .legal-page p{font-size:15px;line-height:1.8;color:rgba(242,237,228,0.72);margin-bottom:16px}
+  .legal-page ul,.legal-page ol{margin:0 0 16px 20px}
+  .legal-page li{font-size:15px;line-height:1.8;color:rgba(242,237,228,0.72);margin-bottom:6px}
+  .legal-page a{color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(184,147,90,0.3);transition:border-color 0.3s ease}
+  .legal-page a:hover{border-color:var(--gold)}
+  .legal-highlight{border-left:1px solid var(--gold);padding:16px 24px;margin:32px 0;background:rgba(184,147,90,0.04)}
+  .legal-highlight p{margin:0;color:rgba(242,237,228,0.85)}
+  footer{border-top:1px solid var(--line);padding:56px 24px 40px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px}
+  footer .logo{font-size:1.8rem}
+  footer .footer-links{display:flex;gap:32px;list-style:none}
+  footer .footer-links a{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;border-bottom:none;transition:color 0.3s ease}
+  footer .footer-links a:hover{color:var(--gold)}
+  .footer-social{display:flex;gap:16px}
+  .footer-social a{width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:50%;color:var(--muted);transition:all 0.3s ease}
+  .footer-social a:hover{color:var(--gold);border-color:var(--gold);transform:translateY(-2px)}
+  .footer-social svg{width:30px;height:30px;fill:currentColor;display:block;margin:auto}
+  .footer-divider{width:100%;max-width:560px;height:1px;background:linear-gradient(to right,transparent,var(--line),transparent);margin:4px 0}
+  .footer-legal{display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:0;list-style:none;width:100%}
+  .footer-legal li{display:flex;align-items:center;flex-shrink:0}
+  .footer-legal li+li::before{content:"";display:inline-block;width:1px;height:9px;background:rgba(138,132,121,0.25);margin:0 12px}
+  .footer-legal a{color:rgba(138,132,121,0.55);text-decoration:none;border-bottom:none;font-size:9px;letter-spacing:0.08em;text-transform:uppercase;transition:color 0.3s ease;white-space:nowrap}
+  .footer-legal a:hover{color:var(--gold)}
+  footer .copy{font-size:11px;color:var(--muted);letter-spacing:0.1em}
+  @media(max-width:900px){nav{padding:18px 20px}.footer-legal{flex-wrap:wrap;gap:6px 0}.footer-legal li+li::before{margin:0 10px}}
+  @media(max-width:768px){.legal-page{padding:120px 24px 80px}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo">Magna<span class="dot">·</span>Properties</a>
+  <a href="/" class="nav-back">← Voltar</a>
+</nav>
+
+<main class="legal-page">
+  <div class="legal-kicker">Legal</div>
+  <h1>Termos e <em>Condições</em></h1>
+
+  <h2>1. Identificação da Empresa</h2>
+  <p>O presente website é propriedade e operado por <strong>Magna Properties, Lda.</strong>, sociedade por quotas registada em Portugal, com NIF <strong>519380428</strong>, titular de licença AMI n.º <strong>14969</strong>, emitida pelo Instituto dos Mercados Públicos, do Imobiliário e da Construção (IMPIC), com sede no Algarve, Portugal.</p>
+  <p>Contacto geral: <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a></p>
+
+  <h2>2. Objeto e Âmbito</h2>
+  <p>Estes Termos e Condições regulam o acesso e a utilização do website <strong>magnaproperties.pt</strong> e de todos os seus subdomínios e páginas associadas, bem como os serviços de mediação imobiliária prestados pela Magna Properties.</p>
+  <p>Ao aceder e utilizar este website, o utilizador declara ter lido, compreendido e aceite na íntegra os presentes Termos e Condições. Caso não concorde com alguma das disposições aqui previstas, deverá abster-se de utilizar o website.</p>
+
+  <h2>3. Serviços de Mediação Imobiliária</h2>
+  <p>A Magna Properties exerce a atividade de mediação imobiliária ao abrigo da Lei n.º 15/2013, de 8 de fevereiro, e demais legislação aplicável. A nossa atuação compreende:</p>
+  <ul>
+    <li>Angariação, promoção e venda de imóveis;</li>
+    <li>Avaliação e distribuição de investimentos imobiliários;</li>
+    <li>Acompanhamento durante todo o processo de aquisição e venda.</li>
+  </ul>
+  <p>A Magna Properties atua como intermediária entre compradores e vendedores, não sendo parte nos contratos de compra e venda celebrados entre eles.</p>
+
+  <h2>4. Utilização do Website</h2>
+  <p>O utilizador compromete-se a utilizar este website de forma lícita, de acordo com a lei portuguesa e europeia aplicável, a boa-fé e os presentes Termos e Condições. É expressamente proibido:</p>
+  <ul>
+    <li>Utilizar o website para fins ilícitos ou não autorizados;</li>
+    <li>Reproduzir, copiar, distribuir ou modificar os conteúdos do website sem autorização prévia e escrita da Magna Properties;</li>
+    <li>Tentar aceder de forma não autorizada a sistemas ou redes associados ao website;</li>
+    <li>Introduzir vírus, código malicioso ou qualquer outro elemento que possa danificar ou perturbar o funcionamento do website.</li>
+  </ul>
+
+  <h2>5. Formulários de Contacto e Leads</h2>
+  <p>O website disponibiliza formulários de contacto alojados na plataforma Typeform, através dos quais os utilizadores podem submeter o seu interesse em apresentar negócios ou investir. Ao preencher e submeter esses formulários, o utilizador consente expressamente que a Magna Properties trate os dados fornecidos para os fins descritos na <a href="/politica-de-privacidade">Política de Privacidade</a>.</p>
+
+  <div class="legal-highlight">
+    <p>A submissão de um formulário não cria qualquer relação contratual entre o utilizador e a Magna Properties, nem implica qualquer compromisso de representação, exclusividade ou prestação de serviço. O início de qualquer relação comercial formal fica sempre dependente de acordo escrito entre as partes.</p>
+  </div>
+
+  <h2>6. Propriedade Intelectual</h2>
+  <p>Todos os conteúdos presentes neste website — incluindo, mas não se limitando a, textos, imagens, logótipos, design, código-fonte e estrutura — são propriedade exclusiva da Magna Properties, Lda., ou utilizados sob licença, estando protegidos pela legislação aplicável em matéria de direitos de autor e propriedade intelectual.</p>
+  <p>É proibida a reprodução, total ou parcial, de qualquer conteúdo sem autorização prévia e escrita da Magna Properties.</p>
+
+  <h2>7. Limitação de Responsabilidade</h2>
+  <p>A Magna Properties não garante a disponibilidade contínua e ininterrupta do website, podendo proceder à sua suspensão temporária para manutenção ou melhorias. As informações disponibilizadas têm caráter meramente informativo e não constituem aconselhamento jurídico, fiscal ou financeiro.</p>
+  <p>A Magna Properties não se responsabiliza por quaisquer danos, diretos ou indiretos, resultantes do acesso ou utilização do website, incluindo vírus ou outros elementos nocivos que possam afetar os sistemas informáticos dos utilizadores.</p>
+
+  <h2>8. Links para Websites de Terceiros</h2>
+  <p>Este website pode conter ligações para websites de terceiros (nomeadamente Typeform e plataformas de redes sociais). Estas ligações são disponibilizadas por conveniência e não implicam aprovação ou responsabilidade da Magna Properties relativamente ao conteúdo desses websites.</p>
+
+  <h2>9. Alterações aos Termos e Condições</h2>
+  <p>A Magna Properties reserva-se o direito de alterar os presentes Termos e Condições a qualquer momento, sem aviso prévio. As alterações entram em vigor no momento da sua publicação neste website. Recomendamos a consulta regular desta página.</p>
+
+  <h2>10. Lei Aplicável e Jurisdição</h2>
+  <p>Os presentes Termos e Condições são regidos pela lei portuguesa. Em caso de litígio, as partes acordam em recorrer, em primeiro lugar, a meios de resolução alternativa de litígios, conforme previsto na <a href="/resolucao-alternativa-de-litigios">página RAL</a>. Na impossibilidade de resolução extrajudicial, será competente o tribunal da comarca do Algarve.</p>
+</main>
+
+<footer>
+  <a href="/" class="logo">Magna<span class="dot">·</span>Properties</a>
+  <ul class="footer-links">
+    <li><a href="/#manifesto">Quem Somos</a></li>
+    <li><a href="/#servicos">Serviços</a></li>
+  </ul>
+  <div class="footer-social">
+    <a href="https://wa.me/351910207507" target="_blank" rel="noopener" aria-label="WhatsApp">
+      <svg style="width:28px;height:28px" viewBox="2.91 3.57 18 18"><path d="M17.6 6.32A8.86 8.86 0 0 0 11.9 4a8.9 8.9 0 0 0-7.7 13.35L3 21l3.75-1.17a8.9 8.9 0 0 0 5.15 1.64h.01a8.9 8.9 0 0 0 8.9-8.9 8.86 8.86 0 0 0-3.21-6.25zM11.9 19.87h-.01a7.4 7.4 0 0 1-3.77-1.03l-.27-.16-2.8.87.88-2.73-.18-.28a7.4 7.4 0 1 1 13.7-3.94 7.4 7.4 0 0 1-7.55 7.27zm4.06-5.55c-.22-.11-1.32-.65-1.53-.72-.2-.08-.35-.11-.5.11-.15.22-.57.72-.7.87-.13.15-.26.16-.48.05a6.1 6.1 0 0 1-1.79-1.1 6.7 6.7 0 0 1-1.24-1.54c-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.08-.15.04-.28-.02-.39-.06-.11-.5-1.2-.68-1.65-.18-.43-.36-.37-.5-.38h-.43c-.15 0-.39.06-.6.28-.2.22-.79.77-.79 1.87 0 1.1.81 2.16.92 2.31.11.15 1.59 2.43 3.86 3.4.54.23.96.37 1.29.48.54.17 1.03.15 1.42.09.43-.06 1.32-.54 1.51-1.06.19-.52.19-.96.13-1.06-.06-.09-.2-.15-.42-.26z"/></svg>
+    </a>
+    <a href="https://instagram.com/themagnaproperties" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg style="width:28px;height:28px" viewBox="0 0 24 24"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23a3.72 3.72 0 0 1-.9 1.38 3.72 3.72 0 0 1-1.38.9c-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41 1.27-.06 1.65-.07 4.85-.07zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56a5.9 5.9 0 0 0-2.13 1.39A5.9 5.9 0 0 0 .62 4.14C.32 4.9.12 5.77.06 7.05.01 8.33 0 8.74 0 12s.01 3.67.06 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.39 2.13.66.66 1.33 1.07 2.13 1.38.76.3 1.63.5 2.91.56 1.28.06 1.69.07 4.95.07s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.85.62c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm6.41-10.85a1.44 1.44 0 1 1-1.44-1.44 1.44 1.44 0 0 1 1.44 1.44z"/></svg>
+    </a>
+  </div>
+  <div class="footer-divider" aria-hidden="true"></div>
+  <ul class="footer-legal" aria-label="Informação legal">
+    <li><a href="/termos-e-condicoes">Termos e Condições</a></li>
+    <li><a href="/politica-de-privacidade">Política de Privacidade</a></li>
+    <li><a href="/politica-de-cookies">Política de Cookies</a></li>
+    <li><a href="https://www.livroreclamacoes.pt/inicio" target="_blank" rel="noopener">Livro de Reclamações</a></li>
+    <li><a href="/resolucao-alternativa-de-litigios">Resolução Alternativa de Litígios</a></li>
+    <li><a href="/gerir-dados">Gerir Dados</a></li>
+  </ul>
+  <div class="copy">© 2026 Magna Properties, Lda. · AMI 14969 · Algarve</div>
+</footer>
+</body>
+</html>
