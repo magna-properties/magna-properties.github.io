@@ -9,7 +9,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
 <link rel="manifest" href="/assets/icons/site.webmanifest">
 <meta name="theme-color" content="#06050a">
-<title>Magna Properties — Algarve Real Estate</title>
+<title>Magna Properties — Consultoria e Investimento Imobiliário em Loulé, Faro e Olhão</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -288,6 +288,16 @@
     text-align: center;
   }
 
+  .service-text strong {
+    display: block;
+    margin-bottom: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(24px, 3vw, 28px);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--gold);
+  }
+
   .service-item:hover .service-text {
     color: var(--ink);
   }
@@ -494,8 +504,8 @@
   <canvas id="particle-canvas"></canvas>
   <div class="hero-content">
     <div class="hero-kicker" data-i18n="hero.kicker"></div>
-    <h1 class="hero-title" data-i18n-html="hero.title">Bem-vindo ao <em>futuro</em> do imobiliário.</h1>
-    <p class="hero-sub" data-i18n="hero.sub"></p>
+    <h1 class="hero-title" data-i18n-html="hero.title">Imóveis para investir em <em>Loulé, Faro e Olhão.</em></h1>
+    <p class="hero-sub" data-i18n="hero.sub">Quem vende fica a saber quanto vale. Quem compra fica a saber se compensa. Analisamos com dados reais de transação.</p>
     <div class="cta-row">
       <a href="https://form.typeform.com/to/cgYuPLqD" class="btn btn-primary" id="hero-cta1" target="_blank" rel="noopener">
         <span data-i18n="hero.cta1">Quero Apresentar Negócio</span>
@@ -521,9 +531,8 @@
   <div class="section-label" data-i18n="serv.label">Os Nossos Serviços</div>
   <h2 class="services-title" data-i18n-html="serv.title">O que <em>fazemos.</em></h2>
   <div class="services-strip">
-    <div class="service-item"><span class="service-text" data-i18n="serv.s1">Avaliação de Investimentos Imobiliários.</span></div>
-    <div class="service-item"><span class="service-text" data-i18n="serv.s2">Angariação, Promoção e Venda de Imóveis.</span></div>
-    <div class="service-item"><span class="service-text" data-i18n="serv.s3">Acompanhamento durante todo o Processo de Aquisição e Venda.</span></div>
+    <div class="service-item"><span class="service-text" data-i18n-html="serv.s1"><strong>Se tem um imóvel</strong>Avaliamos com dados reais de transação e uma visita ao imóvel. Se avançarmos, apresentamo-lo à nossa rede de investidores e partilhamos com todas as agências e consultores do mercado.</span></div>
+    <div class="service-item"><span class="service-text" data-i18n-html="serv.s2"><strong>Se quer investir</strong>Analisamos a viabilidade de cada negócio antes de o apresentar: valor de aquisição, potencial de valorização e retorno esperado. Só lhe mostramos o que passa nos nossos critérios.</span></div>
   </div>
 </section>
 
@@ -565,16 +574,16 @@
 <script>
 const whoBodyContent = {
   pt: `
-    <p>A Magna Properties é uma empresa de consultoria imobiliária sediada no Algarve.</p>
-    <p>Atuamos num mercado exigente e competitivo, onde cada decisão requer conhecimento, visão e um acompanhamento diferenciado.</p>
-    <p>Acreditamos que cada cliente merece uma abordagem exclusiva e assente na transparência.</p>
-    <div class="who-pledge">Rule #1: Speed.</div>
+    <p>A Magna é uma consultora de investimento imobiliário no Algarve.</p>
+    <p>Ajudamos proprietários a saber quanto vale realmente o seu imóvel e investidores a saber se um negócio faz sentido — sempre com dados reais de transação.</p>
+    <p>Trabalhamos em Loulé, Faro e Olhão.</p>
+    <div class="who-pledge">Se os números não baterem certo, somos os primeiros a dizê-lo.</div>
   `,
   en: `
-    <p>Magna Properties is a real estate advisory company based in the Algarve.</p>
-    <p>We operate in a demanding and competitive market, where every decision requires knowledge, vision, and a differentiated approach.</p>
-    <p>We believe every client deserves an exclusive approach, always grounded in transparency.</p>
-    <div class="who-pledge">Rule #1: Speed.</div>
+    <p>Magna is a real estate investment consultancy in the Algarve.</p>
+    <p>We help property owners understand what their property is really worth and investors determine whether a deal makes sense — always using real transaction data.</p>
+    <p>We work in Loulé, Faro and Olhão.</p>
+    <div class="who-pledge">If the numbers don't add up, we'll be the first to say so.</div>
   `
 };
 
@@ -583,17 +592,16 @@ const dict = {
     "nav.about": "About",
     "nav.services": "Services",
     "hero.kicker": "",
-    "hero.title": "Welcome to the <em>future</em> of real estate.",
-    "hero.sub": "",
+    "hero.title": "Properties to invest in <em>Loulé, Faro and Olhão.</em>",
+    "hero.sub": "Sellers learn what their property is worth. Buyers learn whether the investment makes sense. We analyse using real transaction data.",
     "hero.cta1": "Present My Deal",
     "hero.cta2": "I Want to Invest",
     "who.label": "Who We Are",
     "who.title": "Different<br><em>by nature.</em>",
     "serv.label": "Our Services",
     "serv.title": "What we <em>do.</em>",
-    "serv.s1": "Real Estate Investment Assessment.",
-    "serv.s2": "Property Acquisition, Marketing and Sales.",
-    "serv.s3": "Full Support Throughout the Acquisition and Sales Process.",
+    "serv.s1": "<strong>If you own a property</strong>We assess it using real transaction data and a property visit. If we move forward, we present it to our investor network and share it with every agency and consultant in the market.",
+    "serv.s2": "<strong>If you want to invest</strong>We analyse the viability of each deal before presenting it: acquisition price, appreciation potential and expected return. We only show you opportunities that meet our criteria.",
     "foot.about": "About",
     "foot.services": "Services",
     "foot.terms": "Terms & Conditions",
@@ -607,17 +615,16 @@ const dict = {
     "nav.about": "Quem Somos",
     "nav.services": "Serviços",
     "hero.kicker": "",
-    "hero.title": "Bem-vindo ao <em>futuro</em> do imobiliário.",
-    "hero.sub": "",
+    "hero.title": "Imóveis para investir em <em>Loulé, Faro e Olhão.</em>",
+    "hero.sub": "Quem vende fica a saber quanto vale. Quem compra fica a saber se compensa. Analisamos com dados reais de transação.",
     "hero.cta1": "Quero Apresentar Negócio",
     "hero.cta2": "Quero Investir",
     "who.label": "Quem Somos",
     "who.title": "Diferentes<br><em>por natureza.</em>",
     "serv.label": "Os Nossos Serviços",
     "serv.title": "O que <em>fazemos.</em>",
-    "serv.s1": "Avaliação de Investimentos Imobiliários.",
-    "serv.s2": "Angariação, Promoção e Venda de Imóveis.",
-    "serv.s3": "Acompanhamento durante todo o Processo de Aquisição e Venda.",
+    "serv.s1": "<strong>Se tem um imóvel</strong>Avaliamos com dados reais de transação e uma visita ao imóvel. Se avançarmos, apresentamo-lo à nossa rede de investidores e partilhamos com todas as agências e consultores do mercado.",
+    "serv.s2": "<strong>Se quer investir</strong>Analisamos a viabilidade de cada negócio antes de o apresentar: valor de aquisição, potencial de valorização e retorno esperado. Só lhe mostramos o que passa nos nossos critérios.",
     "foot.about": "Quem Somos",
     "foot.services": "Serviços",
     "foot.terms": "Termos e Condições",
