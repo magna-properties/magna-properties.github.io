@@ -15,7 +15,7 @@ footer{padding:58px 56px 38px;text-align:center;border-top:1px solid var(--line)
 .footer-social{display:flex;justify-content:center;gap:16px;margin-top:24px}.footer-social a{width:52px;height:52px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:50%;color:var(--muted);transition:all .3s}.footer-social a:hover{color:var(--gold);border-color:var(--gold);transform:translateY(-2px)}.footer-social svg{width:30px;height:30px;fill:currentColor;display:block;margin:auto}.footer-social svg.icon-whatsapp{width:38px;height:38px}
 .hero::before,.hero.compact::after{display:none}.panel{display:flex;flex-direction:column}.panel h3{color:var(--gold-bright)}.panel>div,.panel>p{flex:1}.panel .btn{margin-top:30px;align-self:flex-start}
 
-.market-label{color:var(--ink)}
+.market-label{color:var(--gold)}
 
 /* Hero investment CTA: elevated contrast with a restrained, premium shimmer. */
 .hero-cta{position:relative;isolation:isolate;min-width:250px;padding:19px 38px;overflow:hidden;border-color:rgba(242,237,228,.22);background:linear-gradient(115deg,#9e7844 0%,var(--gold-bright) 48%,#a47c47 100%);box-shadow:0 12px 36px rgba(184,147,90,.2),0 0 0 1px rgba(212,169,106,.1);animation:hero-cta-aura 3.8s ease-in-out infinite}.hero-cta::before{content:"";position:absolute;z-index:-1;inset:-2px auto -2px -45%;width:34%;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,248,229,.56),transparent);animation:hero-cta-shimmer 4.8s ease-in-out infinite}.hero-cta span{font-size:15px;transition:transform .35s ease}.hero-cta:hover{transform:translateY(-3px);box-shadow:0 18px 42px rgba(184,147,90,.34),0 0 0 1px rgba(212,169,106,.28)}.hero-cta:hover span{transform:translateX(4px)}
