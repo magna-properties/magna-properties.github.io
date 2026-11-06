@@ -43,26 +43,46 @@ document.addEventListener('click',e=>{
   if(c){try{navigator.clipboard.writeText(c.dataset.copy).then(()=>{const s=c.querySelector('span')||c;s.textContent=T('Copiado','Copied')},()=>{})}catch(err){}}
 });
 
+/* ---------- verificação anti-spam (Cloudflare Turnstile) ----------
+   Desenhada só quando é precisa: no "Quero investir" só no último passo. Só se vê se o
+   Cloudflare pedir interação, e desaparece logo a seguir ao "Sucesso!". */
+function tsRender(el){
+  if(!el||el.dataset.wid||!window.turnstile)return;
+  el.dataset.wid=window.turnstile.render(el,{sitekey:el.dataset.sitekey,language:el.dataset.language||'auto',appearance:'interaction-only','refresh-expired':'auto',
+    callback:()=>setTimeout(()=>{el.style.display='none'},1200),
+    'expired-callback':()=>{el.style.display=''},'error-callback':()=>{el.style.display=''}});
+}
+function tsToken(el){try{return(el&&el.dataset.wid&&window.turnstile&&window.turnstile.getResponse(el.dataset.wid))||''}catch(e){return ''}}
+function tsReset(el){if(el&&el.dataset.wid&&window.turnstile){el.style.display='';try{window.turnstile.reset(el.dataset.wid)}catch(e){}}}
+window.magnaTS=function(){$$('[data-turnstile]').forEach(el=>{if(!el.closest('#invform'))tsRender(el)});const s4=document.querySelector('#invform fieldset[data-step="4"]');if(s4&&!s4.hidden)tsRender($('#invform [data-turnstile]'))};
+if(window.turnstile)window.magnaTS();
+
 /* ---------- envio para o Worker (Cloudflare) → Notion e MailerLite ---------- */
 function validPhone(v){const d=(v||'').replace(/[^\d+]/g,'');return /^\+?\d{9,15}$/.test(d)}
 async function sendLead(kind,data,form,btn,errEl){
   if(btn.disabled)return false;
   const hp=form.querySelector('input[name=website]');
-  const tsIn=form.querySelector('[data-turnstile] input[name="cf-turnstile-response"]');
-  const body={form:kind,site_lang:EN?'en':'pt',source_page:fromPage,attribution:{first:ATTR.first,visit:ATTR.visit},turnstile:tsIn?tsIn.value:'',website:hp?hp.value:'',...data};
+  const tsEl=form.querySelector('[data-turnstile]');tsRender(tsEl);
+  const tok=()=>tsToken(tsEl);
+  const body={form:kind,site_lang:EN?'en':'pt',source_page:fromPage,attribution:{first:ATTR.first,visit:ATTR.visit},turnstile:'',website:hp?hp.value:'',...data};
   const old=btn.innerHTML;btn.disabled=true;btn.innerHTML=T('A enviar…','Sending…');errEl.textContent='';
   try{
     if(body.website)return true;
-    if(!body.turnstile)throw new Error('turnstile');
+    // Espera até 10 s pelo código da verificação anti-spam (pode ainda estar a ser gerado).
+    if(!tok()&&window.turnstile){btn.innerHTML=T('A verificar…','Checking…');for(let i=0;i<20&&!tok();i++)await new Promise(r=>setTimeout(r,500));btn.innerHTML=T('A enviar…','Sending…');}
+    body.turnstile=tok();
+    if(!body.turnstile)throw new Error(window.turnstile?'turnstile':'turnstile-blocked');
     const r=await fetch(FORMS_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const j=await r.json().catch(()=>({}));
-    if(!r.ok||!j.ok)throw new Error(j.error||('HTTP '+r.status));
+    if(!r.ok||!j.ok)throw new Error(j.error==='turnstile'?'turnstile-rejected':(j.error||('HTTP '+r.status)));
     return true;
   }catch(e){
-    errEl.innerHTML=e.message==='turnstile'
+    errEl.innerHTML=e.message==='turnstile-blocked'
+      ?T('A verificação anti-spam não carregou. Se usa um bloqueador de anúncios ou de privacidade, desative-o para este site e recarregue a página, ou <a href="'+WA+'" target="_blank" rel="noopener">fale connosco por WhatsApp</a>.','The anti-spam check did not load. If you use an ad or privacy blocker, turn it off for this site and reload the page, or <a href="'+WA+'" target="_blank" rel="noopener">message us on WhatsApp</a>.')
+      :(e.message==='turnstile'||e.message==='turnstile-rejected')
       ?T('Aguarde um instante pela verificação anti-spam e tente novamente. Se não funcionar, <a href="'+WA+'" target="_blank" rel="noopener">fale connosco por WhatsApp</a>.','Please wait a moment for the anti-spam check and try again. If it still fails, <a href="'+WA+'" target="_blank" rel="noopener">message us on WhatsApp</a>.')
       :T('Não conseguimos enviar o pedido. Tente novamente ou <a href="'+WA+'" target="_blank" rel="noopener">fale connosco por WhatsApp</a>.','We could not send your request. Please try again or <a href="'+WA+'" target="_blank" rel="noopener">message us on WhatsApp</a>.');
-    if(window.turnstile)try{window.turnstile.reset(form.querySelector('[data-turnstile]'))}catch(x){}
+    tsReset(tsEl);
     return false;
   }finally{btn.disabled=false;btn.innerHTML=old;}
 }
@@ -72,7 +92,7 @@ const EMAIL_OK=v=>/^\S+@\S+\.\S+$/.test(v);
 const inv=$('#invform');
 if(inv){
   let step=1;
-  const showStep=n=>{step=n;$$('fieldset[data-step]',inv).forEach(f=>f.hidden=+f.dataset.step!==n);$('#inv-prog').style.width=(n*25)+'%';$('#inv-back').hidden=n===1;$('#inv-next').innerHTML=n===4?T('Enviar pedido','Send request'):T('Continuar →','Continue →');$('#inv-err').textContent='';};
+  const showStep=n=>{step=n;$$('fieldset[data-step]',inv).forEach(f=>f.hidden=+f.dataset.step!==n);$('#inv-prog').style.width=(n*25)+'%';$('#inv-back').hidden=n===1;$('#inv-next').innerHTML=n===4?T('Enviar pedido','Send request'):T('Continuar →','Continue →');$('#inv-err').textContent='';if(n===4)tsRender($('[data-turnstile]',inv));};
   const err=t=>{$('#inv-err').textContent=t};
   inv.addEventListener('submit',async e=>{e.preventDefault();
     if(step===1&&!$$('input[name=area]:checked',inv).length)return err(T('Escolha pelo menos um concelho.','Choose at least one municipality.'));
