@@ -388,6 +388,10 @@ footer .legal{align-items:center}footer .legal>span{margin-left:auto}@media (max
 /* páginas legais antigas */
 .doc .note-box{border-left:2px solid var(--gold);padding:12px 18px;margin:18px 0;background:var(--ink-2)}
 .doc .note-box p{margin:0}
+/* mensagem de sucesso dos formulários: caixa dourada, visto verde */
+.done{border:0;padding:4px 0;display:grid;gap:10px;justify-items:start}
+.done::before{content:"";width:48px;height:48px;border-radius:50%;border:1px solid var(--ok);background:rgba(127,181,154,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='%237fb59a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/24px no-repeat;margin-bottom:4px}
+.formbox:has(.done:not([hidden])){border-color:var(--gold)}
 /* botão de língua (links) */
 .lang a{color:var(--muted);font:500 .75rem var(--f-body);letter-spacing:.12em;padding:6px 10px;border-radius:999px;text-decoration:none}
 .lang a[aria-current]{background:var(--gold);color:var(--gold-ink)}
