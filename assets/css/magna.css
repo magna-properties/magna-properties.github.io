@@ -400,3 +400,6 @@ footer .legal{align-items:center}footer .legal>span{margin-left:auto}@media (max
 main section[data-page]{display:block}
 .gd-form{display:grid;gap:14px;max-width:560px;margin:8px 0 24px}
 .gd-form textarea{min-height:110px}
+/* títulos dos mercados por cima do gráfico; topo com altura estável no telemóvel */
+.mk-row .mk h3{margin:0 0 18px}
+@supports (height:1svh){.hero-main{min-height:min(88svh,800px)}}
