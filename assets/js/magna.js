@@ -5,7 +5,7 @@
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const PAGE=document.body.dataset.page||'inicio';
 const FORMS_ENDPOINT='https://magna-forms.magnaproperties.workers.dev/';
-const WA='https://wa.me/351935904830';
+const WA='https://wa.me/351917241061';
 const EN=(document.documentElement.lang||'').startsWith('en');
 const T=(pt,en)=>EN?en:pt;
 const PATHS={'/en/':'inicio','/en/invest/':'investir','/en/markets/':'mercados','/en/markets/loule/':'loule','/en/markets/faro/':'faro','/en/markets/olhao/':'olhao','/en/about/':'sobre','/en/contact/':'contactos','/en/present-a-deal/':'vender','/en/privacy-policy.html':'privacidade','/en/cookie-policy.html':'cookies','/':'inicio','/investir/':'investir','/mercados/':'mercados','/mercados/loule/':'loule','/mercados/faro/':'faro','/mercados/olhao/':'olhao','/quem-somos/':'sobre','/contactos/':'contactos','/vender/':'vender','/politica-de-privacidade.html':'privacidade','/politica-de-cookies.html':'cookies'};
@@ -96,7 +96,7 @@ if(inv){
   const err=t=>{$('#inv-err').textContent=t};
   inv.addEventListener('submit',async e=>{e.preventDefault();
     if(step===1&&!$$('input[name=area]:checked',inv).length)return err(T('Escolha pelo menos um concelho.','Choose at least one municipality.'));
-    if(step===2&&!$('input[name=strategy]:checked',inv))return err(T('Escolha uma estratégia (ou “Ainda não sei”).','Choose a strategy (or “Not sure yet”).'));
+    if(step===2&&!$('input[name=strategy]:checked',inv))return err(T('Escolha uma estratégia.','Choose a strategy.'));
     if(step===3&&!$('input[name=capital]:checked',inv))return err(T('Indique o intervalo de capital.','Choose a capital range.'));
     if(step===4){
       if(!$('#i-name').value.trim())return err(T('Indique o seu nome.','Enter your name.'));
