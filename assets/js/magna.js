@@ -8,7 +8,7 @@ const FORMS_ENDPOINT='https://magna-forms.magnaproperties.workers.dev/';
 const WA='https://wa.me/351917241061';
 const EN=(document.documentElement.lang||'').startsWith('en');
 const T=(pt,en)=>EN?en:pt;
-const PATHS={'/en/':'inicio','/en/invest/':'investir','/en/markets/':'mercados','/en/markets/loule/':'loule','/en/markets/faro/':'faro','/en/markets/olhao/':'olhao','/en/about/':'sobre','/en/contact/':'contactos','/en/present-a-deal/':'vender','/en/privacy-policy.html':'privacidade','/en/cookie-policy.html':'cookies','/':'inicio','/investir/':'investir','/mercados/':'mercados','/mercados/loule/':'loule','/mercados/faro/':'faro','/mercados/olhao/':'olhao','/quem-somos/':'sobre','/contactos/':'contactos','/vender/':'vender','/politica-de-privacidade.html':'privacidade','/politica-de-cookies.html':'cookies'};
+const PATHS={'/en/':'inicio','/en/invest/':'investir','/en/markets/':'mercados','/en/markets/loule/':'loule','/en/markets/faro/':'faro','/en/markets/olhao/':'olhao','/en/about/':'sobre','/en/contact/':'contactos','/en/present-a-deal/':'vender','/en/privacy-policy.html':'privacidade','/en/cookie-policy.html':'cookies','/':'inicio','/investir/':'investir','/mercados/':'mercados','/mercados/loule/':'loule','/mercados/faro/':'faro','/mercados/olhao/':'olhao','/quem-somos/':'sobre','/contactos/':'contactos','/vender/':'vender','/relatorio/':'relatorio','/en/sell/':'vender','/en/report/':'relatorio','/politica-de-privacidade.html':'privacidade','/politica-de-cookies.html':'cookies'};
 
 /* ---------- origem da visita (só em memória e nos links internos) ---------- */
 const UTM=['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
@@ -92,6 +92,9 @@ const EMAIL_OK=v=>/^\S+@\S+\.\S+$/.test(v);
 const inv=$('#invform');
 if(inv){
   let step=1;
+  // Vem da página de um concelho (ex.: /investir/?concelho=loule#formulario): esse concelho já fica escolhido.
+  const pre={loule:'#a-loule',faro:'#a-faro',olhao:'#a-olhao'}[q.get('concelho')];
+  if(pre&&$(pre,inv))$(pre,inv).checked=true;
   const showStep=n=>{step=n;$$('fieldset[data-step]',inv).forEach(f=>f.hidden=+f.dataset.step!==n);$('#inv-prog').style.width=(n*25)+'%';$('#inv-back').hidden=n===1;$('#inv-next').innerHTML=n===4?T('Enviar pedido','Send request'):T('Continuar →','Continue →');$('#inv-err').textContent='';if(n===4)tsRender($('[data-turnstile]',inv));};
   const err=t=>{$('#inv-err').textContent=t};
   inv.addEventListener('submit',async e=>{e.preventDefault();
@@ -103,7 +106,7 @@ if(inv){
       if(!EMAIL_OK($('#i-email').value))return err(T('O email não parece válido. Verifique se tem “@” e domínio.','The email looks invalid. Check the “@” and the domain.'));
       if(!validPhone($('#i-phone').value))return err(T('Indique um telefone válido (com indicativo, se não for português).','Enter a valid phone number, with the country code if it is not Portuguese.'));
       if(!$('#i-priv').checked)return err(T('Para o contactarmos, confirme que leu a Política de Privacidade.','So we can contact you, please confirm you have read the Privacy Policy.'));
-      const d={name:$('#i-name').value.trim(),email:$('#i-email').value.trim(),phone:$('#i-phone').value.trim(),areas:$$('input[name=area]:checked',inv).map(i=>i.value),strategy:$('input[name=strategy]:checked',inv).value,capital:$('input[name=capital]:checked',inv).value,bank_credit:$('#k-fin').checked,preferred_lang:$('#i-lang').value,privacy:true,report:$('#i-mkt').checked};
+      const d={name:$('#i-name').value.trim(),email:$('#i-email').value.trim(),phone:$('#i-phone').value.trim(),areas:$$('input[name=area]:checked',inv).map(i=>i.value),strategy:$('input[name=strategy]:checked',inv).value,capital:$('input[name=capital]:checked',inv).value,preferred_lang:$('#i-lang').value,privacy:true,report:$('#i-mkt').checked};
       if(!await sendLead('investir',d,inv,$('#inv-next'),$('#inv-err')))return;
       track('generate_lead');
       inv.hidden=true;$('.progress').hidden=true;$('#inv-done').hidden=false;return;
@@ -117,12 +120,13 @@ if(inv){
 
 /* ---------- formulário "Apresentar negócio" ---------- */
 const vf=$('#vform');
+if(vf){const c={loule:'Loulé',faro:'Faro',olhao:'Olhão'}[q.get('concelho')];if(c)$('#v-area').value=c;}
 if(vf)vf.addEventListener('submit',async e=>{e.preventDefault();const er=$('#v-err');
   if(!$('#v-name').value.trim()||!$('#v-phone').value.trim()){er.textContent=T('Indique o nome e o telefone / WhatsApp.','Enter your name and phone / WhatsApp.');return}
   if(!EMAIL_OK($('#v-email').value)){er.textContent=T('O email não parece válido. Verifique se tem “@” e domínio.','The email looks invalid. Check the “@” and the domain.');return}
   if(!validPhone($('#v-phone').value)){er.textContent=T('Indique um telefone válido (com indicativo, se não for português).','Enter a valid phone number, with the country code if it is not Portuguese.');return}
   if(!$('#v-priv').checked){er.textContent=T('Confirme que leu a Política de Privacidade.','Please confirm you have read the Privacy Policy.');return}
-  const d={name:$('#v-name').value.trim(),email:$('#v-email').value.trim(),phone:$('#v-phone').value.trim(),property_type:$('#v-type').value,municipality:$('#v-area').value,role:$('#v-who').value,privacy:true};
+  const d={name:$('#v-name').value.trim(),email:$('#v-email').value.trim(),phone:$('#v-phone').value.trim(),property_type:$('#v-type').value,municipality:$('#v-area').value,privacy:true};
   if(!await sendLead('vender',d,vf,$('#v-send'),er))return;
   vf.hidden=true;$('#v-done').hidden=false;});
 
@@ -186,6 +190,9 @@ if(gd)gd.addEventListener('submit',e=>{e.preventDefault();
  }),{threshold:.55});
  $$('.mk-row .ill').forEach(s=>io.observe(s));
 })();
+
+/* ---------- links com #formulario: garante o salto até ao formulário depois de a página carregar ---------- */
+addEventListener('load',()=>{const h=decodeURIComponent(location.hash.slice(1));const t=h&&document.getElementById(h);if(t)setTimeout(()=>t.scrollIntoView(),60)});
 
 /* ---------- WhatsApp e barra móvel aparecem depois do primeiro ecrã ---------- */
 function onScroll(){document.documentElement.classList.toggle('scrolled',scrollY>innerHeight*.6)}
