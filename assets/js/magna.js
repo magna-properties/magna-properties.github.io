@@ -23,7 +23,7 @@ const ATTR=(function(){
   return {first:t,visit:t,prev};
 })();
 // Página em que a pessoa estava quando decidiu contactar-nos (ex.: veio de Loulé para o formulário).
-const fromPage=(ATTR.prev&&ATTR.prev!==PAGE)?ATTR.prev:PAGE;
+const fromPage=(ATTR.prev&&ATTR.prev!==PAGE&&!['investir','vender','relatorio'].includes(ATTR.prev))?ATTR.prev:PAGE;
 // Leva a origem para as páginas seguintes, sem a guardar no dispositivo.
 (function(){
   const carry=new URLSearchParams();
