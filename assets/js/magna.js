@@ -5,7 +5,7 @@
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const PAGE=document.body.dataset.page||'inicio';
 const FORMS_ENDPOINT='https://magna-forms.magnaproperties.workers.dev/';
-const WA='https://wa.me/351917241061';
+const WA='https://wa.me/351929058727';
 const EN=(document.documentElement.lang||'').startsWith('en');
 const T=(pt,en)=>EN?en:pt;
 const PATHS={'/en/':'inicio','/en/invest/':'investir','/en/markets/':'mercados','/en/markets/loule/':'loule','/en/markets/faro/':'faro','/en/markets/olhao/':'olhao','/en/about/':'sobre','/en/contact/':'contactos','/en/present-a-deal/':'vender','/en/privacy-policy.html':'privacidade','/en/cookie-policy.html':'cookies','/':'inicio','/investir/':'investir','/mercados/':'mercados','/mercados/loule/':'loule','/mercados/faro/':'faro','/mercados/olhao/':'olhao','/quem-somos/':'sobre','/contactos/':'contactos','/vender/':'vender','/relatorio/':'relatorio','/en/sell/':'vender','/en/report/':'relatorio','/politica-de-privacidade.html':'privacidade','/politica-de-cookies.html':'cookies'};
