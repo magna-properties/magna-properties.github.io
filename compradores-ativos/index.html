@@ -139,7 +139,7 @@ let known=null;
 const chosen=()=>[...new Set(all('.pk input:checked').map(i=>i.value))];
 function count(){
   const n=chosen().length, b=$('c-send');
-  b.disabled=!n; b.textContent=n?('Enviar '+n+(n===1?' comprador':' compradores')+' →'):'Escolha pelo menos um comprador';
+  b.disabled=!n; b.textContent=n?'Enviar propostas →':'Escolha pelo menos um comprador';
   all('.pg').forEach(g=>{const k=g.querySelectorAll('input:checked').length;g.querySelector('.pg-sel').textContent=k?('· '+k+(k===1?' escolhido':' escolhidos')):''});
 }
 all('.pk input').forEach(i=>i.addEventListener('change',()=>{all('.pk input').forEach(o=>{if(o.value===i.value)o.checked=i.checked});count();})); count();
