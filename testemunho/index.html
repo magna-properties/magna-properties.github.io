@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Testemunho | MAGNA Properties</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#efebe4; --bg:#fff; --soft:#faf8f4; --beige:#f5efe4; --sel:#f3e8d4;
+  --line:#e6dfd2; --ink:#1d1a16; --muted:#6f685d; --quiet:#8f887d;
+  --gold:#b8935a; --gold-hi:#d4a96a; --gold-ink:#8a6a37; --step:#a7793b;
+  --dark:#06050a; --cream:#f2ede4; --cream-2:#bdb5a8; --ok:#3f8a66; --err:#a3402c;
+  --serif:"Cormorant Garamond",Georgia,serif; --sans:"DM Sans",Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--ink);font:400 15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.page{max-width:760px;margin:0 auto;padding:26px max(18px,env(safe-area-inset-left,0px)) 56px}
+
+/* ---------- cabeçalho escuro (igual a compradores ativos / newsletter) ---------- */
+.top{background:var(--dark);color:var(--cream);border-radius:22px;padding:32px 34px 36px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font:500 22px/1 var(--serif);letter-spacing:.22em;text-transform:uppercase;color:var(--cream);text-decoration:none;white-space:nowrap}
+.logo i{color:var(--gold);font-style:normal}
+.lang{display:inline-flex;border:1px solid rgba(242,237,228,.22);border-radius:999px;padding:3px}
+.lang button{border:0;background:none;color:var(--cream-2);font:500 11px/1 var(--sans);letter-spacing:.1em;padding:7px 11px;border-radius:999px;cursor:pointer}
+.lang button.on{background:var(--gold);color:var(--dark)}
+.eye{margin:34px 0 0;font:700 11px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--gold-hi)}
+h1{margin:12px 0 0;font:500 clamp(30px,5.4vw,44px)/1.08 var(--serif);text-wrap:balance}
+h1 em{color:var(--gold-hi);font-style:italic;font-weight:700}
+.lead{margin:12px 0 0;color:var(--cream-2);max-width:48ch}
+.prog{margin-top:28px}
+.prog-t{display:flex;justify-content:space-between;font:500 12px/1 var(--sans);letter-spacing:.06em;color:var(--cream-2)}
+.prog-t b{color:var(--gold-hi);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:11px}
+.prog-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.prog-bars i{height:3px;border-radius:3px;background:rgba(242,237,228,.16);transition:background .3s}
+.prog-bars i.on{background:var(--gold)}
+.top.compact{padding-bottom:32px}
+.top.compact .eye,.top.compact h1,.top.compact .prog{display:none}
+
+/* ---------- cartão branco ---------- */
+.card{margin-top:16px;background:var(--bg);border-radius:22px;padding:clamp(22px,4.5vw,36px)}
+.step-eye{margin:0;font:700 12px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--step)}
+h2{margin:10px 0 0;font:500 clamp(25px,4vw,31px)/1.15 var(--serif);text-wrap:balance}
+h2 em{color:var(--gold-ink);font-style:italic;font-weight:700}
+.sub{margin:8px 0 0;color:var(--muted)}
+.q{margin-top:28px}
+.q-t{font:600 15px/1.4 var(--sans);margin:0}
+.q-h{margin:3px 0 0;font-size:13px;color:var(--muted)}
+
+/* escala 1–5: barras finas */
+.q-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.q-v{display:none;font:600 13px/1.4 var(--sans);color:var(--gold-ink);white-space:nowrap;min-height:18px}
+.bars{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.bars button{border:0;background:none;padding:14px 0 0;cursor:pointer;display:flex;flex-direction:column;gap:9px;align-items:stretch;font:inherit}
+.bars button i{display:block;height:6px;border-radius:6px;background:var(--line);transition:background .15s}
+.bars button span{font:500 12.5px/1.25 var(--sans);color:var(--quiet);text-align:center}
+.bars button.on i{background:var(--gold)}
+.bars button.on span{color:var(--gold-ink)}
+.bars button.cur span{color:var(--ink);font-weight:600}
+.bars.pv button i{background:var(--line)}
+.bars.pv button.pv i{background:var(--gold)}
+.ends{display:none;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--quiet)}
+.q+.q{margin-top:34px}
+
+/* campos */
+.f{display:grid;gap:6px;margin-top:22px;font-size:13px;color:var(--muted)}
+.f label{font:600 15px/1.4 var(--sans);color:var(--ink)}
+.f input,.f textarea{font:400 15px/1.5 var(--sans);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:13px 15px;width:100%}
+.f textarea{min-height:180px;resize:vertical}
+.f input:focus,.f textarea:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
+.cnt{text-align:right;font-size:12px;color:var(--quiet)}
+.ideas{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.ideas span{background:var(--beige);color:var(--gold-ink);border-radius:999px;padding:5px 11px;font-size:12.5px}
+
+/* escolha de autorização */
+.ch{display:grid;gap:10px;margin-top:12px}
+.ch button{font:inherit;text-align:left;cursor:pointer;display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);background:var(--bg);border-radius:16px;padding:16px;color:var(--ink)}
+.ch button i{flex:none;width:20px;height:20px;border-radius:50%;border:1.5px solid var(--quiet);margin-top:2px}
+.ch button b{display:block;font-weight:600}
+.ch button small{display:block;color:var(--muted);font-size:13px;margin-top:2px;line-height:1.45}
+@media(hover:hover){.ch button:hover{border-color:var(--gold)}}
+.ch button.on{background:var(--sel);border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.ch button.on i{border:6px solid var(--gold)}
+.note{margin-top:22px;background:var(--soft);border:1px solid var(--line);border-radius:16px;padding:14px 16px;font-size:13px;color:var(--muted)}
+.note a{color:var(--gold-ink)}
+[data-turnstile]{margin-top:14px}
+
+.err{margin:10px 0 0;color:var(--err);font-size:13px}
+.err:empty{display:none}
+
+/* navegação */
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:30px;padding-top:22px;border-top:1px solid var(--line)}
+.btn{border:0;border-radius:999px;background:var(--gold);color:#fff;font:600 15px/1 var(--sans);padding:15px 24px;cursor:pointer;box-shadow:0 0 0 6px rgba(184,147,90,.14);white-space:nowrap}
+.btn:disabled{opacity:.5;cursor:wait}
+.ghost{border:0;background:none;color:var(--muted);font:500 14px/1 var(--sans);cursor:pointer;padding:10px 0}
+.ghost:hover{color:var(--ink)}
+
+/* estados finais */
+.done{text-align:left}
+.tick{width:52px;height:52px;border-radius:50%;border:1px solid var(--ok);background:rgba(63,138,102,.1);color:var(--ok);display:grid;place-items:center;font-size:22px}
+.tick.warn{border-color:var(--gold);background:rgba(184,147,90,.12);color:var(--gold-ink)}
+.back{margin:22px 0 0}.back a{color:var(--gold-ink);font-weight:600;text-decoration:none}
+.cta-dark{margin-top:16px;background:var(--dark);color:var(--cream);border-radius:22px;padding:30px 34px}
+.cta-dark p{margin:0;font:500 clamp(22px,3.6vw,28px)/1.2 var(--serif)}
+.cta-dark em{color:var(--gold-hi)}
+.cta-dark a{display:inline-block;margin-top:18px;background:var(--gold);color:#fff;text-decoration:none;font:600 15px/1 var(--sans);padding:15px 24px;border-radius:999px}
+
+.foot{margin-top:30px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.7}
+.foot a{color:inherit}
+
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@media(max-width:560px){
+  .bars button span{display:none}.bars button{padding-top:10px}
+  .q-v,.ends{display:flex}
+  .q-row{align-items:flex-start}
+
+  .top{padding:28px 22px 30px}
+  .logo{font-size:14px;letter-spacing:.14em}
+    .btn{padding:14px 20px}
+  .cta-dark{padding:26px 22px}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="top">
+    <div class="bar">
+      <a class="logo" href="https://magnaproperties.pt">Magna <i>·</i> Properties</a>
+      <div class="lang"><button type="button" data-l="pt" class="on">PT</button><button type="button" data-l="en">EN</button></div>
+    </div>
+    <p class="eye" data-t="eye">Testemunho de cliente</p>
+    <h1 id="h1"></h1>
+    <div class="prog" id="prog"><div class="prog-t"><b id="prog-t"></b><span id="prog-n"></span></div><div class="prog-bars"><i></i><i></i><i></i></div></div>
+  </header>
+
+  <!-- PASSO 1 -->
+  <section class="card" data-step="1">
+    <p class="step-eye" data-t="s1eye">Passo 1 · Avaliação</p>
+    <h2 data-t="s1h" data-html>Como correu o <em>nosso trabalho?</em></h2>
+    <p class="sub" data-t="s1sub">Duas perguntas rápidas. Não há respostas certas.</p>
+
+    <div class="q">
+      <div class="q-row"><p class="q-t" data-t="q1">Como avalia o serviço da Magna Properties no geral?</p><span class="q-v" id="v_aval"></span></div>
+      <div class="bars" id="r_aval"><button type="button" data-v="1" aria-label="1"><i></i><span data-t="r1">Muito fraco</span></button><button type="button" data-v="2" aria-label="2"><i></i><span data-t="r2">Fraco</span></button><button type="button" data-v="3" aria-label="3"><i></i><span data-t="r3">Satisfatório</span></button><button type="button" data-v="4" aria-label="4"><i></i><span data-t="r4">Bom</span></button><button type="button" data-v="5" aria-label="5"><i></i><span data-t="r5">Excelente</span></button></div>
+      <div class="ends"><span data-t="r1">Muito fraco</span><span data-t="r5">Excelente</span></div>
+      <p class="err" id="e_aval"></p>
+    </div>
+
+    <div class="q">
+      <div class="q-row"><p class="q-t" data-t="q2">Recomendaria a Magna Properties a um amigo ou familiar?</p><span class="q-v" id="v_rec"></span></div>
+      <div class="bars" id="r_rec"><button type="button" data-v="1" aria-label="1"><i></i><span data-t="n1">Improvável</span></button><button type="button" data-v="2" aria-label="2"><i></i><span data-t="n2">Pouco provável</span></button><button type="button" data-v="3" aria-label="3"><i></i><span data-t="n3">Talvez</span></button><button type="button" data-v="4" aria-label="4"><i></i><span data-t="n4">Provável</span></button><button type="button" data-v="5" aria-label="5"><i></i><span data-t="n5">Com certeza</span></button></div>
+      <div class="ends"><span data-t="n1">Improvável</span><span data-t="n5">Com certeza</span></div>
+      <p class="err" id="e_rec"></p>
+    </div>
+
+    <div class="nav"><span></span><button class="btn" type="button" data-go="2" data-t="next">Seguinte →</button></div>
+  </section>
+
+  <!-- PASSO 2 -->
+  <section class="card" data-step="2" hidden>
+    <p class="step-eye" data-t="s2eye">Passo 2 · Testemunho</p>
+    <h2 data-t="s2h" data-html>Em poucas palavras, <em>conte-nos como foi.</em></h2>
+    <div class="f">
+      <div class="ideas" aria-hidden="true"><span data-t="i1">O que mais valorizou?</span><span data-t="i2">Como foi o acompanhamento?</span><span data-t="i3">O que nos diferenciou?</span></div>
+      <textarea id="txt" aria-label="O seu testemunho" maxlength="600" data-tp="ph3" placeholder="Ex.: A equipa foi sempre atenta e disponível. O processo foi mais simples do que esperávamos."></textarea>
+      <div class="cnt"><span id="cnt">0</span> / 600</div>
+    </div>
+    <p class="err" id="e_txt"></p>
+    <div class="nav"><button class="ghost" type="button" data-go="1" data-t="back">← Anterior</button><button class="btn" type="button" data-go="3" data-t="next">Seguinte →</button></div>
+  </section>
+
+  <!-- PASSO 3 -->
+  <section class="card" data-step="3" hidden>
+    <p class="step-eye" data-t="s3eye">Passo 3 · Autorização</p>
+    <h2 data-t="s3h" data-html>Podemos <em>partilhar</em> o seu testemunho?</h2>
+    <p class="sub" data-t="s3sub">A decisão é sua e pode mudá-la quando quiser.</p>
+
+    <div class="q">
+      <div class="ch" id="c_aut">
+        <button type="button" data-v="sim"><i></i><span><b data-t="a1">Sim, pode ser partilhado</b><small data-t="a1s">No site da Magna Properties e nas nossas redes sociais.</small></span></button>
+        <button type="button" data-v="interno"><i></i><span><b data-t="a2">Prefiro que fique só para uso interno</b><small data-t="a2s">Usamos apenas para melhorar o nosso serviço.</small></span></button>
+      </div>
+      <p class="err" id="e_aut"></p>
+    </div>
+
+    <div class="f" id="nome_box" hidden>
+      <label for="nome" data-t="q4">Como deve aparecer o seu nome?</label>
+      <input id="nome" data-tp="ph4" placeholder="Ex.: Ana M., Família Martins">
+      <span data-t="h4">Se deixar em branco, publicamos só as iniciais.</span>
+    </div>
+
+    <div class="note" data-t="rgpd" data-html>Os seus dados são tratados pela Magna Properties, Lda. de acordo com a nossa <a href="https://magnaproperties.pt/politica-de-privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a>. Pode retirar a autorização a qualquer momento através de <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a>.</div>
+
+    <div data-turnstile data-sitekey="0x4AAAAAAF099A9eeVuIEKs4"></div>
+
+    <p class="err" id="e_send"></p>
+    <div class="nav"><button class="ghost" type="button" data-go="2" data-t="back">← Anterior</button><button class="btn" type="button" id="send" data-t="send">Enviar testemunho</button></div>
+  </section>
+
+  <!-- OBRIGADO -->
+  <section class="card done" id="ok" hidden>
+    <div class="tick">✓</div>
+    <h2 id="okh"></h2>
+    <p class="sub" data-t="oks">Recebemos a sua resposta. A sua opinião ajuda-nos a fazer cada vez melhor.</p>
+    <p class="back"><a href="https://magnaproperties.pt" data-t="site">Ir para magnaproperties.pt →</a></p>
+  </section>
+  <!-- LINK INVÁLIDO / JÁ USADO -->
+  <section class="card done" id="bad" hidden>
+    <div class="tick warn">!</div>
+    <h2 data-t="badh" data-html>Este link <em>já não está ativo.</em></h2>
+    <p class="sub" data-t="bads">Pode já ter enviado o seu testemunho, ou o link expirou. Se quiser deixar a sua opinião, fale com o seu consultor ou escreva-nos para info@magnaproperties.pt.</p>
+  </section>
+
+  <footer class="foot">
+    Magna Properties, Lda. · AMI 27435 · Olhão, Portugal<br>
+    <a href="https://magnaproperties.pt/politica-de-privacidade.html" data-t="pp">Política de Privacidade</a>
+  </footer>
+</div>
+
+<script>
+/* ===== Testemunho de cliente =====
+   O link do email traz ?t=<token assinado pelo Worker magna-testemunhos>.
+   Sem token: link inválido. Pré-visualização interna: ?demo (não grava nada). */
+const CONFIG = { ENDPOINT: 'https://magna-testemunhos.magnaproperties.workers.dev/api/testemunho', DEMO_NOME: 'Ana' };
+
+const Q = new URLSearchParams(location.search);
+const TOKEN = Q.get('t');
+const DEMO = !TOKEN && Q.has('demo');
+let LANG = Q.get('lang') === 'en' ? 'en' : 'pt';
+let step = 1;
+const R = { aval: +Q.get('r') || 0, rec: 0, aut: '' };
+
+/* o token traz o primeiro nome e a língua (parte pública; a assinatura é verificada no Worker) */
+function lerToken(t){
+  try{ const b=atob(t.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')); return JSON.parse(new TextDecoder().decode(Uint8Array.from(b,c=>c.charCodeAt(0)))); }catch(e){ return null; }
+}
+const INFO = TOKEN ? lerToken(TOKEN) : DEMO ? { n: CONFIG.DEMO_NOME } : null;
+if(INFO && INFO.l && !Q.get('lang')) LANG = INFO.l;
+const NOME = (INFO && INFO.n) || '';
+
+const T = {
+  pt:{
+    h1: n=> n ? `Olá ${n}, como foi a sua <em>experiência?</em>` : `Como foi a sua <em>experiência?</em>`,
+    prog:['Avaliação','Testemunho','Autorização'], de:'de', notas:['','Muito fraco','Fraco','Satisfatório','Bom','Excelente'], recs:['','Improvável','Pouco provável','Talvez','Provável','Com certeza'],
+    okh: n=> n ? `Muito obrigado, <em>${n}!</em>` : `Muito <em>obrigado!</em>`,
+    errAval:'Escolha uma classificação.', errRec:'Escolha um valor de 1 a 5.', errTxt:'Escreva pelo menos uma frase.', errAut:'Escolha uma das opções.',
+    errSend:'Não foi possível enviar. Verifique a ligação e tente de novo.', sending:'A enviar…',
+  },
+  en:{
+    eye:'Client testimonial',
+    h1: n=> n ? `Hi ${n}, how was your <em>experience?</em>` : `How was your <em>experience?</em>`,
+    prog:['Rating','Testimonial','Permission'], de:'of', notas:['','Very poor','Poor','Fair','Good','Excellent'], recs:['','Unlikely','Not very likely','Maybe','Likely','Definitely'], n1:'Unlikely', n2:'Not very likely', n3:'Maybe', n4:'Likely', n5:'Definitely',
+    okh: n=> n ? `Thank you, <em>${n}!</em>` : `Thank you <em>so much!</em>`, site:'Go to magnaproperties.pt →', r1:'Very poor', r5:'Excellent',
+    s1eye:'Step 1 · Rating', s1h:'How did <em>we do?</em>', s1sub:'Two quick questions. There are no right answers.',
+    q1:'How would you rate Magna Properties’ service overall?',
+    r1:'Very poor', r2:'Poor', r3:'Fair', r4:'Good', r5:'Excellent',
+    q2:'Would you recommend Magna Properties to a friend or family member?',
+    e1:'Would not recommend', e5:'Would definitely recommend',
+    next:'Next →', back:'← Back',
+    s2eye:'Step 2 · Testimonial', s2h:'In a few words, <em>tell us how it went.</em>', s2sub:'Write as you would to a friend. Two or three sentences are enough.',
+    q3:'How would you describe your experience with us?', i1:'What did you value most?', i2:'How was the follow-up?', i3:'What set us apart?',
+    ph3:'E.g. The team was always attentive and available. The process was simpler than we expected.',
+    s3eye:'Step 3 · Permission', s3h:'May we <em>share</em> your testimonial?', s3sub:'It’s your decision and you can change it at any time.',
+    a1:'Yes, it can be shared', a1s:'On the Magna Properties website and our social media.',
+    a2:'I’d prefer it to stay internal', a2s:'We only use it to improve our service.',
+    q4:'How should your name appear?', ph4:'E.g. Anna M., The Martins family', h4:'If left blank, we’ll only publish your initials.',
+    rgpd:'Your data is processed by Magna Properties, Lda. in accordance with our <a href="https://magnaproperties.pt/en/privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>. You can withdraw your permission at any time by writing to <a href="mailto:info@magnaproperties.pt">info@magnaproperties.pt</a>.',
+    send:'Send testimonial',
+    oks:'We’ve received your response. Your feedback helps us keep getting better.',
+    badh:'This link is <em>no longer active.</em>', bads:'You may have already sent your testimonial, or the link has expired. If you’d like to share your feedback, contact your agent or write to info@magnaproperties.pt.',
+    pp:'Privacy Policy',
+    errAval:'Please choose a rating.', errRec:'Please choose a value from 1 to 5.', errTxt:'Please write at least one sentence.', errAut:'Please choose one of the options.',
+    errSend:'Could not send. Check your connection and try again.', sending:'Sending…',
+  }
+};
+const $=id=>document.getElementById(id);
+const t=k=> (T[LANG][k]!==undefined ? T[LANG][k] : T.pt[k]);
+
+/* guarda o PT original de cada texto marcado */
+document.querySelectorAll('[data-t]').forEach(el=>{ el._pt = el.hasAttribute('data-html') ? el.innerHTML : el.textContent; });
+document.querySelectorAll('[data-tp]').forEach(el=>{ el._pt = el.placeholder; });
+
+function render(){
+  document.documentElement.lang=LANG;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('on', b.dataset.l===LANG));
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const v = LANG==='en' && T.en[el.dataset.t] ? T.en[el.dataset.t] : el._pt;
+    if(el.hasAttribute('data-html')) el.innerHTML=v; else el.textContent=v;
+  });
+  document.querySelectorAll('[data-tp]').forEach(el=>{ el.placeholder = LANG==='en' && T.en[el.dataset.tp] ? T.en[el.dataset.tp] : el._pt; });
+  document.querySelectorAll('a[data-t="pp"]').forEach(x=>x.href = LANG==='en' ? '/en/privacy-policy.html' : '/politica-de-privacidade.html');
+  $('h1').innerHTML=t('h1')(NOME); $('okh').innerHTML=t('okh')(NOME);
+  $('prog-t').textContent=t('prog')[step-1]; $('prog-n').textContent=step+' '+t('de')+' 3';
+  document.querySelectorAll('.prog-bars i').forEach((d,i)=>d.classList.toggle('on', i<step));
+  pinta('r_aval','aval','v_aval','notas'); pinta('r_rec','rec','v_rec','recs');
+}
+
+function go(n){
+  if(n>step && !valida(step)) return;
+  step=n;
+  document.querySelectorAll('[data-step]').forEach(s=>s.hidden = +s.dataset.step!==n);
+  render(); window.scrollTo({top:0,behavior:'smooth'});
+}
+function valida(s){
+  const e=(id,k,ok)=>{ $(id).textContent = ok ? '' : t(k); return ok; };
+  if(s===1){ const a=e('e_aval','errAval',R.aval>0), b=e('e_rec','errRec',R.rec>0); return a&&b; }
+  if(s===2) return e('e_txt','errTxt',$('txt').value.trim().length>=10);
+  if(s===3) return e('e_aut','errAut',!!R.aut);
+  return true;
+}
+function escolha(id,k,cb){
+  const g=$(id);
+  g.addEventListener('click',ev=>{
+    const b=ev.target.closest('button'); if(!b) return;
+    R[k] = k==='aut' ? b.dataset.v : +b.dataset.v;
+    if(k==='aut') g.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    if(cb) cb();
+    render();
+  });
+  if(g.classList.contains('bars')){   // pré-visualização ao passar o rato
+    g.addEventListener('mouseover',ev=>{ const b=ev.target.closest('button'); if(!b) return; g.classList.add('pv'); g.querySelectorAll('button').forEach(x=>x.classList.toggle('pv', +x.dataset.v<=+b.dataset.v)); });
+    g.addEventListener('mouseleave',()=>g.classList.remove('pv'));
+  }
+}
+function pinta(id,k,vid,lista){   // barras cheias até ao valor escolhido (pré-seleção do email: ?r=5)
+  const v=R[k]; document.querySelectorAll('#'+id+' button').forEach(x=>{ x.classList.toggle('on', +x.dataset.v<=v); x.classList.toggle('cur', +x.dataset.v===v); });
+  $(vid).textContent = v ? v+' · '+t(lista)[v] : '';
+}
+escolha('r_aval','aval',()=>$('e_aval').textContent='');
+escolha('r_rec','rec',()=>$('e_rec').textContent='');
+escolha('c_aut','aut',()=>{ $('e_aut').textContent=''; $('nome_box').hidden = R.aut!=='sim'; });
+$('txt').addEventListener('input',e=>{ $('cnt').textContent=e.target.value.length; });
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(+b.dataset.go)));
+document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>{ LANG=b.dataset.l; render(); }));
+
+$('send').addEventListener('click', async ()=>{
+  if(!valida(3)) return;
+  const b=$('send'); b.disabled=true; b.textContent=t('sending'); $('e_send').textContent='';
+  if(TOKEN) for(let i=0;i<20&&!tsToken()&&window.turnstile;i++) await new Promise(r=>setTimeout(r,500));
+  const dados = { t:TOKEN, lang:LANG, turnstile:tsToken(), avaliacao:R.aval, recomendaria:R.rec, testemunho:$('txt').value.trim(),
+                  autorizacao:R.aut, nome_publico:R.aut==='sim' ? $('nome').value.trim() : '' };
+  try{
+    if(TOKEN){
+      const r=await fetch(CONFIG.ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados)});
+      if(r.status===410||r.status===404){ return estado('bad'); }
+      if(!r.ok) throw new Error(r.status);
+    } else if(DEMO){ await new Promise(r=>setTimeout(r,700)); }
+    else return estado('bad');
+    estado('ok');
+  }catch(err){
+    $('e_send').textContent=t('errSend'); b.disabled=false; render();
+  }
+});
+
+function estado(qual){
+  document.querySelectorAll('[data-step]').forEach(s=>s.hidden=true);
+  document.querySelector('.top').classList.add('compact');
+  $(qual).hidden=false;
+  render(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* anti-spam (Cloudflare Turnstile), igual ao resto do site */
+window.magnaTS=function(){ const el=document.querySelector('[data-turnstile]'); if(el&&window.turnstile&&!el.dataset.wid) el.dataset.wid=window.turnstile.render(el,{sitekey:el.dataset.sitekey,language:LANG,appearance:'interaction-only'}); };
+function tsToken(){ const el=document.querySelector('[data-turnstile]'); try{ return (el.dataset.wid&&window.turnstile.getResponse(el.dataset.wid))||''; }catch(e){ return ''; } }
+
+render();
+if(!TOKEN && !DEMO) estado('bad');
+else if(TOKEN){   // o link ainda é válido? (já usado ou expirado → aviso logo à entrada)
+  if(!INFO) estado('bad');
+  else fetch(CONFIG.ENDPOINT+'?t='+encodeURIComponent(TOKEN)).then(r=>{ if(r.status===404||r.status===410) estado('bad'); }).catch(()=>{});
+}
+if(DEMO && Q.get('estado')==='ok') estado('ok');
+if(DEMO && Q.get('estado')==='invalido') estado('bad');
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&amp;onload=magnaTS" async defer></script>
+</body>
+</html>
