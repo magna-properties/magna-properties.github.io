@@ -233,7 +233,8 @@ const CONFIG = { ENDPOINT: 'https://magna-testemunhos.magnaproperties.workers.de
 
 const Q = new URLSearchParams(location.search);
 const TOKEN = Q.get('t');
-const DEMO = !TOKEN && Q.has('demo');
+const CODE = Q.get('c');            // link curto: ?c=<n.º>-<assinatura>
+const DEMO = !TOKEN && !CODE && Q.has('demo');
 let LANG = Q.get('lang') === 'en' ? 'en' : 'pt';
 let step = 1;
 const R = { aval: +Q.get('r') || 0, rec: 0, aut: '' };
@@ -244,7 +245,7 @@ function lerToken(t){
 }
 const INFO = TOKEN ? lerToken(TOKEN) : DEMO ? { n: CONFIG.DEMO_NOME } : null;
 if(INFO && INFO.l && !Q.get('lang')) LANG = INFO.l;
-const NOME = (INFO && INFO.n) || '';
+let NOME = (INFO && INFO.n) || '';
 
 const T = {
   pt:{
@@ -344,11 +345,11 @@ document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',
 $('send').addEventListener('click', async ()=>{
   if(!valida(3)) return;
   const b=$('send'); b.disabled=true; b.textContent=t('sending'); $('e_send').textContent='';
-  if(TOKEN) for(let i=0;i<20&&!tsToken()&&window.turnstile;i++) await new Promise(r=>setTimeout(r,500));
-  const dados = { t:TOKEN, lang:LANG, turnstile:tsToken(), avaliacao:R.aval, recomendaria:R.rec, testemunho:$('txt').value.trim(),
+  if(TOKEN||CODE) for(let i=0;i<20&&!tsToken()&&window.turnstile;i++) await new Promise(r=>setTimeout(r,500));
+  const dados = { t:TOKEN, c:CODE, lang:LANG, turnstile:tsToken(), avaliacao:R.aval, recomendaria:R.rec, testemunho:$('txt').value.trim(),
                   autorizacao:R.aut, nome_publico:R.aut==='sim' ? $('nome').value.trim() : '' };
   try{
-    if(TOKEN){
+    if(TOKEN||CODE){
       const r=await fetch(CONFIG.ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados)});
       if(r.status===410||r.status===404){ return estado('bad'); }
       if(!r.ok) throw new Error(r.status);
@@ -372,7 +373,13 @@ window.magnaTS=function(){ const el=document.querySelector('[data-turnstile]'); 
 function tsToken(){ const el=document.querySelector('[data-turnstile]'); try{ return (el.dataset.wid&&window.turnstile.getResponse(el.dataset.wid))||''; }catch(e){ return ''; } }
 
 render();
-if(!TOKEN && !DEMO) estado('bad');
+if(!TOKEN && !CODE && !DEMO) estado('bad');
+else if(CODE){   // link curto: o nome e a língua vêm do Worker
+  fetch(CONFIG.ENDPOINT+'?c='+encodeURIComponent(CODE)).then(r=>{
+    if(r.status===404||r.status===410){ estado('bad'); return null; }
+    return r.ok ? r.json() : null;
+  }).then(j=>{ if(j&&j.ok){ NOME=j.nome||''; if(!Q.get('lang')&&j.lang) LANG=j.lang; render(); } }).catch(()=>{});
+}
 else if(TOKEN){   // o link ainda é válido? (já usado ou expirado → aviso logo à entrada)
   if(!INFO) estado('bad');
   else fetch(CONFIG.ENDPOINT+'?t='+encodeURIComponent(TOKEN)).then(r=>{ if(r.status===404||r.status===410) estado('bad'); }).catch(()=>{});
